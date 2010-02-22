@@ -13,10 +13,6 @@ $conf['system_source'] = "/root/system_source";
 // Restart services with system deploy
 $conf['restart_services'] = 'apache2 mysql';
 
-// Run Drupal updates
-//$conf['drush'] = '/www/drush/drush -r /www/htdocs -l http://www.mydomain.de -u 1';
-// or $conf['drush']['firstdrush'] = '/www/drush/drush -r /www/htdocs -l http://www.mydomain.de -u 1';
-
 # Repository deployments
 $conf['deploy_svn'][] = '/usr/share/php5/ZendFramework';
 
@@ -25,17 +21,41 @@ $conf['init-system']['dirs'][] = '/tmp/dir1';
 $conf['init-system']['dirs'][] = '/tmp/dir2';
 $conf['init-system']['dirs'][] = '/tmp/dir3';
 
-$conf['init-system']['packages'] = 'htop vim git-core wget';
+$conf['init-system']['packages'] = 'htop vim git-core wget curl';
 
-# Reset database
-$conf['reset-db']['mode']           = 'local'; // local or remote
-$conf['reset-db']['db']             = 'my_db';
-$conf['reset-db']['local_sql']      = '/mnt/hgfs/Downloads/my_db.sql';
 
-$conf['reset-db']['remote_sql']     = 'my_db.sql';
-$conf['reset-db']['remote_dir']     = '/tmp';
-$conf['reset-db']['remote_user']    = 'user_with_ssh_access';
-$conf['reset-db']['remote_server']  = 'my-remote-server.com';
+// settings for all projects
+$project['_common_']['owner']         = 'www-data:www-data';
+// change files/directories to permissions
+$project['_common_']['permissions']   = 664;
 
-$conf['reset-db']['post_commands'][] = '/usr/local/bin/drush cache clear';
-$conf['reset-db']['post_commands'][] = '/usr/local/bin/drush cron';
+// activate project (only active projects are proceed with commands)
+$project['my-project']['active']         = FALSE;
+// drush command for drupal
+$project['my-project']['drush']          = '/www/drush/drush -r /www/htdocs';
+// should local or remote transfer used
+$project['my-project']['transfer_mode']  = 'remote';
+// database name of local AND remote database
+$project['my-project']['db']             = 'my_db';
+// Local file with SQL dump for restore
+$project['my-project']['sql_backup']     = '/mnt/hgfs/my_dump.sql';
+// Remote temp dir
+$project['my-project']['remote_tmp_dir'] = '/tmp';
+// SSH user for remote connection
+$project['my-project']['ssh_user']       = 'user_name_with_ssh_access';
+// SSH server for remote connection
+$project['my-project']['ssh_server']     = 'my-remote-server.com';
+
+$project['my-project']['reset-db']['post_commands'][] = $project['my-project']['drush'] .' cache-clear all';
+$project['my-project']['reset-db']['post_commands'][] = $project['my-project']['drush'] .' cron';
+
+# Reset files
+$project['my-project']['reset-dir']['transfer_mode'] = 'remote'; // local or remote - if not set project default will be used
+// target directory
+$project['my-project']['reset-dir']['target_dir']        = '/www/htdocs/sites/default/files';
+// local archive file with directory content
+$project['my-project']['reset-dir']['source_dir_file']   = '/mnt/hgfs/backup_files.tar';
+// source directory (remote)
+$project['my-project']['reset-dir']['source_remote_dir'] = '/www/htdocs/sitesdefault/files';
+$project['my-project']['reset-dir']['owner']          = 'www-data:www-data';
+$project['my-project']['reset-dir']['permissions']    = 664;
