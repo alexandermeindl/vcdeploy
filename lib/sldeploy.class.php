@@ -23,7 +23,7 @@ class sldeploy {
    *
    * @var int
    */
-  private $version = '0.10';
+  private $version = '0.20';
 
   /**
    * Base directory
@@ -150,8 +150,6 @@ class sldeploy {
     $rc        = $this->system('whoami');
     $this->current_user = $rc['output'][0];
 
-    $paras              = getopt('p:rvqjh');
-
     if (isset($this->conf['debug']) && $this->conf['debug'] ) {
       $this->debug = true;
     }
@@ -160,16 +158,16 @@ class sldeploy {
       $this->conf['write_to_log'] = FALSE;
     }
 
-    if ($this->check_paras($paras)) {
-      if (array_key_exists('h', $paras)) {
+    if ($this->check_paras($this->conf['paras'])) {
+      if (array_key_exists('h', $this->conf['paras'])) {
         $this->help();
         exit(0);
       }
       else {
-        $this->plugin_name = $paras['p'];
-        if (array_key_exists('r', $paras)) $this->with_report = TRUE;
-        if (array_key_exists('v', $paras)) $this->debug       = TRUE;
-        if (array_key_exists('q', $paras)) $this->quiet       = TRUE;
+        $this->plugin_name = $this->conf['paras']['p'];
+        if (array_key_exists('r', $this->conf['paras'])) $this->with_report = TRUE;
+        if (array_key_exists('v', $this->conf['paras'])) $this->debug       = TRUE;
+        if (array_key_exists('q', $this->conf['paras'])) $this->quiet       = TRUE;
       }
     }
     else {
@@ -195,6 +193,9 @@ class sldeploy {
 
     $this->msg("\nList of optional parameters:");
     $this->msg("-h\tdisplay this help");
+    if ((PHP_MAJOR_VERSION>=5) && (PHP_MINOR_VERSION>=3)) {
+      $this->msg("-c\tset configuration file");
+    }
     $this->msg("-q\tsuppress messages (expect error message)");
     $this->msg("-r\tsend status report (e.g. email)");
   }
@@ -349,6 +350,7 @@ class sldeploy {
 
         $this->msg('Run '. $plugin_name .' at '. $this->hostname .'...');
 
+        $plugin = array();
         require_once $this->plugin_dir .'/plugin_'. $plugin_name .'.class.php';
 
         // make sure, we are in base directory (possible change in a plugin)
@@ -410,6 +412,8 @@ class sldeploy {
     if ($this->debug) {
       $this->msg('system: '. $command);
     }
+
+    $rc = 0;
 
     if ($passthru) {
       passthru($command, $rc);

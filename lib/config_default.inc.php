@@ -27,6 +27,7 @@ $conf['git_bin']        = '/usr/bin/git';
 $conf['svn_bin']        = '/usr/bin/svn';
 $conf['cvs_bin']        = '/usr/bin/cvs';
 $conf['nice_bin']       = '/usr/bin/nice';
+$conf['rsync_bin']      = '/usr/bin/rsync';
 $conf['cp_bin']         = '/bin/cp';
 $conf['gzip_bin']       = '/bin/gzip';
 $conf['gunzip_bin']     = '/bin/gunzip';
@@ -40,8 +41,11 @@ $conf['ssh_bin']        = '/usr/bin/ssh';
 // root directory of all projects
 $conf['www_path'] = '/www';
 
-// system configuration directory
+// scm system configuration directory
 $conf['system_source'] = '/root/system_source';
+
+// scm log directory
+$conf['log_source'] = '/root/log_source';
 
 // git, svn or cvs
 $conf['source_scm'] = 'git';
@@ -52,11 +56,23 @@ $conf['backup_dir'] = '/srv/backups';
 // temporary directory
 $conf['tmp_dir'] = '/tmp';
 
+// system etc directory
+$conf['etc_dir'] = '/etc';
+
+// log etc directory in system-log mode
+$conf['log_etc_dir'] = TRUE;
+
+// exclude all files from log with these patterns
+$conf['log_excludes'] = '~ .dpkg-new .dpkg-old adjtime /mtab ld.so.cache';
+
 // system source code mananagement system: git, svn or cvs
 $conf['system_scm']    = 'git';
 
 // activate log
 $conf['write_to_log'] = TRUE;
+
+// Debug mode
+$conf['debug']          = FALSE;
 
 // log file
 $conf['log_file'] = '/var/log/sldeploy.log';

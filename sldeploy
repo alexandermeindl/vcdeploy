@@ -22,7 +22,22 @@ error_reporting(E_ALL);
 require_once 'lib/sldeploy.class.php';
 require_once 'lib/config_default.inc.php';
 
-if (file_exists('config.inc.php')) {
+if ((PHP_MAJOR_VERSION>=5) && (PHP_MINOR_VERSION>=3)) {
+  $paras = getopt('c::p:rvqjh');
+}
+else {
+  $paras = getopt('p:rvqjh');
+}
+
+if (isset($paras['c'])) {
+  if (file_exists($paras['c'])) {
+    require $paras['c'];
+  }
+  else {
+    die('Can not read configuration file '. $paras['c'] ."\n");
+  }
+}
+else if (file_exists('config.inc.php')) {
     require 'config.inc.php';
 }
 elseif (file_exists($_SERVER['HOME']. '/.sldeploy.inc.php')) {
@@ -30,9 +45,13 @@ elseif (file_exists($_SERVER['HOME']. '/.sldeploy.inc.php')) {
 }
 elseif (file_exists('/etc/sldeploy.inc.php')) {
     require '/etc/sldeploy.inc.php';
-} else {
+}
+else {
     die("Configuration file config.inc.php missing!\n");
 }
+
+// store command line parameters
+$conf['paras'] = $paras;
 
 $sldeploy = new sldeploy($conf);
 exit($sldeploy->run());
