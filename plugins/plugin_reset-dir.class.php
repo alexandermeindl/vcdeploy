@@ -133,7 +133,8 @@ class sldeploy_plugin_reset_dir extends sldeploy {
     $this->msg('creating backup of target directory '. $this->project['target_dir']);
 
     $target_file = $this->conf['backup_dir'] .'/'. $this->dir_name . '-'. $this->date_stamp .'.tar.gz';
-    $this->system($this->conf['nice_bin'] .' -n 15 '. $this->conf['tar_bin'] .' cfz '. $target_file .' '. $this->project['target_dir'], TRUE);
+    $this->set_nice('high');
+    $this->system($this->conf['tar_bin'] .' cfz '. $target_file .' '. $this->project['target_dir'], TRUE);
   }
 
 }

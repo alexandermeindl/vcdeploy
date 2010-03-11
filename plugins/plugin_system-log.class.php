@@ -73,8 +73,7 @@ class sldeploy_plugin_system_log extends sldeploy {
     }
 
     $this->package_list();
-    $this->drupal_log();
-
+    $this->project_tasks();
     $this->commit_to_vcm();
   }
 
@@ -143,27 +142,68 @@ class sldeploy_plugin_system_log extends sldeploy {
   }
 
   /**
-   * Log drupal changes
+   * Do project tasks
    *
    */
-  private function drupal_log() {
+  private function project_tasks() {
 
     if (count($this->projects)) {
       foreach($this->projects AS $project_name => $project) {
         $this->set_project($project_name, $project);
 
-        if (isset($this->project['drush']))
+        if (isset($this->project['drush'])) {
           $this->msg('Drupal module log on '. $this->project_name);
-          $this->drush_modules($project_name, $this->project['drush']);
+          $this->drush_modules($this->project['drush']);
+        }
+
+        if (isset($this->project['sql_to_scm']) && $this->project['sql_to_scm']) {
+          $this->msg('Dump SQL to SCM on '. $this->project_name);
+          $this->sql_log();
+        }
       }
     }
+  }
+
+  /**
+   * Write SQL dump for SCV
+   */
+  private function sql_log() {
+
+    if (!isset($this->project['db'])) {
+      $this->msg('Source database not specified!', 1);
+    }
+
+    $sql_file = $this->log_dir .'/dump_'. $this->project_name .'.sql';
+
+    // 1. clear database
+    $this->msg('Clear temporary database '. $this->conf['tmp_db'] .'...');
+    $this->system($this->conf['mysqladmin_bin'] .' -f drop '. $this->conf['tmp_db'], TRUE);
+    $this->system($this->conf['mysqladmin_bin'] .' create '. $this->conf['tmp_db'], TRUE);
+
+    // 2. clone database to tmp
+    $this->msg('Clone database '. $this->project['db'] .'...');
+    $this->system($this->conf['mysqldump_bin'] .' '. $this->conf['mysqldump_options'] .' '. $this->project['db'] .' > '. $sql_file, TRUE);
+    $this->system($this->conf['mysql_bin'] .' '. $this->conf['tmp_db'] .' < '. $sql_file, TRUE);
+
+    // 3. Clear tmp database
+    if (isset($this->project['sql_to_scm_truncates'])) {
+      $tables = explode(' ', $this->project['sql_to_scm_truncates']);
+      foreach($tables AS $table) {
+        $this->msg('Trancate table '. $table);
+        $this->system($this->conf['mysql_bin'] .' '. $this->conf['tmp_db'] .' -e "TRUNCATE TABLE '. $table .'"', TRUE);
+      }
+    }
+
+    // 4. Create dump
+    $this->msg('Creating scm dump for '. $this->project_name .'...');
+    $this->system($this->conf['mysqldump_bin'] .' '. $this->conf['mysqldump_options'] .' '. $this->conf['tmp_db'] .' > '. $sql_file, TRUE);
   }
 
   /**
    * Get information about drupal modules
    *
    */
-  private function drush_modules($project_name, $script) {
+  private function drush_modules($script) {
     $rc = $this->system($script . ' pm-list');
     if (!$rc['rc']) {
       if (is_array($rc['output'])) {
@@ -171,7 +211,7 @@ class sldeploy_plugin_system_log extends sldeploy {
         foreach($rc['output'] AS $line) {
           $info .= $line ."\n";
         }
-        $filename = $this->log_dir .'/drupal_modules_'. $project_name .'.txt';
+        $filename = $this->log_dir .'/drupal_modules_'. $this->project_name .'.txt';
         file_put_contents($filename, $info);
       }
     }

@@ -138,6 +138,13 @@ class sldeploy {
    */
   public $current_user;
 
+  /**
+   * Nice level for system command
+   *
+   * @var int
+   */
+  public $nice = 0;
+
   public function __construct($conf, $write_to_log=FALSE) {
 
     $this->conf         = $conf;
@@ -168,6 +175,11 @@ class sldeploy {
         if (array_key_exists('r', $this->conf['paras'])) $this->with_report = TRUE;
         if (array_key_exists('v', $this->conf['paras'])) $this->debug       = TRUE;
         if (array_key_exists('q', $this->conf['paras'])) $this->quiet       = TRUE;
+
+        // if script is already running, stop it
+        if ($this->check_already_running()) {
+          $this->msg('sldeploy is already running with plugin '. $this->plugin_name, 2);
+        }
       }
     }
     else {
@@ -187,6 +199,7 @@ class sldeploy {
     $this->msg("PLUGIN is required and has to be one of the following values:");
 
     $plugins = $this->get_plugin_info();
+    ksort($plugins);
     foreach ($plugins AS $plugin_name => $plugin_info) {
       $this->msg($plugin_name ."\t". $plugin_info);
     }
@@ -200,7 +213,10 @@ class sldeploy {
     $this->msg("-r\tsend status report (e.g. email)");
   }
 
-
+  /**
+   * Get plugin informatin
+   *
+   */
   private function get_plugin_info() {
 
     $plugins = array();
@@ -403,6 +419,25 @@ class sldeploy {
   }
 
   /**
+   * Set nice level to high or low
+   */
+  public function set_nice($level) {
+    $known_levels = array('high', 'low');
+    if (in_array($level, $known_levels)) {
+      $this->nice = $this->conf['nice_'. $level];
+
+      // negative nice level is only available for root
+      if (($this->nice < 0) && ($this->current_user)) {
+        $this->nice = 0;
+      }
+
+    }
+    else {
+        $this->msg('Unknow nice level (rc='. $level.')');
+    }
+  }
+
+  /**
    * Execute system call
    *
    * @param   string  $command    - command to execute
@@ -411,6 +446,11 @@ class sldeploy {
   public function system($command, $passthru=FALSE) {
     if ($this->debug) {
       $this->msg('system: '. $command);
+    }
+
+    // include nice, if not 0
+    if ($this->nice != 0) {
+      $command = $this->conf['nice_bin'] .' -n '. $this->conf['nice_low'] .' '. $command;
     }
 
     $rc = 0;
@@ -422,6 +462,9 @@ class sldeploy {
     else {
       exec($command, $output, $rc);
     }
+
+    // always reset nice after execution
+    $this->nice = 0;
 
     return array('output' => $output, 'rc' => $rc);
   }
@@ -535,5 +578,59 @@ class sldeploy {
     $ssh_command    = $this->conf['ssh_bin'] .' '. $this->ssh_user .'@'. $this->ssh_server;
 
     return $this->system($ssh_command .' "'. $command .'"', $passthru);
+  }
+
+  /**
+   * Compress file
+   *
+   * @param string  $filename
+   * @param bool    $only_command
+   */
+  public function gzip_file($filename, $only_command=FALSE) {
+
+    $command = $this->conf['gzip_bin'] .' -f '. $filename;
+
+    if (!$only_command) {
+      $this->set_nice('low');
+      $this->msg('compressing file: '. $filename);
+      $rc = $this->system($command, TRUE);
+      if ($rc['rc']) {
+        $this->msg('Error while compress file '. $file, 1);
+      }
+      elseif ($this->conf['create_hashfiles']) {
+        $md5 = md5_file($filename .'.gz');
+        file_put_contents($filename, $md5 .'  '.$filename .'.gz');
+      }
+    }
+
+    return $command;
+  }
+
+  /**
+   * Check if script already running with same plugin
+   *
+   * @return bool
+   */
+  private function check_already_running() {
+
+    $lock_file = $this->conf['tmp_dir'] .'/.sldeploy_'. $this->current_user .'_'. $this->plugin_name .'.lck';
+
+    if (file_exists($lock_file)) {
+      $rc        = $this->system('ps');
+      if (is_array($rc['output'])) {
+        $cnt=0;
+        foreach($rc['output'] AS $process) {
+          if (substr_count($process, 'sldeploy -p '. $this->plugin_name) >0) {
+            $cnt++;
+            if ($cnt>1) {
+              return TRUE;
+            }
+          }
+        }
+        unlink($lock_file);
+      }
+    }
+
+    touch($lock_file);
   }
 }

@@ -53,8 +53,30 @@ $conf['source_scm'] = 'git';
 // backup directory (used by reset-db)
 $conf['backup_dir'] = '/srv/backups';
 
+// Max days to keep backups
+$conf['backup_max_days'] = 7;
+
+# Remote host for rsync
+$conf['backup_remote_host'] = '';
+
+# Remote directory for rsync
+$conf['backup_remote_dir'] = '';
+
+$conf['backup_daily']   = array();
+$conf['backup_weekly']  = array();
+$conf['backup_monthly'] = array();
+
+// additional options to use for a mysql dump
+$conf['mysqldump_options'] = '--single-transaction --extended-insert=false';
+
+// Create hash files for all backup files
+$conf['create_hashfiles'] = FALSE;
+
 // temporary directory
 $conf['tmp_dir'] = '/tmp';
+
+// database for temporary work (all data will be lost in this db!)
+$conf['tmp_db'] = 'sldeploy_tmp';
 
 // system etc directory
 $conf['etc_dir'] = '/etc';
@@ -63,16 +85,22 @@ $conf['etc_dir'] = '/etc';
 $conf['log_etc_dir'] = TRUE;
 
 // exclude all files from log with these patterns
-$conf['log_excludes'] = '~ .dpkg-new .dpkg-old adjtime /mtab ld.so.cache';
+$conf['log_excludes']  = '~ .dpkg-new .dpkg-old adjtime /mtab ld.so.cache';
 
 // system source code mananagement system: git, svn or cvs
 $conf['system_scm']    = 'git';
 
 // activate log
-$conf['write_to_log'] = TRUE;
+$conf['write_to_log']  = TRUE;
 
 // Debug mode
-$conf['debug']          = FALSE;
+$conf['debug']         = FALSE;
+
+// high priority commands
+$conf['nice_high'] = -10;
+
+// low priority commands
+$conf['nice_low']  = 15;
 
 // log file
 $conf['log_file'] = '/var/log/sldeploy.log';

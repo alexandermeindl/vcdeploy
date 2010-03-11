@@ -4,6 +4,13 @@ Requirements
 ============
 
 - PHP 5.2.x
+- SCM (git, svn or cvs)
+
+Optional
+============
+- MySQL
+- rsync
+- tar
 
 
 Installation

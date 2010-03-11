@@ -23,8 +23,6 @@ $plugin['root_only']  = TRUE;
 
 class sldeploy_plugin_reset_db extends sldeploy {
 
-  const db_para = '-c --skip-opt --disable-keys --set-charset --add-locks --lock-tables --create-options --add-drop-table';
-
   /**
    * This function is run with the command
    *
@@ -104,7 +102,7 @@ class sldeploy_plugin_reset_db extends sldeploy {
         }
 
         $this->msg('Compress remote file...');
-        $rc = $this->ssh_system($this->conf['gzip_bin'] .' -f '. $remote_file, TRUE);
+        $rc = $this->ssh_system($this->gzip_file($remote_file, TRUE), TRUE);
         if ($rc['rc']) {
           $this->msg('Error compress remote file.', 1);
         }
@@ -126,14 +124,10 @@ class sldeploy_plugin_reset_db extends sldeploy {
 
     $this->msg('creating database dump of '. $this->project['db']);
     $target_file = $this->conf['backup_dir'] .'/'. $this->project['db'] . '-'. $this->date_stamp .'.sql';
-    $this->system($this->conf['nice_bin'] .' -10 '. $this->conf['mysqldump_bin'] .' '. self::db_para .' '. $this->project['db'] .' > '. $target_file);
+
+    $this->set_nice('high');
+    $this->system($this->conf['mysqldump_bin'] .' '. $this->conf['mysqldump_options'] .' '. $this->project['db'] .' > '. $target_file);
 
     $this->gzip_file($target_file);
   }
-
-  private function gzip_file($file) {
-    $this->msg('compressing '. $file);
-    $this->system($this->conf['nice_bin'] .' -n 15 '. $this->conf['gzip_bin'] .' '. $file);
-  }
-
 }
