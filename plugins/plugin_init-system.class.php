@@ -5,7 +5,7 @@
  *   Voraussetung damit das funktioniert:
  *   Manuelle Installation von:
  *   apt-get install git
- *   git clone git.squatlabs.net:system_SERVER_NAME /root/git_system
+ *   git clone git.squatlabs.com:system_SERVER_NAME /root/git_system
  *
  *
  * The contents of this file are subject to the Mozilla Public License

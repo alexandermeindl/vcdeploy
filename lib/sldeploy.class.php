@@ -23,7 +23,7 @@ class sldeploy {
    *
    * @var int
    */
-  private $version = '0.20';
+  private $version = '0.21';
 
   /**
    * Base directory

@@ -26,6 +26,7 @@ $project = array();
 $conf['git_bin']        = '/usr/bin/git';
 $conf['svn_bin']        = '/usr/bin/svn';
 $conf['cvs_bin']        = '/usr/bin/cvs';
+$conf['bzr_bin']        = '/usr/bin/bzr';
 $conf['nice_bin']       = '/usr/bin/nice';
 $conf['rsync_bin']      = '/usr/bin/rsync';
 $conf['cp_bin']         = '/bin/cp';
@@ -87,8 +88,18 @@ $conf['log_etc_dir'] = TRUE;
 // exclude all files from log with these patterns
 $conf['log_excludes']  = '~ .dpkg-new .dpkg-old adjtime /mtab ld.so.cache';
 
-// system source code mananagement system: git, svn or cvs
+// system source code mananagement system: git, svn, cvs or static
+// git    = git version control usage
+// svn	  = subversion version control usage
+// cvs	  = cvs version control usage
+// static = static directory without version control
 $conf['system_scm']    = 'git';
+
+// define system environment (this is used for daemon configuration and start/stop activity)
+// supported systems:
+// - debian (default)
+// - suse
+$conf['system_os']    = 'debian';
 
 // activate log
 $conf['write_to_log']  = TRUE;
@@ -108,6 +119,7 @@ $conf['log_file'] = '/var/log/sldeploy.log';
 $conf['deploy_git']     = array();
 $conf['deploy_svn']     = array();
 $conf['deploy_cvs']     = array();
+$conf['deploy_bzr']     = array();
 $conf['permissions']    = array();
 $conf['reset_db']       = array();
 $conf['reset_dir']      = array();

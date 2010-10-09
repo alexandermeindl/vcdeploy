@@ -14,6 +14,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
+ * TODO: - branch support for git
+ *		 - bzr support
+ *
  */
 
 $plugin['info']       = 'update all project repositories';
@@ -26,6 +29,8 @@ class sldeploy_plugin_update_project extends sldeploy {
     $this->update_repository($this->conf['deploy_cvs'], $this->conf['cvs_bin'] .' update', 'CVS');
     $this->update_repository($this->conf['deploy_svn'], $this->conf['svn_bin'] .' update', 'SVN');
     $this->update_repository($this->conf['deploy_git'], $this->conf['git_bin'] .' pull', 'GIT');
+
+//    $this->update_repository($this->conf['deploy_bzr'], $this->conf['bzr_bin'] .' pull', 'Bazaar');
 
     // Make sure sldeploy is executable
     chmod($this->base_dir .'/sldeploy', 0775);
