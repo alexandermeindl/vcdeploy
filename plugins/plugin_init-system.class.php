@@ -27,6 +27,19 @@ class sldeploy_plugin_init_system extends sldeploy {
 
   public function run() {
 
+		$this->msg('First update to latest packages...');
+		switch($this->conf['system_os']) {
+			case 'suse':
+				$rc = $this->system('zypper --non-interactive update', TRUE);
+				break;
+			case 'debian':
+				$rc = $this->system('apt-get update', TRUE);
+				$rc = $this->system('apt-get upgrade', TRUE);
+				break;
+			default:
+				msg('init system not support on this platform', TRUE);
+		}
+
     if (is_array($this->conf['init-system']['dirs']) &&
         count($this->conf['init-system']['dirs'])) {
 
@@ -43,20 +56,42 @@ class sldeploy_plugin_init_system extends sldeploy {
 
     if (!empty($this->conf['init-system']['packages'])) {
       $this->msg('Install linux packages...');
-      $rc = $this->system('apt-get install -y '. $this->conf['init-system']['packages']);
+			if ($this->conf['system_os']=='suse') {
+      	$rc = $this->system('zypper --non-interactive install '. $this->conf['init-system']['packages'], TRUE);
+			}
+			else { // debian
+      	$rc = $this->system('apt-get install -y '. $this->conf['init-system']['packages'], TRUE);
+			}
       if ($rc['rc']) {
-        $this->msg('An error occured while installing packages:');
-        foreach ($rc['output'] AS $line) {
-          $this->msg($line);
-        }
-        exit(2);
+				if (!empty($rc['output'])) {
+	        $this->msg('An error occured while installing packages:');
+	        foreach ($rc['output'] AS $line) {
+	          $this->msg($line);
+	        }
+				}
+				else {
+	        $this->msg('An error occured while installing packages (rc='. $rc['rc'] .')');
+				}
+				exit($rc['rc']);
       }
 
-      $this->system('apt-get clean');
-
-      chown('/var/log/php_errors', 'www-data');
-      chgrp('/var/log/php_errors', 'www-data');
+			$this->set_php_logfile();
     }
   }
+
+	function set_php_logfile() {
+
+		$php_log_file = '/var/log/php_errors';
+
+		if ($this->conf['system_os']=='suse') {
+      chown($php_log_file, 'wwwrun');
+      chgrp($php_log_file, 'www');
+		}
+		else {
+      $this->system('apt-get clean');
+      chown($php_log_file, 'www-data');
+      chgrp($php_log_file, 'www-data');
+		}
+	}
 
 }

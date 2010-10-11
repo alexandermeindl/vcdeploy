@@ -129,5 +129,7 @@ $conf['init-system'] = array();
 $conf['init-system']['dirs']     = array();
 $conf['init-system']['packages'] = '';
 
+$conf['commands'] = array();
+
 // default access for all plugins
 $plugin = array('root_only' => FALSE);
