@@ -36,21 +36,29 @@ class sldeploy_plugin_command extends sldeploy {
 			$this->active_command = $argv[3];
 		}
 		else {
-			$this->msg('No command specified', 1);
+			$this->msg('No command specified. Use one of the following commands: '. implode(', ', $this->get_available_commands()), 1);
 		}
 
 		if (array_key_exists($this->active_command, $this->conf['commands'])) {
 			$this->run_command();
 		}
 		else {
-			$this->msg('Unknown command has been used.');
-			$commands = array();
-      foreach($this->conf['commands'] AS $command_name => $command) {
-				$commands[] = $command_name;
-			}
-			$this->msg('Use one of the following commands: '. implode(', ', $commands), 1);
+			$this->msg('Unknown command has been used. Use one of the following commands: '. implode(', ', $this->get_available_commands()));
 		}
   }
+
+	/**
+	  * Get all available commands
+	  *
+	  * @return array
+	  */
+	function get_available_commands() {
+		$commands = array();
+    foreach($this->conf['commands'] AS $command_name => $command) {
+			$commands[] = $command_name;
+		}
+		return $commands;
+	}
 
 	/**
 	  * run a system command or a group of commands
@@ -60,12 +68,18 @@ class sldeploy_plugin_command extends sldeploy {
 
 		$command = $this->conf['commands'][$this->active_command];
 		if (is_array($command)) {
+			$runs=0;
 			foreach($command AS $command_atom) {
 				if ($command_atom!=$this->active_command && array_key_exists($command_atom, $this->conf['commands'])) {
+					if ($runs) {
+						$this->msg('---');
+					}
 					$this->msg('Run '. $command_atom .'...');
 					$this->system($this->conf['commands'][$command_atom], TRUE);
+					$runs++;
 				}
 			}
+			$this->msg($runs .' commands have been executed');
 		}
 		else {
 			$this->system($command, TRUE);
