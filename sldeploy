@@ -22,7 +22,7 @@ error_reporting(E_ALL);
 require_once 'lib/sldeploy.class.php';
 require_once 'lib/config_default.inc.php';
 
-if ((PHP_MAJOR_VERSION>=5) && (PHP_MINOR_VERSION>=3)) {
+if (defined('PHP_MAJOR_VERSION') && PHP_MAJOR_VERSION>=5 && PHP_MINOR_VERSION>=3) {
   $paras = getopt('c::p:rvqjh');
 }
 else {
