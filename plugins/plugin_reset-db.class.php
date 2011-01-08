@@ -3,7 +3,8 @@
  * @file
  *   Plugin to reset database
  *
- * This is useful, if you want to fetch a copy an extern installation to your local developer environment.
+ * This is useful, if you want to fetch a copy an extern
+ * installation to your local developer environment.
  *
  *
  * The contents of this file are subject to the Mozilla Public License
@@ -18,10 +19,17 @@
  *
  */
 
-$plugin['info']       = 'reset database';
-$plugin['root_only']  = TRUE;
+$plugin['info'] = 'Reset database. If no project is specified, all active project databases will be reseted';
+$plugin['root_only'] = TRUE;
 
-class sldeploy_plugin_reset_db extends sldeploy {
+$plugin['options']['project'] = array(
+                              'short_name'  => '-p',
+                              'long_name'   => '--project',
+                              'action'      => 'StoreString',
+                              'description' => 'Only reset database of this project',
+                            );
+
+class SldeployPluginResetDb extends Sldeploy {
 
   /**
     * Current database name to reset
@@ -37,16 +45,25 @@ class sldeploy_plugin_reset_db extends sldeploy {
    */
   public function run() {
 
-    if (count($this->projects)) {
-      foreach($this->projects AS $project_name => $project) {
-        $this->set_project($project_name, $project);
+    // check for existing projects
+    $this->validate_projects();
 
-        $this->msg('Project: '. $this->project_name);
-        $this->reset_db();
+    if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
+      $project_name = $this->paras->command->options['project'];
+      if (!array_key_exists($project_name, $this->projects)) {
+        throw new Exception('Project "' . $project_name . '" is not configured!');
       }
+      $this->set_project($project_name, $this->projects[$project_name]);
+      $this->msg('Project: ' . $this->project_name);
+      $this->_resetDb();
     }
     else {
-      $this->msg('No project configuration found', 1);
+      foreach ($this->projects AS $project_name => $project) {
+        $this->set_project($project_name, $project);
+
+        $this->msg('Project: ' . $this->project_name);
+        $this->_resetDb();
+      }
     }
   }
 
@@ -55,93 +72,48 @@ class sldeploy_plugin_reset_db extends sldeploy {
    *
    * @return bool
    */
-  private function reset_db() {
+  private function _resetDb() {
 
-    if (!empty($this->project['db'])) {
+    if (isset($this->project['db'])) {
 
-      if (!is_array($this->project['db'])) {
-        $this->project['db'] = array($this->project['db']);
-      }
+      foreach ($this->project['db'] AS $identifier => $db) {
 
-      foreach ($this->project['db'] AS $this->current_db) {
-
-        $sql_file = $this->get_sql_file();
+        $sql_file = $this->get_remote_db_file($identifier, $this->get_source_db($identifier));
 
         if (!empty($sql_file)) {
 
-          // create database of existing database
-          $this->db_backup();
+          // create backup of existing database
+          $this->create_db_dump($db);
 
           // drop database
-          $this->system($this->conf['mysqladmin_bin'] .' -f drop '. $this->current_db);
+          $this->system($this->conf['mysqladmin_bin'] . ' -f drop ' . $db);
 
-          $this->msg('Recreating database '. $this->current_db .'...');
+          $this->msg('Recreating database ' . $db . '...');
           sleep(2);
 
-          system($this->conf['mysqladmin_bin'] .' create '. $this->current_db);
+          system($this->conf['mysqladmin_bin'] . ' create ' . $db);
 
           $this->msg('Import data...');
-          $this->system($this->conf['gunzip_bin'] .' < '. $sql_file .' | '. $this->conf['mysql_bin'] .' '. $this->current_db);
+          $this->system($this->conf['gunzip_bin'] . ' < ' . $sql_file . ' | ' . $this->conf['mysql_bin'] . ' ' . $db);
 
-          $this->msg('Database '. $this->current_db .' has been successfully reseted.');
+          if (isset($this->project['reset_db']['with_db_sanitize']) && $this->project['reset_db']['with_db_sanitize']) {
+            $this->sanitize_database_sanitize($db);
+          }
+
+          $this->msg('Database ' . $db . ' has been successfully reseted.');
         }
         else {
           $this->msg('SQL file for import could not be identify');
+        }
+      }
+
+      // run post commands
+      if (isset($this->project['reset_db']['post_commands'])) {
+        $this->post_commands($this->project['reset_db']['post_commands']);
       }
     }
-
-    $this->post_commands($this->project['post_commands']);
-  }
-  else {
-      $this->msg('Project '. $this->project_name .': no database has been specified.');
+    else {
+      $this->msg('Project ' . $this->project_name . ': no database has been specified.');
     }
-  }
-
-  private function get_sql_file() {
-
-    switch ($this->project['transfer_mode']) {
-
-      case 'local':
-        $sql_file = $this->project['sql_backup'] .'.gz';
-        break;
-
-      case 'remote':
-
-        $remote_file = $this->project['remote_tmp_dir'] .'/'. $this->current_db .'.sql';
-
-        $this->msg('Create Dump on remote server...');
-        $rc = $this->ssh_system($this->conf['mysqldump_bin'] .' '. $this->current_db .' > '. $remote_file, TRUE);
-        if ($rc['rc']) {
-          $this->msg('Error creating remote dump.', 1);
-        }
-
-        $this->msg('Compress remote file...');
-        $rc = $this->ssh_system($this->gzip_file($remote_file, TRUE), TRUE);
-        if ($rc['rc']) {
-          $this->msg('Error compress remote file.', 1);
-        }
-
-        $sql_file = $this->conf['tmp_dir'] .'/'. $this->current_db .'.sql.gz';
-
-        $this->ssh_get_file($this->project['remote_tmp_dir'] .'/'. $this->current_db .'.sql.gz',
-                            $sql_file);
-        break;
-
-      default:
-        $sql_file = '';
-    }
-
-    return $sql_file;
-  }
-
-  private function db_backup() {
-
-    $this->msg('creating database dump of '. $this->current_db);
-    $target_file = $this->conf['backup_dir'] .'/'. $this->current_db . '-'. $this->date_stamp .'.sql';
-
-    $this->set_nice('high');
-    $this->system($this->conf['mysqldump_bin'] .' '. $this->conf['mysqldump_options'] .' '. $this->current_db .' > '. $target_file);
-
-    $this->gzip_file($target_file);
   }
 }

@@ -1,7 +1,12 @@
 <?php
 /**
  * @file
- *   Update repositories
+ *   Update repositories of projects
+ *
+ * @example
+ * $project['xhprof']['path'] = '/www/xhprof';
+ * $project['xhprof']['scm']['type'] = 'git';
+ * $project['xhprof']['scm']['url'] = 'https://github.com/preinheimer/xhprof.git';
  *
  *
  * The contents of this file are subject to the Mozilla Public License
@@ -15,55 +20,107 @@
  * under the License.
  *
  * TODO: - branch support for git
- *		 - bzr support
+ *       - bzr support
  *
  */
 
-$plugin['info']       = 'update all project repositories';
-$plugin['root_only']  = FALSE;
+$plugin['info'] = 'update all project repositories';
+$plugin['root_only'] = FALSE;
 
-class sldeploy_plugin_update_project extends sldeploy {
+class SldeployPluginUpdateProject extends Sldeploy {
 
+  /**
+   * Progress bar
+   *
+   * @var object
+   */
+  private $bar;
+
+  /**
+   * Amount of projects to update
+   *
+   * @var int
+   */
+  private $project_amount = 0;
+
+  /**
+   * Current project position
+   *
+   * @var int
+   */
+  private $current_pos = 0;
+
+  /**
+   * This function is run with the command
+   *
+   * @see sldeploy#run()
+   */
   public function run() {
 
-    $this->update_repository($this->conf['deploy_cvs'], $this->conf['cvs_bin'] .' update', 'CVS');
-    $this->update_repository($this->conf['deploy_svn'], $this->conf['svn_bin'] .' update', 'SVN');
-    $this->update_repository($this->conf['deploy_git'], $this->conf['git_bin'] .' pull', 'GIT');
+    // check for existing projects
+    $this->validate_projects();
 
-//    $this->update_repository($this->conf['deploy_bzr'], $this->conf['bzr_bin'] .' pull', 'Bazaar');
+    // set amount of projects
+    $this->project_amount = count($this->projects);
+
+    if (!isset($this->paras->options['verbose']) || !$this->paras->options['verbose']) {
+      $this->bar = new Console_ProgressBar(' %fraction% [%bar%] %percent%  ', '=', ' ', 50, $this->project_amount);
+    }
+
+    foreach ($this->projects AS $project_name => $project) {
+
+      $this->set_project($project_name, $project);
+      $this->current_pos++;
+
+      if ($this->project['scm']['type']=='static') {
+        // do nothing
+        $rc = 0;
+      }
+      else {
+        // initialize scm
+        $this->set_scm('project');
+        $rc = $this->_updateRepository($this->scm->update(), $this->scm->get_name());
+      }
+
+      if ($rc) {
+        return $rc;
+      }
+    }
 
     // Make sure sldeploy is executable
-    chmod($this->base_dir .'/sldeploy', 0775);
+    chmod($this->base_dir . '/sldeploy', 0775);
   }
 
   /**
-   * @params array $directories
    * @params string $command
    * @params string $info
    *
    */
-  private function update_repository($directories, $command, $info) {
+  private function _updateRepository($command, $info) {
 
-    if ((is_array($directories)) && count($directories)) {
-      $this->msg('Update '. $info .' repository...');
+    if (!empty($this->project['path'])) {
 
-      foreach($directories AS $source_dir) {
-        if (file_exists($source_dir)) {
-          if (is_dir($source_dir)) {
-            chdir($source_dir);
-            $this->system($command, TRUE);
-          }
-          else {
-            $this->msg($source_dir .' is not a directory');
-          }
+      // verbose view
+      if (isset($this->paras->options['verbose']) && $this->paras->options['verbose']) {
+        $this->msg('Updating ' . $info . ' Repository for project ' . $this->project_name . ' (' . $this->current_pos . '/' . $this->project_amount . ')...');
+      }
+      else {
+        $this->bar->update($this->current_pos);
+      }
+
+      if (file_exists($this->project['path'])) {
+        if (is_dir($this->project['path'])) {
+          chdir($this->project['path']);
+          $rc = $this->system($command, TRUE);
+          return $rc['rc'];
         }
         else {
-          $this->msg($source_dir .' does not exist');
+          throw new Exception($this->project['path'] . ' is not a directory');
         }
       }
     }
-
-    return TRUE;
+    else {
+      $this->msg('No path specified for project ' . $this->project_name);
+    }
   }
-
 }

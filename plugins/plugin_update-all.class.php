@@ -16,12 +16,24 @@
  *
  */
 
-$plugin['info']       = 'Run update-project, update-system, update-drupal and permission plugins';
-$plugin['root_only']  = FALSE;
+$plugin['info'] = 'Run update-project, update-system, update-drupal and permission plugins';
+$plugin['root_only'] = TRUE;
 
-class sldeploy_plugin_update_all extends sldeploy {
+$plugin['batch_before'] = array('update-project', 'update-system', 'update-drupal', 'permission');
+$plugin['batch_after'] = array();
 
-  public function run_batch() {
-    return array('update-project', 'update-system', 'update-drupal', 'permission');
+// TODO: implement batch mode
+
+class SldeployPluginUpdateAll extends Sldeploy {
+
+    /**
+   * This function is run with the command
+   *
+   * @see sldeploy#run()
+   */
+  public function run() {
+
+    // nothing todo in this plugin
+    $this->msg('All updates completed.');
   }
 }

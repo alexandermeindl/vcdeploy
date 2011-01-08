@@ -3,7 +3,8 @@
  * @file
  *   Plugin to reset a directory
  *
- * This is useful, if you want to fetch a copy an extern installation to your local developer environment.
+ * This is useful, if you want to fetch a copy an extern installatio
+ * to your local developer environment.
  *
  *
  * The contents of this file are subject to the Mozilla Public License
@@ -18,17 +19,17 @@
  *
  */
 
-$plugin['info']       = 'reset directory';
-$plugin['root_only']  = TRUE;
+$plugin['info'] = 'Reset directory. If no project is specified, all active projects files/directories will be reseted.';
+$plugin['root_only'] = TRUE;
 
-class sldeploy_plugin_reset_dir extends sldeploy {
+$plugin['options']['project'] = array(
+                              'short_name'  => '-p',
+                              'long_name'   => '--project',
+                              'action'      => 'StoreString',
+                              'description' => 'Only reset data of this project',
+                            );
 
-  /**
-   * Entry name of current directory
-   *
-   * @var string
-   */
-  private $dir_name;
+class SldeployPluginResetDir extends Sldeploy {
 
   /**
    * This function is run with the command
@@ -37,17 +38,25 @@ class sldeploy_plugin_reset_dir extends sldeploy {
    */
   public function run() {
 
-    if (count($this->projects)) {
-      foreach($this->projects AS $project_name => $project) {
-        $this->set_project($project_name, $project);
-        $this->dir_name = 'reset_dir-'. $this->project_name;
+    // check for existing projects
+    $this->validate_projects();
 
-        $this->msg('Project: '. $this->project_name);
-        $this->reset_dir();
+    if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
+      $project_name = $this->paras->command->options['project'];
+      if (!array_key_exists($project_name, $this->projects)) {
+        throw new Exception('Project "' . $project_name . '" is not configured!');
       }
+      $this->set_project($project_name, $this->projects[$project_name]);
+      $this->msg('Project: ' . $this->project_name);
+      $this->_resetDir();
     }
     else {
-      $this->msg('No project configuration found', 1);
+      foreach ($this->projects AS $project_name => $project) {
+        $this->set_project($project_name, $project);
+
+        $this->msg('Project: ' . $this->project_name);
+        $this->_resetDir();
+      }
     }
   }
 
@@ -56,85 +65,39 @@ class sldeploy_plugin_reset_dir extends sldeploy {
    *
    * @return bool
    */
-  public function reset_dir() {
+  private function _resetDir() {
 
-    if (!empty($this->project['target_dir'])) {
+    if (isset($this->project['data_dir'])) {
 
-      $tar_file = $this->get_tar_file();
+      foreach ($this->project['data_dir'] AS $identifier => $dir) {
 
-      if (!empty($tar_file)) {
+        $tar_file = $this->get_source_data_file($identifier, $this->get_source_data($identifier));
 
-        // create database of existing database
-        $this->dir_backup();
+        if (!empty($tar_file)) {
 
-        // remove existing target directory
-        if ($this->project['target_dir']!='/') {
-          $this->system('rm -r '. $this->project['target_dir']);
+          // create backup of existing data
+          $this->create_project_data_backup();
+
+          // remove existing target directory
+          $this->remove_directory($dir);
+
+          // Restore Tar file
+          chdir(dirname($dir)); // go to parent directory
+          $this->system($this->conf['tar_bin'] . ' xfz ' . $tar_file);
+
+          if (isset($this->project['reset_dir']['post_commands'])) {
+            $this->post_commands($this->project['reset_dir']['post_commands']);
+          }
+
+          $this->msg('Directory ' . $identifier . ' has been successfully restored.');
         }
         else {
-          $this->msg('Never use / as target directory!', 2);
+          $this->msg('TAR file for reset could not be identify');
         }
-
-        // Restore Tar file
-        chdir(dirname($this->project['target_dir'])); // go to parent directory
-        $this->system($this->conf['tar_bin'] .' xfz '. $tar_file);
-
-        if (isset($this->project['post_commands'])) {
-          $this->post_commands($this->project['post_commands']);
-        }
-
-        $this->msg('Directory '. $this->project['target_dir'] .' has been successfully restored.');
-      }
-      else {
-        $this->msg('TAR file for reset could not be identify');
       }
     }
     else {
-      $this->msg('Project '. $this->project_name .': no target_dir has been specified.');
+      $this->msg('Project ' . $this->project_name . ': no data_dir has been specified.');
     }
   }
-
-  private function get_tar_file() {
-
-    switch ($this->project['transfer_mode']) {
-
-      case 'local':
-        $tar_file = $this->project['source_dir_file'] .'.gz';
-        break;
-
-      case 'remote':
-
-        $remote_file = $this->project['remote_tmp_dir'] .'/'. $this->dir_name .'.tar.gz';
-
-        $this->msg('Create TAR file on remote server ('. $this->ssh_server .')...');
-
-        $dir = basename($this->project['source_remote_dir']);
-
-        $rc = $this->ssh_system('cd '. dirname($this->project['source_remote_dir']) .' && '. $this->conf['tar_bin'] .' cfz '. $remote_file .' '. $dir);
-        if ($rc['rc']) {
-          $this->msg('Error creating tar file.', 2);
-        }
-
-        $tar_file = $this->conf['tmp_dir'] .'/'. $this->dir_name .'.tar.gz';
-
-        $this->ssh_get_file($this->project['remote_tmp_dir'] .'/'. $this->dir_name .'.tar.gz',
-                            $tar_file);
-        break;
-
-      default:
-        $tar_file = '';
-    }
-
-    return $tar_file;
-  }
-
-  private function dir_backup() {
-
-    $this->msg('creating backup of target directory '. $this->project['target_dir']);
-
-    $target_file = $this->conf['backup_dir'] .'/'. $this->dir_name . '-'. $this->date_stamp .'.tar.gz';
-    $this->set_nice('high');
-    $this->system($this->conf['tar_bin'] .' cfz '. $target_file .' '. $this->project['target_dir'], TRUE);
-  }
-
 }

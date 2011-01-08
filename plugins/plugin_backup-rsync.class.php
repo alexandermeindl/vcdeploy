@@ -16,10 +16,10 @@
  *
  */
 
-$plugin['info']       = 'Rsync backup files with remote system';
-$plugin['root_only']  = FALSE;
+$plugin['info'] = 'Rsync backup files with remote system';
+$plugin['root_only'] = FALSE;
 
-class sldeploy_plugin_backup_rsync extends sldeploy {
+class SldeployPluginBackupRsync extends Sldeploy {
 
   /**
    * This function is run with the command
@@ -29,17 +29,17 @@ class sldeploy_plugin_backup_rsync extends sldeploy {
   public function run() {
 
     if (!isset($this->conf['backup_remote_host']) || empty($this->conf['backup_remote_host'])) {
-      $this->msg('backup_remote_host is not specified!', 1);
+      throw new Exception('backup_remote_host is not specified!');
     }
-    else if (!isset($this->conf['backup_remote_dir']) || empty($this->conf['backup_remote_dir'])) {
-      $this->msg('backup_remote_dir is not specified!', 1);
+    elseif (!isset($this->conf['backup_remote_dir']) || empty($this->conf['backup_remote_dir'])) {
+      throw new Exception('backup_remote_dir is not specified!');
     }
 
-    $this->msg('Sync data between '. $this->hostname .' and '. $this->conf['backup_remote_host'] .'...');
+    $this->msg('Sync data between ' . $this->hostname . ' and ' . $this->conf['backup_remote_host'] . '...');
 
-    $remote_dir = $this->conf['backup_remote_host'] .':'. $this->conf['backup_remote_dir'] .'/';
-    $command    = $this->conf['rsync_bin'] .' -e ssh -avzp --exclude "*.journal" --exclude ".nfs*" --exclude "*.tar" --delete';
+    $remote_dir = $this->conf['backup_remote_host'] . ':' . $this->conf['backup_remote_dir'] . '/';
+    $command = $this->conf['rsync_bin'] . ' -e ssh -avzp --exclude "*.journal" --exclude ".nfs*" --exclude "*.tar" --delete';
 
-    $this->system($command .' '. $this->conf['backup_dir'] .'/ '. $remote_dir);
+    $this->system($command . ' ' . $this->conf['backup_dir'] . '/ ' . $remote_dir);
   }
 }

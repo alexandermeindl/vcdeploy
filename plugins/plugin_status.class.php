@@ -15,22 +15,29 @@
  * under the License.
  *
  * TODO: - branch support for git
- *		 - bzr support
+ *     - bzr support
  *
  */
 
-$plugin['info']       = 'status messages and information of sldeploy environment';
-$plugin['root_only']  = FALSE;
+$plugin['info'] = 'status messages and information of sldeploy environment';
+$plugin['root_only'] = FALSE;
 
-class sldeploy_plugin_status extends sldeploy {
+class SldeployPluginStatus extends Sldeploy {
 
+  /**
+   * This function is run with the command
+   *
+   * @see sldeploy#run()
+   */
   public function run() {
 
-    $this->msg("Version: \t".				$this->version);
-   	$this->msg("SCM:\t\t".					$this->conf['source_scm']);
-    $this->msg("System OS:\t".			$this->conf['system_os']);
-	 	$this->msg("Config file:\t".		$this->conf['config_file']);
-    $this->msg("System source:\t".	$this->conf['system_source']);
-    $this->msg("Backup dir:\t".			$this->conf['backup_dir']);
+    $this->msg("Version:\t\t" . $this->version);
+    $this->msg("SCM:\t\t\t" . $this->conf['source_scm']);
+    $this->msg("System OS:\t\t" . $this->conf['system_os']);
+    $this->msg("Config file:\t\t" . $this->conf['config_file']);
+    $this->msg("System source:\t\t" . $this->conf['system_source']);
+    $this->msg("Backup dir:\t\t" . $this->conf['backup_dir']);
+    $this->msg("Project (active):\t" . count($this->get_projects()));
+    $this->msg("Project (all):\t\t" . count($this->get_all_projects()));
   }
 }

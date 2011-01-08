@@ -16,10 +16,10 @@
  *
  */
 
-$plugin['info']       = 'run drupal updates on all drupal projects';
-$plugin['root_only']  = FALSE;
+$plugin['info'] = 'run drupal updates on all drupal projects';
+$plugin['root_only'] = FALSE;
 
-class sldeploy_plugin_update_drupal extends sldeploy {
+class SldeployPluginUpdateDrupal extends Sldeploy {
 
   /**
    * This function is run with the command
@@ -28,17 +28,16 @@ class sldeploy_plugin_update_drupal extends sldeploy {
    */
   public function run() {
 
-    if (count($this->projects)) {
-      foreach($this->projects AS $project_name => $project) {
-        $this->set_project($project_name, $project);
+    // check for existing projects
+    $this->validate_projects();
 
-        if (isset($this->project['drush']))
-          $this->msg('Drupal updatedb on '. $this->project_name);
-          $this->drush_exec($this->project['drush']);
+    foreach ($this->projects AS $project_name => $project) {
+      $this->set_project($project_name, $project);
+
+      if (isset($this->project['drush'])) {
+        $this->msg('Drupal updatedb on ' . $this->project_name);
+        $this->_drushExec($this->project['drush']);
       }
-    }
-    else {
-      $this->msg('No project configuration found', 1);
     }
   }
 
@@ -47,11 +46,10 @@ class sldeploy_plugin_update_drupal extends sldeploy {
    *
    * @param   string  $script
    */
-  private function drush_exec($script) {
+  private function _drushExec($script) {
 
     $this->system($script . ' --yes updatedb', TRUE);
     $this->system($script . ' cache-clear all', TRUE);
     $this->system($script . ' cron', TRUE);
   }
-
 }

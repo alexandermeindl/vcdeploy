@@ -6,7 +6,10 @@
  * Permissions
  *
  * name = filename or directory name
- * rec  = recursive: yes, files (files only) dirs (directories only) or no [default]
+ * rec  = recursive: yes,
+ *                    files (files only)
+ *                    dirs (directories only) or
+ *                    no [default]
  * mod  = permissions
  * own  = owner
  *
@@ -22,11 +25,16 @@
  *
  */
 
-$plugin['info']       = 'set file and directory permissions';
-$plugin['root_only']  = TRUE;
+$plugin['info'] = 'set file and directory permissions';
+$plugin['root_only'] = TRUE;
 
-class sldeploy_plugin_permission extends sldeploy {
+class SldeployPluginPermission extends Sldeploy {
 
+  /**
+   * This function is run with the command
+   *
+   * @see sldeploy#run()
+   */
   public function run() {
 
     $this->msg('Set permissions...');
@@ -34,9 +42,8 @@ class sldeploy_plugin_permission extends sldeploy {
     if (is_array($this->conf['permissions'])) {
 
       foreach ($this->conf['permissions'] AS $permission) {
-
         if ($permission['name'] == '/') {
-          $this->msg('Permission should never ever set tor / (recursive)!', 2);
+          throw new Exception('Permission should never ever set tor / (recursive)!');
         }
         elseif (empty($permission['name'])) {
           $this->msg('Missing name (directory) for this entry.');
@@ -44,17 +51,21 @@ class sldeploy_plugin_permission extends sldeploy {
         else {
 
           if (!empty($permission['mod'])) {
-            $this->set_permissions('mod',
-                                    $permission['name'],
-                                    $permission['mod'],
-                                    $permission['rec']);
+            $this->_setPermissions(
+              'mod',
+              $permission['name'],
+              $permission['mod'],
+              $permission['rec']
+            );
           }
 
           if (!empty($permission['own'])) {
-            $this->set_permissions('own',
-                                    $permission['name'],
-                                    $permission['own'],
-                                    $permission['rec']);
+            $this->_setPermissions(
+              'own',
+              $permission['name'],
+              $permission['own'],
+              $permission['rec']
+            );
           }
         }
       }
@@ -62,7 +73,6 @@ class sldeploy_plugin_permission extends sldeploy {
   }
 
   /**
-    *
     * Set permissions
     *
     * @params string $mode
@@ -71,33 +81,36 @@ class sldeploy_plugin_permission extends sldeploy {
     * @params string $recursive
     *
     */
-  private function set_permissions($mode, $directory, $value, $recursive=NULL) {
+  private function _setPermissions($mode, $directory, $value, $recursive = NULL) {
 
-    if ($mode=='own') $command = 'chown';
-    else              $command = 'chmod';
+    if ($mode == 'own') {
+      $command = 'chown';
+    }
+    else {
+      $command = 'chmod';
+    }
 
     if (!empty($value)) {
 
-      $this->msg('Set permissions ('. $value .') to '. $directory .'...');
+      $this->msg('Set permissions (' . $value . ') to ' . $directory . '...');
 
       switch ($recursive) {
 
         case 'files':
-          $this->system('find '. $directory .' -type f -exec '. $command .' '. $value .' {} \;');
+          $this->system('find ' . $directory . ' -type f -exec ' . $command . ' ' . $value . ' {} \;');
           break;
 
         case 'dirs':
-          $this->system('find '. $directory .' -type d -exec '. $command .' '. $value .' {} \;');
+          $this->system('find ' . $directory . ' -type d -exec ' . $command . ' ' . $value . ' {} \;');
           break;
 
         case 'yes':
-          $this->system($command .' -R '. $value .' '. $directory);
+          $this->system($command . ' -R ' . $value . ' ' . $directory);
           break;
 
         default: // not recursive
-          $this->system($command .' '. $value .' '. $directory);
+          $this->system($command . ' ' . $value . ' ' . $directory);
       }
     }
   }
-
 }

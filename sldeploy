@@ -19,41 +19,39 @@
 
 error_reporting(E_ALL);
 
-require_once 'lib/sldeploy.class.php';
-require_once 'lib/config_default.inc.php';
 
-if (defined('PHP_MAJOR_VERSION') && PHP_MAJOR_VERSION>=5 && PHP_MINOR_VERSION>=3) {
-  $paras = getopt('c::p:rvqjh');
-}
-else {
-  $paras = getopt('p:rvqjh');
+if (!defined('__DIR__')) {
+  $ipos = strrpos(__FILE__, '/');
+  define('__DIR__', substr(__FILE__, 0, $ipos) . '/');
+  unset($ipos);
 }
 
+set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . '/lib');
 
+require 'Log.php';
+require 'sldeploy/loader.class.php';
+require 'sldeploy/exception_handler.inc.php';
+require 'sldeploy/config_default.inc.php';
 
-if (isset($paras['c'])) {
-	$conf['config_file'] = $paras['c'];
-  if (!file_exists($conf['config_file'])) {
-    die('Can not read configuration file '. $conf['config_file'] ."\n");
-  }
+if (file_exists('config.inc.php')) {
+  $conf['config_file'] = chdir() . '/config.inc.php';
 }
-else if (file_exists('config.inc.php')) {
-	$conf['config_file'] = chdir() .'/config.inc.php';
-}
-elseif (file_exists($_SERVER['HOME']. '/.sldeploy.inc.php')) {
-	$conf['config_file'] = $_SERVER['HOME']. '/.sldeploy.inc.php';
+elseif (file_exists($_SERVER['HOME'] . '/.sldeploy.inc.php')) {
+  $conf['config_file'] = $_SERVER['HOME'] . '/.sldeploy.inc.php';
 }
 elseif (file_exists('/etc/sldeploy.inc.php')) {
-	$conf['config_file'] = '/etc/sldeploy.inc.php';
+  $conf['config_file'] = '/etc/sldeploy.inc.php';
 }
 else {
-	die("Configuration file config.inc.php missing!\n");
+  die("Configuration file config.inc.php missing!\n");
 }
 
 require $conf['config_file'];
 
-// store command line parameters
-$conf['paras'] = $paras;
+// set exception handler
+$logger = Log::factory('file', $conf['log_file'], basename(__FILE__));
+set_exception_handler('exceptionHandler');
 
-$sldeploy = new sldeploy($conf);
-exit($sldeploy->run());
+$sldeploy = new SlDeployLoader($conf);
+
+exit($sldeploy->parser());

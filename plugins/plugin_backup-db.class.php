@@ -16,10 +16,31 @@
  *
  */
 
-$plugin['info']       = 'Create backup of all databases';
-$plugin['root_only']  = FALSE;
+$plugin['info'] = 'Create database backup. If no database name is specified a backup of all databases will be created';
+$plugin['root_only'] = FALSE;
 
-class sldeploy_plugin_backup_db extends sldeploy {
+$plugin['options']['database'] = array(
+                              'short_name'  => '-d',
+                              'long_name'   => '--database',
+                              'action'      => 'StoreString',
+                              'description' => 'Only create backup of this database',
+                            );
+
+class SldeployPluginBackupDb extends Sldeploy {
+
+  /**
+   * Progress bar
+   *
+   * @var object
+   */
+  private $bar;
+
+  /**
+   * Current project position
+   *
+   * @var int
+   */
+  private $current_pos = 0;
 
   /**
    * This function is run with the command
@@ -29,33 +50,54 @@ class sldeploy_plugin_backup_db extends sldeploy {
   public function run() {
 
     if (empty($this->conf['backup_dir'])) {
-      $this->msg('Backup directory not specified', 1);
+      throw new Exception('Backup directory not specified.');
     }
-    else if (!file_exists($this->conf['backup_dir'])) {
-      $this->msg('Backup directory does not exist', 1);
+    elseif (!file_exists($this->conf['backup_dir'])) {
+      throw new Exception('Backup directory does not exist.');
     }
 
-    $this->all_dbs();
+    if (isset($this->paras->command->options['database']) && !empty($this->paras->command->options['database'])) {
+      $this->create_db_dump($this->paras->command->options['database']);
+    }
+    else {
+      $this->_allDbs();
+    }
   }
 
-  private function create_db_backup($db_name) {
-
-    $target_file = $this->conf['backup_dir'] .'/db-'. $db_name .'-'. $this->date_stamp .'.sql';
-
-    $this->msg('Creating database dump of '. $db_name .'...');
-
-    $this->set_nice('high');
-    $this->system($this->conf['mysqldump_bin'] .' '. $this->conf['mysqldump_options'] .' '. $db_name .'>'. $target_file);
-    $this->gzip_file($target_file);
+  /**
+   * Create database dump
+   *
+   * @param string $db_name
+   */
+  private function _singleDb($db_name) {
+    $this->create_db_dump($db_name);
   }
 
-  private function all_dbs() {
+  /**
+   * Create database dump of all existing databases
+   */
+  private function _allDbs() {
 
-    $rc = $this->system($this->conf['mysql_bin'] ." -Bse 'show databases'");
+    $rc = $this->system($this->conf['mysql_bin'] . " -Bse 'show databases'");
 
     if (!$rc['rc']) {
-      foreach($rc['output'] AS $db_name) {
-        $this->create_db_backup($db_name);
+
+      $amount = count($rc['output']);
+
+      if (!isset($this->paras->options['verbose']) || !$this->paras->options['verbose']) {
+        $this->bar = new Console_ProgressBar(' %fraction% [%bar%] %percent%  ', '=', ' ', 50, $amount);
+      }
+
+      foreach ($rc['output'] AS $db_name) {
+        $this->current_pos++;
+        // verbose view
+        if (isset($this->paras->options['verbose']) && $this->paras->options['verbose']) {
+          $this->create_db_dump($db_name);
+        }
+        else {
+          $this->bar->update($this->current_pos);
+          $this->create_db_dump($db_name, NULL, FALSE);
+        }
       }
     }
     else {

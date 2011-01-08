@@ -16,10 +16,10 @@
  *
  */
 
-$plugin['info']       = 'remove old backups';
-$plugin['root_only']  = FALSE;
+$plugin['info'] = 'remove old backups';
+$plugin['root_only'] = FALSE;
 
-class sldeploy_plugin_backup_clear extends sldeploy {
+class SldeployPluginBackupClear extends Sldeploy {
 
   /**
    * This function is run with the command
@@ -29,25 +29,28 @@ class sldeploy_plugin_backup_clear extends sldeploy {
   public function run() {
 
     if (empty($this->conf['backup_dir'])) {
-      $this->msg('Backup directory not specified', 1);
+      throw new Exception('Backup directory not specified.');
     }
-    else if (!file_exists($this->conf['backup_dir'])) {
-      $this->msg('Backup directory does not exist', 1);
+    elseif (!file_exists($this->conf['backup_dir'])) {
+      throw new Exception('Backup directory does not exist.');
     }
 
-    $this->clear_backups();
+    $this->_clearBackups();
   }
 
-  private function clear_backups() {
+  /**
+   * Clear exisiting backups
+   */
+  private function _clearBackups() {
 
-    $this->msg('Remove old backups on '. $this->hostname .'...');
+    $this->msg('Remove old backups on ' . $this->hostname . '...');
 
     $max_minutes = $this->conf['backup_max_days'] * 24 * 60;
 
-    $this->system('find "'. $this->conf['backup_dir'] .'/" ! -mmin -'. $max_minutes .' -name "*.tar.gz*" -type f -exec rm {} \;', TRUE);
-    $this->system('find "'. $this->conf['backup_dir'] .'/" ! -mmin -'. $max_minutes .' -name "*sql.gz*" -type f -exec rm {} \;', TRUE);
+    $this->system('find "' . $this->conf['backup_dir'] . '/" ! -mmin -' . $max_minutes . ' -name "*.tar.gz*" -type f -exec rm {} \;', TRUE);
+    $this->system('find "' . $this->conf['backup_dir'] . '/" ! -mmin -' . $max_minutes . ' -name "*sql.gz*" -type f -exec rm {} \;', TRUE);
 
-    # delete files, which no longer in use
-    $this->system('find "'. $this->conf['backup_dir'] .'/" -name "*.tar" -type f -exec rm {} \;', TRUE);
+    // delete files, which no longer in use
+    $this->system('find "' . $this->conf['backup_dir'] . '/" -name "*.tar" -type f -exec rm {} \;', TRUE);
   }
 }

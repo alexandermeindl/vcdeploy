@@ -16,10 +16,10 @@
  *
  */
 
-$plugin['info']       = 'Create backup of files';
-$plugin['root_only']  = FALSE;
+$plugin['info'] = 'Create backup of files';
+$plugin['root_only'] = FALSE;
 
-class sldeploy_plugin_backup_files extends sldeploy {
+class SldeployPluginBackupFiles extends Sldeploy {
 
   /**
    * This function is run with the command
@@ -29,24 +29,24 @@ class sldeploy_plugin_backup_files extends sldeploy {
   public function run() {
 
     $this->msg('Run backups...');
-    $this->backup_files();
+    $this->_backupFiles();
   }
 
   /**
    * Create backup of specified directories
    *
    */
-  private function backup_files() {
+  private function _backupFiles() {
 
     if (is_array($this->conf['backup_daily'])) {
 
-      foreach($this->conf['backup_daily'] AS $name => $values) {
+      foreach ($this->conf['backup_daily'] AS $name => $values) {
 
         if (!isset($values['dir'])) {
-          $this->msg('Missing dir for '. $name .' backup set!');
+          $this->msg('Missing dir for ' . $name . ' backup set!');
         }
-        else if (!file_exists($values['dir'])) {
-          $this->msg('Backup target directory does not exist: '. $values['dir']);
+        elseif (!file_exists($values['dir'])) {
+          $this->msg('Backup target directory does not exist: ' . $values['dir']);
         }
         else {
 
@@ -60,16 +60,16 @@ class sldeploy_plugin_backup_files extends sldeploy {
               $values['multi_excludes'] = array();
             }
 
-            $source_dirs = $this->get_multi_source_dirs($values['dir'], $values['multi_excludes']);
-            foreach($source_dirs AS $source_name => $source_dir) {
-              $backup_name = $name .'_'. $source_name;
-              $this->msg('creating backup for '. $backup_name .' ('. $source_dir .')...');
-              $this->create_backup($backup_name, $source_dir, $values['excludes']);
+            $source_dirs = $this->_getMultiSourceDirs($values['dir'], $values['multi_excludes']);
+            foreach ($source_dirs AS $source_name => $source_dir) {
+              $backup_name = $name . '_' . $source_name;
+              $this->msg('creating backup for ' . $backup_name . ' (' . $source_dir . ')...');
+              $this->create_data_dump($source_dir, $this->_getTargetBackupFilename($backup_name), $values['excludes']);
             }
           }
           else {                                               // SINGLE
-            $this->msg('creating backup for '. $name .' ('. $values['dir'].')...');
-            $this->create_backup($name, $values['dir'], $values['excludes']);
+            $this->msg('creating backup for ' . $name . ' (' . $values['dir'] . ')...');
+            $this->create_data_dump($values['dir'], $this->_getTargetBackupFilename($name), $values['excludes']);
           }
         }
       }
@@ -77,37 +77,12 @@ class sldeploy_plugin_backup_files extends sldeploy {
   }
 
   /**
-   * Create backup of a directory
+   * Get filename for backup
    *
-   * @param string  $name
-   * @param string  $source_dir
-   * @param array   $excludes
+   * @param string $name
    */
-  private function create_backup($name, $source_dir, $excludes) {
-
-    $target_file = $this->conf['backup_dir'] .'/'. $name .'-'. $this->date_stamp .'.tar';
-
-    // change to parent directory
-    $dir        = basename($source_dir);
-    $parent_dir = dirname($source_dir);
-
-    chdir($parent_dir);
-
-    $command = $this->conf['tar_bin'] .' cplf '. $target_file;
-    if (isset($excludes) && is_array($excludes)) {
-      $command .= ' --exclude="'. implode('" --exclude="', $excludes) .'"';
-    }
-    $command .= ' '. $dir;
-
-    $this->set_nice('low');
-    $rc = $this->system($command);
-
-    if (!$rc['rc']) {
-      $this->gzip_file($target_file);
-    }
-    else {
-      $this->msg('Error on creating backup '. $name .' (dir: '. $source_dir .')');
-    }
+  private function _getTargetBackupFilename($name) {
+    return $this->conf['backup_dir'] . '/' . $name . '-' . $this->date_stamp . '.tar';
   }
 
   /**
@@ -116,16 +91,16 @@ class sldeploy_plugin_backup_files extends sldeploy {
    * @param string  $source_dir
    * @param array   $excludes
    */
-  private function get_multi_source_dirs($source_dir, $excludes) {
+  private function _getMultiSourceDirs($source_dir, $excludes) {
 
     $dirs = array();
 
     $d = dir($source_dir);
-    while (false !== ($entry = $d->read())) {
-      if ($entry!='.' && $entry!='..' && is_dir($source_dir .'/'. $entry)) {
+    while (FALSE !== ($entry = $d->read())) {
+      if ($entry != '.' && $entry != '..' && is_dir($source_dir . '/' . $entry)) {
         $ok = TRUE;
         reset($excludes);
-        foreach($excludes AS $exclude) {
+        foreach ($excludes AS $exclude) {
           if ($entry == $exclude) {
             $ok = FALSE;
             break;
@@ -133,7 +108,7 @@ class sldeploy_plugin_backup_files extends sldeploy {
         }
 
         if ($ok) {
-          $dirs[$entry] = $source_dir .'/'. $entry;
+          $dirs[$entry] = $source_dir . '/' . $entry;
         }
       }
     }
