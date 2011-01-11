@@ -18,6 +18,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
+ * @package  sldeploy
+ * @author  Alexander Meindl
+ * @link    https://github.com/alexandermeindl/sldeploy
  */
 
 $plugin['info'] = 'initial a new system environment';
@@ -28,6 +31,8 @@ class SldeployPluginInitSystem extends Sldeploy {
     /**
    * This function is run with the command
    *
+   * @return int
+   * @throws Exception
    * @see sldeploy#run()
    */
   public function run() {
@@ -78,7 +83,7 @@ class SldeployPluginInitSystem extends Sldeploy {
         else {
           $this->msg('An error occured while installing packages (rc=' . $rc['rc'] . ')');
         }
-        exit($rc['rc']);
+        return $rc['rc'];
       }
 
       $this->_setPhpLogFile();
@@ -86,7 +91,21 @@ class SldeployPluginInitSystem extends Sldeploy {
   }
 
   /**
+   * Get max steps of this plugin for progress view
+   *
+   * @param int $init initial value of counter
+   *
+   * @return int amount of working steps of this plugin
+   * @see Sldeploy#progressbar_init()
+   */
+  public function get_steps($init = 0) {
+    return $init++;
+  }
+
+  /**
    * Set PHP log file
+   *
+   * @return void
    */
   private function _setPhpLogFile() {
 

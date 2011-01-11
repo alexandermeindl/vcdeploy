@@ -4,6 +4,7 @@
  *   Update repositories of projects
  *
  * @example
+ *
  * $project['xhprof']['path'] = '/www/xhprof';
  * $project['xhprof']['scm']['type'] = 'git';
  * $project['xhprof']['scm']['url'] = 'https://github.com/preinheimer/xhprof.git';
@@ -22,6 +23,9 @@
  * TODO: - branch support for git
  *       - bzr support
  *
+ * @package  sldeploy
+ * @author  Alexander Meindl
+ * @link    https://github.com/alexandermeindl/sldeploy
  */
 
 $plugin['info'] = 'update all project repositories';
@@ -30,29 +34,9 @@ $plugin['root_only'] = FALSE;
 class SldeployPluginUpdateProject extends Sldeploy {
 
   /**
-   * Progress bar
-   *
-   * @var object
-   */
-  private $bar;
-
-  /**
-   * Amount of projects to update
-   *
-   * @var int
-   */
-  private $project_amount = 0;
-
-  /**
-   * Current project position
-   *
-   * @var int
-   */
-  private $current_pos = 0;
-
-  /**
    * This function is run with the command
    *
+   * @return void
    * @see sldeploy#run()
    */
   public function run() {
@@ -60,19 +44,14 @@ class SldeployPluginUpdateProject extends Sldeploy {
     // check for existing projects
     $this->validate_projects();
 
-    // set amount of projects
-    $this->project_amount = count($this->projects);
-
-    if (!isset($this->paras->options['verbose']) || !$this->paras->options['verbose']) {
-      $this->bar = new Console_ProgressBar(' %fraction% [%bar%] %percent%  ', '=', ' ', 50, $this->project_amount);
-    }
+    $this->progressbar_init();
 
     foreach ($this->projects AS $project_name => $project) {
 
       $this->set_project($project_name, $project);
-      $this->current_pos++;
+      $this->progressbar_step();
 
-      if ($this->project['scm']['type']=='static') {
+      if ($this->project['scm']['type'] == 'static') {
         // do nothing
         $rc = 0;
       }
@@ -92,21 +71,31 @@ class SldeployPluginUpdateProject extends Sldeploy {
   }
 
   /**
+   * Get max steps of this plugin for progress view
+   *
+   * @param int $init initial value of counter
+   *
+   * @return int amount of working steps of this plugin
+   * @see Sldeploy#progressbar_init()
+   */
+  public function get_steps($init = 0) {
+    return $init + count($this->projects);
+  }
+
+  /**
+   * Update repository
+   *
    * @params string $command
    * @params string $info
    *
+   * @return int
+   * @throws Exception
    */
   private function _updateRepository($command, $info) {
 
     if (!empty($this->project['path'])) {
 
-      // verbose view
-      if (isset($this->paras->options['verbose']) && $this->paras->options['verbose']) {
-        $this->msg('Updating ' . $info . ' Repository for project ' . $this->project_name . ' (' . $this->current_pos . '/' . $this->project_amount . ')...');
-      }
-      else {
-        $this->bar->update($this->current_pos);
-      }
+      $this->show_progress('Updating ' . $info . ' Repository for project ' . $this->project_name . ' (' . $this->get_progressbar_pos() . '/' . $this->get_steps() . ')...', FALSE);
 
       if (file_exists($this->project['path'])) {
         if (is_dir($this->project['path'])) {
@@ -122,5 +111,7 @@ class SldeployPluginUpdateProject extends Sldeploy {
     else {
       $this->msg('No path specified for project ' . $this->project_name);
     }
+
+    return 0;
   }
 }

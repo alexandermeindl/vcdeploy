@@ -1,0 +1,234 @@
+\hypertarget{class_log__composite}{
+\section{Log\_\-composite Class Reference}
+\label{class_log__composite}\index{Log\_\-composite@{Log\_\-composite}}
+}
+Inheritance diagram for Log\_\-composite:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_log__composite}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_log__composite_a3bc0d26b9f7c00bbf4caf2964ea0b501}{Log\_\-composite} (\$name, \$ident= '', \$conf=array(), \$level=PEAR\_\-LOG\_\-DEBUG)
+\item 
+\hyperlink{class_log__composite_a44a2ac59a3b91f8c18905dce700934d6}{open} ()
+\item 
+\hyperlink{class_log__composite_aa69c8bf1f1dcf4e72552efff1fe3e87e}{close} ()
+\item 
+\hyperlink{class_log__composite_a7751f77b5263bcf940ece6e824a05b38}{flush} ()
+\item 
+\hyperlink{class_log__composite_ac3758dfa38a67df158a446847cf06413}{log} (\$message, \$priority=null)
+\item 
+\hyperlink{class_log__composite_a2c140997a6e82a14ed58842d26bbb2c5}{isComposite} ()
+\item 
+\hyperlink{class_log__composite_a9d8352d257344340d7a5b9c081d2a0d9}{setIdent} (\$ident)
+\item 
+\hyperlink{class_log__composite_a69f884b1a42cb59ba09070fa0229d733}{addChild} (\&\$child)
+\item 
+\hyperlink{class_log__composite_afeed0fd389f43d6d9efbe9ef1ca9e2d1}{removeChild} (\$child)
+\end{DoxyCompactItemize}
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_log__composite_a8fa4d4087d153e03788aeece675aefb9}{
+{\bfseries \$\_\-children} = array()}
+\label{class_log__composite_a8fa4d4087d153e03788aeece675aefb9}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_log__composite_a69f884b1a42cb59ba09070fa0229d733}{
+\index{Log\_\-composite@{Log\_\-composite}!addChild@{addChild}}
+\index{addChild@{addChild}!Log_composite@{Log\_\-composite}}
+\subsubsection[{addChild}]{\setlength{\rightskip}{0pt plus 5cm}addChild (
+\begin{DoxyParamCaption}
+\item[{\&\$}]{child}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__composite_a69f884b1a42cb59ba09070fa0229d733}
+Adds a \hyperlink{class_log}{Log} instance to the list of children.
+
+
+\begin{DoxyParams}[1]{Parameters}
+object & {\em \$child} & The \hyperlink{class_log}{Log} instance to add.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean True if the \hyperlink{class_log}{Log} instance was successfully added.
+\end{DoxyReturn}
+public \hypertarget{class_log__composite_aa69c8bf1f1dcf4e72552efff1fe3e87e}{
+\index{Log\_\-composite@{Log\_\-composite}!close@{close}}
+\index{close@{close}!Log_composite@{Log\_\-composite}}
+\subsubsection[{close}]{\setlength{\rightskip}{0pt plus 5cm}close (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__composite_aa69c8bf1f1dcf4e72552efff1fe3e87e}
+Closes all open child instances.
+
+\begin{DoxyReturn}{Returns}
+True if all of the opened child instances were successfully closed.
+\end{DoxyReturn}
+public 
+
+Reimplemented from \hyperlink{class_log_aa69c8bf1f1dcf4e72552efff1fe3e87e}{Log}.
+
+\hypertarget{class_log__composite_a7751f77b5263bcf940ece6e824a05b38}{
+\index{Log\_\-composite@{Log\_\-composite}!flush@{flush}}
+\index{flush@{flush}!Log_composite@{Log\_\-composite}}
+\subsubsection[{flush}]{\setlength{\rightskip}{0pt plus 5cm}flush (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__composite_a7751f77b5263bcf940ece6e824a05b38}
+Flushes all child instances. It is assumed that all of the children have been successfully opened.
+
+\begin{DoxyReturn}{Returns}
+True if all of the child instances were successfully flushed.
+\end{DoxyReturn}
+public \begin{DoxySince}{Since}
+\hyperlink{class_log}{Log} 1.8.2 
+\end{DoxySince}
+
+
+Reimplemented from \hyperlink{class_log_a7751f77b5263bcf940ece6e824a05b38}{Log}.
+
+\hypertarget{class_log__composite_a2c140997a6e82a14ed58842d26bbb2c5}{
+\index{Log\_\-composite@{Log\_\-composite}!isComposite@{isComposite}}
+\index{isComposite@{isComposite}!Log_composite@{Log\_\-composite}}
+\subsubsection[{isComposite}]{\setlength{\rightskip}{0pt plus 5cm}isComposite (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__composite_a2c140997a6e82a14ed58842d26bbb2c5}
+Returns true if this is a composite.
+
+\begin{DoxyReturn}{Returns}
+boolean True if this is a composite class.
+\end{DoxyReturn}
+public 
+
+Reimplemented from \hyperlink{class_log_a2c140997a6e82a14ed58842d26bbb2c5}{Log}.
+
+\hypertarget{class_log__composite_ac3758dfa38a67df158a446847cf06413}{
+\index{Log\_\-composite@{Log\_\-composite}!log@{log}}
+\index{log@{log}!Log_composite@{Log\_\-composite}}
+\subsubsection[{log}]{\setlength{\rightskip}{0pt plus 5cm}log (
+\begin{DoxyParamCaption}
+\item[{\$}]{message, }
+\item[{\$}]{priority = {\ttfamily null}}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__composite_ac3758dfa38a67df158a446847cf06413}
+Sends \$message and \$priority to each child of this composite. If the appropriate children aren't already open, they will be opened here.
+
+
+\begin{DoxyParams}[1]{Parameters}
+mixed & {\em \$message} & String or object containing the message to log. \\
+\hline
+string & {\em \$priority} & (optional) The priority of the message. Valid values are: PEAR\_\-LOG\_\-EMERG, PEAR\_\-LOG\_\-ALERT, PEAR\_\-LOG\_\-CRIT, PEAR\_\-LOG\_\-ERR, PEAR\_\-LOG\_\-WARNING, PEAR\_\-LOG\_\-NOTICE, PEAR\_\-LOG\_\-INFO, and PEAR\_\-LOG\_\-DEBUG.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean True if the entry is successfully logged.
+\end{DoxyReturn}
+public 
+
+Reimplemented from \hyperlink{class_log_ac3758dfa38a67df158a446847cf06413}{Log}.
+
+\hypertarget{class_log__composite_a3bc0d26b9f7c00bbf4caf2964ea0b501}{
+\index{Log\_\-composite@{Log\_\-composite}!Log\_\-composite@{Log\_\-composite}}
+\index{Log\_\-composite@{Log\_\-composite}!Log_composite@{Log\_\-composite}}
+\subsubsection[{Log\_\-composite}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Log\_\-composite} (
+\begin{DoxyParamCaption}
+\item[{\$}]{name, }
+\item[{\$}]{ident = {\ttfamily ''}, }
+\item[{\$}]{conf = {\ttfamily array()}, }
+\item[{\$}]{level = {\ttfamily PEAR\_\-LOG\_\-DEBUG}}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__composite_a3bc0d26b9f7c00bbf4caf2964ea0b501}
+Constructs a new composite \hyperlink{class_log}{Log} object.
+
+
+\begin{DoxyParams}[1]{Parameters}
+boolean & {\em \$name} & This parameter is ignored. \\
+\hline
+boolean & {\em \$ident} & This parameter is ignored. \\
+\hline
+boolean & {\em \$conf} & This parameter is ignored. \\
+\hline
+boolean & {\em \$level} & This parameter is ignored.\\
+\hline
+\end{DoxyParams}
+public \hypertarget{class_log__composite_a44a2ac59a3b91f8c18905dce700934d6}{
+\index{Log\_\-composite@{Log\_\-composite}!open@{open}}
+\index{open@{open}!Log_composite@{Log\_\-composite}}
+\subsubsection[{open}]{\setlength{\rightskip}{0pt plus 5cm}open (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__composite_a44a2ac59a3b91f8c18905dce700934d6}
+Opens all of the child instances.
+
+\begin{DoxyReturn}{Returns}
+True if all of the child instances were successfully opened.
+\end{DoxyReturn}
+public 
+
+Reimplemented from \hyperlink{class_log_a44a2ac59a3b91f8c18905dce700934d6}{Log}.
+
+\hypertarget{class_log__composite_afeed0fd389f43d6d9efbe9ef1ca9e2d1}{
+\index{Log\_\-composite@{Log\_\-composite}!removeChild@{removeChild}}
+\index{removeChild@{removeChild}!Log_composite@{Log\_\-composite}}
+\subsubsection[{removeChild}]{\setlength{\rightskip}{0pt plus 5cm}removeChild (
+\begin{DoxyParamCaption}
+\item[{\$}]{child}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__composite_afeed0fd389f43d6d9efbe9ef1ca9e2d1}
+Removes a \hyperlink{class_log}{Log} instance from the list of children.
+
+
+\begin{DoxyParams}[1]{Parameters}
+object & {\em \$child} & The \hyperlink{class_log}{Log} instance to remove.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean True if the \hyperlink{class_log}{Log} instance was successfully removed.
+\end{DoxyReturn}
+public \hypertarget{class_log__composite_a9d8352d257344340d7a5b9c081d2a0d9}{
+\index{Log\_\-composite@{Log\_\-composite}!setIdent@{setIdent}}
+\index{setIdent@{setIdent}!Log_composite@{Log\_\-composite}}
+\subsubsection[{setIdent}]{\setlength{\rightskip}{0pt plus 5cm}setIdent (
+\begin{DoxyParamCaption}
+\item[{\$}]{ident}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__composite_a9d8352d257344340d7a5b9c081d2a0d9}
+Sets this identification string for all of this composite's children.
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$ident} & The new identification string.\\
+\hline
+\end{DoxyParams}
+public \begin{DoxySince}{Since}
+\hyperlink{class_log}{Log} 1.6.7 
+\end{DoxySince}
+
+
+Reimplemented from \hyperlink{class_log_a9d8352d257344340d7a5b9c081d2a0d9}{Log}.
+
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/system/sldeploy/lib/Log/composite.php\end{DoxyCompactItemize}

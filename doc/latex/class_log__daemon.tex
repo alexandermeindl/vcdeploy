@@ -1,0 +1,177 @@
+\hypertarget{class_log__daemon}{
+\section{Log\_\-daemon Class Reference}
+\label{class_log__daemon}\index{Log\_\-daemon@{Log\_\-daemon}}
+}
+Inheritance diagram for Log\_\-daemon:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_log__daemon}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_log__daemon_aaa65d5c80b0b6d4779a6586e3fc81420}{Log\_\-daemon} (\$name, \$ident= '', \$conf=array(), \$level=PEAR\_\-LOG\_\-DEBUG)
+\item 
+\hyperlink{class_log__daemon_a33903cc9fd6af0bfeb673f5eb950a97f}{\_\-Log\_\-daemon} ()
+\item 
+\hyperlink{class_log__daemon_a44a2ac59a3b91f8c18905dce700934d6}{open} ()
+\item 
+\hyperlink{class_log__daemon_aa69c8bf1f1dcf4e72552efff1fe3e87e}{close} ()
+\item 
+\hyperlink{class_log__daemon_ac3758dfa38a67df158a446847cf06413}{log} (\$message, \$priority=null)
+\item 
+\hyperlink{class_log__daemon_a323d6a4c485bde666c56b68cbb015ffc}{\_\-toSyslog} (\$priority)
+\end{DoxyCompactItemize}
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_log__daemon_a1c89defaf5aa7ac8e526065e8572f580}{
+{\bfseries \$\_\-name} = LOG\_\-DAEMON}
+\label{class_log__daemon_a1c89defaf5aa7ac8e526065e8572f580}
+
+\item 
+\hypertarget{class_log__daemon_af1506e931ec9d7d4e7bad5b48ecd8c4b}{
+{\bfseries \$\_\-socket}}
+\label{class_log__daemon_af1506e931ec9d7d4e7bad5b48ecd8c4b}
+
+\item 
+\hypertarget{class_log__daemon_ac275a475a83ee8de16cf9c9f928fbe77}{
+{\bfseries \$\_\-ip} = '127.0.0.1'}
+\label{class_log__daemon_ac275a475a83ee8de16cf9c9f928fbe77}
+
+\item 
+\hypertarget{class_log__daemon_a5a8912b8c0c188d6d9abdfb6e158dc3b}{
+{\bfseries \$\_\-proto} = 'udp'}
+\label{class_log__daemon_a5a8912b8c0c188d6d9abdfb6e158dc3b}
+
+\item 
+\hypertarget{class_log__daemon_a13773f1d0509d899a7f5ab3ffda1e67f}{
+{\bfseries \$\_\-port} = 514}
+\label{class_log__daemon_a13773f1d0509d899a7f5ab3ffda1e67f}
+
+\item 
+\hypertarget{class_log__daemon_a99e2d38c529f75c63e5b1780206fdccb}{
+{\bfseries \$\_\-maxsize} = 4096}
+\label{class_log__daemon_a99e2d38c529f75c63e5b1780206fdccb}
+
+\item 
+\hypertarget{class_log__daemon_af52fba8079c66afcbffdfa2e5be45bb4}{
+{\bfseries \$\_\-timeout} = 1}
+\label{class_log__daemon_af52fba8079c66afcbffdfa2e5be45bb4}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_log__daemon_a33903cc9fd6af0bfeb673f5eb950a97f}{
+\index{Log\_\-daemon@{Log\_\-daemon}!\_\-Log\_\-daemon@{\_\-Log\_\-daemon}}
+\index{\_\-Log\_\-daemon@{\_\-Log\_\-daemon}!Log_daemon@{Log\_\-daemon}}
+\subsubsection[{\_\-Log\_\-daemon}]{\setlength{\rightskip}{0pt plus 5cm}\_\-Log\_\-daemon (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__daemon_a33903cc9fd6af0bfeb673f5eb950a97f}
+Destructor.
+
+private \hypertarget{class_log__daemon_a323d6a4c485bde666c56b68cbb015ffc}{
+\index{Log\_\-daemon@{Log\_\-daemon}!\_\-toSyslog@{\_\-toSyslog}}
+\index{\_\-toSyslog@{\_\-toSyslog}!Log_daemon@{Log\_\-daemon}}
+\subsubsection[{\_\-toSyslog}]{\setlength{\rightskip}{0pt plus 5cm}\_\-toSyslog (
+\begin{DoxyParamCaption}
+\item[{\$}]{priority}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__daemon_a323d6a4c485bde666c56b68cbb015ffc}
+Converts a PEAR\_\-LOG\_\-$\ast$ constant into a syslog LOG\_\-$\ast$ constant.
+
+This function exists because, under Windows, not all of the LOG\_\-$\ast$ constants have unique values. Instead, the PEAR\_\-LOG\_\-$\ast$ were introduced for global use, with the conversion to the LOG\_\-$\ast$ constants kept local to to the syslog driver.
+
+
+\begin{DoxyParams}[1]{Parameters}
+int & {\em \$priority} & PEAR\_\-LOG\_\-$\ast$ value to convert to LOG\_\-$\ast$ value.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The LOG\_\-$\ast$ representation of \$priority.
+\end{DoxyReturn}
+private \hypertarget{class_log__daemon_aa69c8bf1f1dcf4e72552efff1fe3e87e}{
+\index{Log\_\-daemon@{Log\_\-daemon}!close@{close}}
+\index{close@{close}!Log_daemon@{Log\_\-daemon}}
+\subsubsection[{close}]{\setlength{\rightskip}{0pt plus 5cm}close (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__daemon_aa69c8bf1f1dcf4e72552efff1fe3e87e}
+Closes the connection to the system logger, if it is open.  public 
+
+Reimplemented from \hyperlink{class_log_aa69c8bf1f1dcf4e72552efff1fe3e87e}{Log}.
+
+\hypertarget{class_log__daemon_ac3758dfa38a67df158a446847cf06413}{
+\index{Log\_\-daemon@{Log\_\-daemon}!log@{log}}
+\index{log@{log}!Log_daemon@{Log\_\-daemon}}
+\subsubsection[{log}]{\setlength{\rightskip}{0pt plus 5cm}log (
+\begin{DoxyParamCaption}
+\item[{\$}]{message, }
+\item[{\$}]{priority = {\ttfamily null}}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__daemon_ac3758dfa38a67df158a446847cf06413}
+Sends \$message to the currently open syslog connection. Calls \hyperlink{class_log__daemon_a44a2ac59a3b91f8c18905dce700934d6}{open()} if necessary. Also passes the message along to any \hyperlink{class_log__observer}{Log\_\-observer} instances that are observing this \hyperlink{class_log}{Log}.
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$message} & The textual message to be logged. \\
+\hline
+int & {\em \$priority} & (optional) The priority of the message. Valid values are: LOG\_\-EMERG, LOG\_\-ALERT, LOG\_\-CRIT, LOG\_\-ERR, LOG\_\-WARNING, LOG\_\-NOTICE, LOG\_\-INFO, and LOG\_\-DEBUG. The default is LOG\_\-INFO.  public \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented from \hyperlink{class_log_ac3758dfa38a67df158a446847cf06413}{Log}.
+
+\hypertarget{class_log__daemon_aaa65d5c80b0b6d4779a6586e3fc81420}{
+\index{Log\_\-daemon@{Log\_\-daemon}!Log\_\-daemon@{Log\_\-daemon}}
+\index{Log\_\-daemon@{Log\_\-daemon}!Log_daemon@{Log\_\-daemon}}
+\subsubsection[{Log\_\-daemon}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Log\_\-daemon} (
+\begin{DoxyParamCaption}
+\item[{\$}]{name, }
+\item[{\$}]{ident = {\ttfamily ''}, }
+\item[{\$}]{conf = {\ttfamily array()}, }
+\item[{\$}]{level = {\ttfamily PEAR\_\-LOG\_\-DEBUG}}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__daemon_aaa65d5c80b0b6d4779a6586e3fc81420}
+Constructs a new syslog object.
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$name} & The syslog facility. \\
+\hline
+string & {\em \$ident} & The identity string. \\
+\hline
+array & {\em \$conf} & The configuration array. \\
+\hline
+int & {\em \$maxLevel} & Maximum level at which to log.  public \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_log__daemon_a44a2ac59a3b91f8c18905dce700934d6}{
+\index{Log\_\-daemon@{Log\_\-daemon}!open@{open}}
+\index{open@{open}!Log_daemon@{Log\_\-daemon}}
+\subsubsection[{open}]{\setlength{\rightskip}{0pt plus 5cm}open (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__daemon_a44a2ac59a3b91f8c18905dce700934d6}
+Opens a connection to the system logger, if it has not already been opened. This is implicitly called by \hyperlink{class_log__daemon_ac3758dfa38a67df158a446847cf06413}{log()}, if necessary.  public 
+
+Reimplemented from \hyperlink{class_log_a44a2ac59a3b91f8c18905dce700934d6}{Log}.
+
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/system/sldeploy/lib/Log/daemon.php\end{DoxyCompactItemize}

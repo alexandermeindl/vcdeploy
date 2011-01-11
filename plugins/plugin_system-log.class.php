@@ -17,6 +17,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
+ * @package  sldeploy
+ * @author  Alexander Meindl
+ * @link    https://github.com/alexandermeindl/sldeploy
  */
 
 $plugin['info'] = 'log system changes';
@@ -41,6 +44,8 @@ class SldeployPluginSystemLog extends Sldeploy {
   /**
    * This function is run with the command
    *
+   * @return int
+   * @throws Exception
    * @see sldeploy#run()
    */
   public function run() {
@@ -76,8 +81,21 @@ class SldeployPluginSystemLog extends Sldeploy {
     $this->_packageList();
     $this->_projectTasks();
     $this->_commitToVcm();
+
+    return 0;
   }
 
+  /**
+   * Get max steps of this plugin for progress view
+   *
+   * @param int $init initial value of counter
+   *
+   * @return int amount of working steps of this plugin
+   * @see Sldeploy#progressbar_init()
+   */
+  public function get_steps($init = 0) {
+    return $init++;
+  }
 
   /**
    * Exclude paremeters for rsync
@@ -98,6 +116,7 @@ class SldeployPluginSystemLog extends Sldeploy {
   /**
     * Is the server mac os x or linux
     *
+    * @return bool
     */
   private function _detectDarwin() {
 
@@ -186,6 +205,9 @@ class SldeployPluginSystemLog extends Sldeploy {
   /**
    * Get information about drupal modules
    *
+   * @param string
+   *
+   * @return void
    */
   private function _drushModules($script) {
     $rc = $this->system($script . ' pm-list');
@@ -234,6 +256,7 @@ class SldeployPluginSystemLog extends Sldeploy {
   /**
    * Commit changes to vcm
    *
+   * @return void
    */
   private function _commitToVcm() {
     $this->system($this->conf['git_bin'] . ' --work-tree ' . $this->conf['log_source'] . ' add -A ' . $this->log_dir, TRUE);

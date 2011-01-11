@@ -1,4 +1,24 @@
 <?php
+/**
+ * @file
+ *   Loader class of sldeploy
+ *
+ *
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations
+ * under the License.
+ *
+ * @package  sldeploy
+ * @author  Alexander Meindl
+ * @link    https://github.com/alexandermeindl/sldeploy
+ *
+ */
 
 require 'Console/CommandLine.php';
 require 'Console/ProgressBar.php';
@@ -11,7 +31,7 @@ class SlDeployLoader {
    *
    * @var string
    */
-  protected $version = '0.40';
+  protected $version = '0.41';
 
   /**
    * Configuration
@@ -37,8 +57,6 @@ class SlDeployLoader {
   /**
    * Active plugin
    *
-   * (see $this->_checkParas for available plugins)
-   *
    * @var string
    */
   protected $plugin_name;
@@ -62,6 +80,8 @@ class SlDeployLoader {
    *
    * @param array $conf
    * @param bool $write_to_log
+   *
+   * @return void
    */
   public function __construct($conf) {
 
@@ -71,6 +91,8 @@ class SlDeployLoader {
     $this->hostname = $this->get_hostname();
     $this->base_dir = dirname($_SERVER['SCRIPT_NAME']);
     $this->plugin_dir = $this->base_dir . '/plugins';
+
+    include_once $this->plugin_dir . '/plugin_interface.class.php';
 
     $this->logger = $logger;
 
@@ -85,6 +107,7 @@ class SlDeployLoader {
   /**
     * Get all available modules
     *
+    * @return void
     */
   private function _setPlugins() {
 
@@ -93,7 +116,9 @@ class SlDeployLoader {
     $d = dir($this->plugin_dir);
     while (FALSE !== ($entry = $d->read())) {
       if ((substr($entry, 0, 7) == 'plugin_') && (substr($entry, -10) == '.class.php')) {
-        $this->plugins[] = substr($entry, 7, -10);
+        if ($entry != 'plugin_inerface.class.php') {
+          $this->plugins[] = substr($entry, 7, -10);
+        }
       }
     }
     $d->close();
@@ -102,8 +127,9 @@ class SlDeployLoader {
   }
 
   /**
-   * Get plugin informatin
+   * Get plugin information
    *
+   * @return array
    */
   private function _getPluginInfo() {
 
@@ -113,7 +139,7 @@ class SlDeployLoader {
       unset($plugin);
       include_once $this->plugin_dir . '/plugin_' . $plugin_name . '.class.php';
 
-      if ($this->check_plugin_permission($plugin['root_only'])) {
+      if (isset($plugin['root_only']) && $this->check_plugin_permission($plugin['root_only'])) {
         unset($plugin['root_only']);
         $plugins[$plugin_name] = $plugin;
         if (!isset($plugin['info'])) {
@@ -127,6 +153,7 @@ class SlDeployLoader {
 
   /**
    * Get hostname
+   *
    * @return  string
    */
   protected function get_hostname() {
@@ -138,6 +165,7 @@ class SlDeployLoader {
    * Check plugin permission
    *
    * @param bool $root_only
+   *
    * @return bool
    */
   public function check_plugin_permission($root_only) {
@@ -155,34 +183,11 @@ class SlDeployLoader {
   }
 
   /**
-   * Check parameters, if there are valid
-   *
-   * m (required) = modules
-   *
-   * @param   array   $paras
-   * @return  bool    true, if parameters are valid
-   */
-  private function _checkParas($paras) {
-
-    $this->_setPlugins();
-
-    if (!is_array($paras)) {
-      return;
-    }
-    if (array_key_exists('h', $paras)) {
-      return TRUE;
-    }
-    if ((!array_key_exists('p', $paras)) || (!in_array($paras['p'], $this->plugins))) {
-        return;
-    }
-
-    return TRUE;
-  }
-
-  /**
    * Build commands for command line parser
    *
    * @param object $parser
+   *
+   * @return void
    */
   private function _buildSubCommands(&$parser) {
 
@@ -237,6 +242,7 @@ class SlDeployLoader {
    * Get class name from plugin name
    *
    * @param string $class_name
+   *
    * @return string
    */
   private function _getPluginClass($plugin_name) {
@@ -380,7 +386,9 @@ class SlDeployLoader {
    *
    * @param  object $result
    * @param  bool $no_message
-   * @return  int - return code of plugin
+   *
+   * @return  int return code of plugin
+   * @throws Exception
    */
   public function run_plugin($result, $no_message = FALSE) {
 

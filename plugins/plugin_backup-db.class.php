@@ -14,6 +14,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
+ * @package  sldeploy
+ * @author  Alexander Meindl
+ * @link    https://github.com/alexandermeindl/sldeploy
  */
 
 $plugin['info'] = 'Create database backup. If no database name is specified a backup of all databases will be created';
@@ -45,6 +48,8 @@ class SldeployPluginBackupDb extends Sldeploy {
   /**
    * This function is run with the command
    *
+   * @return int
+   * @throws Exception
    * @see sldeploy#run()
    */
   public function run() {
@@ -62,6 +67,8 @@ class SldeployPluginBackupDb extends Sldeploy {
     else {
       $this->_allDbs();
     }
+
+    return 0;
   }
 
   /**
@@ -74,7 +81,25 @@ class SldeployPluginBackupDb extends Sldeploy {
   }
 
   /**
+   * Get max steps of this plugin for progress view
+   *
+   * @param int $init initial value of counter
+   *
+   * @return int amount of working steps of this plugin
+   * @see Sldeploy#progressbar_init()
+   */
+  public function get_steps($init = 0) {
+
+    $rc = $this->system($this->conf['mysql_bin'] . " -Bse 'show databases'");
+
+    // 2 times, because of gzip compression
+    return $init + count($rc['output']) * 2;
+  }
+
+  /**
    * Create database dump of all existing databases
+   *
+   * @return void
    */
   private function _allDbs() {
 
@@ -82,22 +107,10 @@ class SldeployPluginBackupDb extends Sldeploy {
 
     if (!$rc['rc']) {
 
-      $amount = count($rc['output']);
-
-      if (!isset($this->paras->options['verbose']) || !$this->paras->options['verbose']) {
-        $this->bar = new Console_ProgressBar(' %fraction% [%bar%] %percent%  ', '=', ' ', 50, $amount);
-      }
+      $this->progressbar_init();
 
       foreach ($rc['output'] AS $db_name) {
-        $this->current_pos++;
-        // verbose view
-        if (isset($this->paras->options['verbose']) && $this->paras->options['verbose']) {
           $this->create_db_dump($db_name);
-        }
-        else {
-          $this->bar->update($this->current_pos);
-          $this->create_db_dump($db_name, NULL, FALSE);
-        }
       }
     }
     else {

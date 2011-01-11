@@ -14,6 +14,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
+ * @package  sldeploy
+ * @author  Alexander Meindl
+ * @link    https://github.com/alexandermeindl/sldeploy
  */
 
 $plugin['info'] = 'List all available backups';
@@ -24,6 +27,8 @@ class SldeployPluginBackupLs extends Sldeploy {
   /**
    * This function is run with the command
    *
+   * @return int
+   * @throws Exception
    * @see sldeploy#run()
    */
   public function run() {
@@ -35,17 +40,32 @@ class SldeployPluginBackupLs extends Sldeploy {
       throw new Exception('Backup directory does not exist.');
     }
 
-    $this->_listBackups();
+    return $this->_listBackups();
+  }
+
+  /**
+   * Get max steps of this plugin for progress view
+   *
+   * @param int $init initial value of counter
+   *
+   * @return int amount of working steps of this plugin
+   * @see Sldeploy#progressbar_init()
+   */
+  public function get_steps($init = 0) {
+    return $init++;
   }
 
   /**
    * List all existing backups
+   *
+   * @return int
    */
   private function _listBackups() {
 
     $lines = array();
 
     $d = dir($this->conf['backup_dir']);
+
     while (FALSE !== ($entry = $d->read())) {
       if ($entry != '.' && $entry != '..') {
         $line = $this->_getBackupLine($entry);
@@ -60,12 +80,16 @@ class SldeployPluginBackupLs extends Sldeploy {
     foreach ($lines AS $line) {
       $this->msg($line);
     }
+
+    return 0;
   }
 
   /**
    * Get one line of a backup file
    *
    * @param string $entry
+   *
+   * @return string
    */
   private function _getBackupLine($entry) {
 

@@ -1,0 +1,134 @@
+\hypertarget{class_log__display}{
+\section{Log\_\-display Class Reference}
+\label{class_log__display}\index{Log\_\-display@{Log\_\-display}}
+}
+Inheritance diagram for Log\_\-display:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_log__display}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_log__display_ad25e02846e6eeb2f8d4592f9d79f5d03}{Log\_\-display} (\$name= '', \$ident= '', \$conf=array(), \$level=PEAR\_\-LOG\_\-DEBUG)
+\item 
+\hyperlink{class_log__display_a44a2ac59a3b91f8c18905dce700934d6}{open} ()
+\item 
+\hyperlink{class_log__display_aa69c8bf1f1dcf4e72552efff1fe3e87e}{close} ()
+\item 
+\hyperlink{class_log__display_ac3758dfa38a67df158a446847cf06413}{log} (\$message, \$priority=null)
+\end{DoxyCompactItemize}
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_log__display_a987ec493419026385e852e1fbbc68543}{
+{\bfseries \$\_\-lineFormat} = '$<$b$>$\%3\$s$<$/b$>$: \%4\$s'}
+\label{class_log__display_a987ec493419026385e852e1fbbc68543}
+
+\item 
+\hypertarget{class_log__display_a7b5dae11e5c85b90db946240cb9d4e42}{
+{\bfseries \$\_\-timeFormat} = '\%b \%d \%H:\%M:\%S'}
+\label{class_log__display_a7b5dae11e5c85b90db946240cb9d4e42}
+
+\item 
+\hypertarget{class_log__display_a71a796528e37593c1ced9208dc114240}{
+{\bfseries \$\_\-rawText} = false}
+\label{class_log__display_a71a796528e37593c1ced9208dc114240}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_log__display_aa69c8bf1f1dcf4e72552efff1fe3e87e}{
+\index{Log\_\-display@{Log\_\-display}!close@{close}}
+\index{close@{close}!Log_display@{Log\_\-display}}
+\subsubsection[{close}]{\setlength{\rightskip}{0pt plus 5cm}close (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__display_aa69c8bf1f1dcf4e72552efff1fe3e87e}
+Closes the display handler.
+
+public \begin{DoxySince}{Since}
+\hyperlink{class_log}{Log} 1.9.6 
+\end{DoxySince}
+
+
+Reimplemented from \hyperlink{class_log_aa69c8bf1f1dcf4e72552efff1fe3e87e}{Log}.
+
+\hypertarget{class_log__display_ac3758dfa38a67df158a446847cf06413}{
+\index{Log\_\-display@{Log\_\-display}!log@{log}}
+\index{log@{log}!Log_display@{Log\_\-display}}
+\subsubsection[{log}]{\setlength{\rightskip}{0pt plus 5cm}log (
+\begin{DoxyParamCaption}
+\item[{\$}]{message, }
+\item[{\$}]{priority = {\ttfamily null}}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__display_ac3758dfa38a67df158a446847cf06413}
+Writes \$message to the text browser. Also, passes the message along to any \hyperlink{class_log__observer}{Log\_\-observer} instances that are observing this \hyperlink{class_log}{Log}.
+
+
+\begin{DoxyParams}[1]{Parameters}
+mixed & {\em \$message} & String or object containing the message to log. \\
+\hline
+string & {\em \$priority} & The priority of the message. Valid values are: PEAR\_\-LOG\_\-EMERG, PEAR\_\-LOG\_\-ALERT, PEAR\_\-LOG\_\-CRIT, PEAR\_\-LOG\_\-ERR, PEAR\_\-LOG\_\-WARNING, PEAR\_\-LOG\_\-NOTICE, PEAR\_\-LOG\_\-INFO, and PEAR\_\-LOG\_\-DEBUG. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean True on success or false on failure.  public 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{class_log_ac3758dfa38a67df158a446847cf06413}{Log}.
+
+\hypertarget{class_log__display_ad25e02846e6eeb2f8d4592f9d79f5d03}{
+\index{Log\_\-display@{Log\_\-display}!Log\_\-display@{Log\_\-display}}
+\index{Log\_\-display@{Log\_\-display}!Log_display@{Log\_\-display}}
+\subsubsection[{Log\_\-display}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Log\_\-display} (
+\begin{DoxyParamCaption}
+\item[{\$}]{name = {\ttfamily ''}, }
+\item[{\$}]{ident = {\ttfamily ''}, }
+\item[{\$}]{conf = {\ttfamily array()}, }
+\item[{\$}]{level = {\ttfamily PEAR\_\-LOG\_\-DEBUG}}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__display_ad25e02846e6eeb2f8d4592f9d79f5d03}
+Constructs a new \hyperlink{class_log__display}{Log\_\-display} object.
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$name} & Ignored. \\
+\hline
+string & {\em \$ident} & The identity string. \\
+\hline
+array & {\em \$conf} & The configuration array. \\
+\hline
+int & {\em \$level} & \hyperlink{class_log}{Log} messages up to and including this level.  public \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_log__display_a44a2ac59a3b91f8c18905dce700934d6}{
+\index{Log\_\-display@{Log\_\-display}!open@{open}}
+\index{open@{open}!Log_display@{Log\_\-display}}
+\subsubsection[{open}]{\setlength{\rightskip}{0pt plus 5cm}open (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__display_a44a2ac59a3b91f8c18905dce700934d6}
+Opens the display handler.
+
+public \begin{DoxySince}{Since}
+\hyperlink{class_log}{Log} 1.9.6 
+\end{DoxySince}
+
+
+Reimplemented from \hyperlink{class_log_a44a2ac59a3b91f8c18905dce700934d6}{Log}.
+
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/system/sldeploy/lib/Log/display.php\end{DoxyCompactItemize}

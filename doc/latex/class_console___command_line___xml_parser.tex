@@ -1,0 +1,85 @@
+\hypertarget{class_console___command_line___xml_parser}{
+\section{Console\_\-CommandLine\_\-XmlParser Class Reference}
+\label{class_console___command_line___xml_parser}\index{Console\_\-CommandLine\_\-XmlParser@{Console\_\-CommandLine\_\-XmlParser}}
+}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{class_console___command_line___xml_parser_a81b49840824d3195e1492dabaaac0f6c}{parse} (\$xmlfile)
+\item 
+static \hyperlink{class_console___command_line___xml_parser_ad44128f8d5e83ad6829e85d6d597210b}{parseString} (\$xmlstr)
+\item 
+static \hyperlink{class_console___command_line___xml_parser_a94aac519f29e177fa747400ceafc6a39}{validate} (\$doc)
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_console___command_line___xml_parser_a81b49840824d3195e1492dabaaac0f6c}{
+\index{Console\_\-CommandLine\_\-XmlParser@{Console\_\-CommandLine\_\-XmlParser}!parse@{parse}}
+\index{parse@{parse}!Console_CommandLine_XmlParser@{Console\_\-CommandLine\_\-XmlParser}}
+\subsubsection[{parse}]{\setlength{\rightskip}{0pt plus 5cm}static parse (
+\begin{DoxyParamCaption}
+\item[{\$}]{xmlfile}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{class_console___command_line___xml_parser_a81b49840824d3195e1492dabaaac0f6c}
+Parses the given xml definition file and returns a \hyperlink{class_console___command_line}{Console\_\-CommandLine} instance constructed with the xml data.
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$xmlfile} & The xml file to parse\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\hyperlink{class_console___command_line}{Console\_\-CommandLine} A parser instance 
+\end{DoxyReturn}
+\hypertarget{class_console___command_line___xml_parser_ad44128f8d5e83ad6829e85d6d597210b}{
+\index{Console\_\-CommandLine\_\-XmlParser@{Console\_\-CommandLine\_\-XmlParser}!parseString@{parseString}}
+\index{parseString@{parseString}!Console_CommandLine_XmlParser@{Console\_\-CommandLine\_\-XmlParser}}
+\subsubsection[{parseString}]{\setlength{\rightskip}{0pt plus 5cm}static parseString (
+\begin{DoxyParamCaption}
+\item[{\$}]{xmlstr}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{class_console___command_line___xml_parser_ad44128f8d5e83ad6829e85d6d597210b}
+Parses the given xml definition string and returns a \hyperlink{class_console___command_line}{Console\_\-CommandLine} instance constructed with the xml data.
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$xmlstr} & The xml string to parse\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\hyperlink{class_console___command_line}{Console\_\-CommandLine} A parser instance 
+\end{DoxyReturn}
+\hypertarget{class_console___command_line___xml_parser_a94aac519f29e177fa747400ceafc6a39}{
+\index{Console\_\-CommandLine\_\-XmlParser@{Console\_\-CommandLine\_\-XmlParser}!validate@{validate}}
+\index{validate@{validate}!Console_CommandLine_XmlParser@{Console\_\-CommandLine\_\-XmlParser}}
+\subsubsection[{validate}]{\setlength{\rightskip}{0pt plus 5cm}static validate (
+\begin{DoxyParamCaption}
+\item[{\$}]{doc}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{class_console___command_line___xml_parser_a94aac519f29e177fa747400ceafc6a39}
+Validates the xml definition using Relax NG.
+
+
+\begin{DoxyParams}[1]{Parameters}
+DomDocument & {\em \$doc} & The document to validate\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean Whether the xml data is valid or not. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{class_console___command_line___exception}{Console\_\-CommandLine\_\-Exception}} & \\
+\hline
+\end{DoxyExceptions}
+\begin{Desc}
+\item[\hyperlink{todo__todo000006}{Todo}]use exceptions \end{Desc}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/system/sldeploy/lib/Console/CommandLine/XmlParser.php\end{DoxyCompactItemize}

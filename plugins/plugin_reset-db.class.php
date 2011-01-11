@@ -17,6 +17,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
+ * @package  sldeploy
+ * @author  Alexander Meindl
+ * @link    https://github.com/alexandermeindl/sldeploy
  */
 
 $plugin['info'] = 'Reset database. If no project is specified, all active project databases will be reseted';
@@ -32,15 +35,9 @@ $plugin['options']['project'] = array(
 class SldeployPluginResetDb extends Sldeploy {
 
   /**
-    * Current database name to reset
-    *
-    * @var string
-    */
-  private $current_db;
-
-  /**
    * This function is run with the command
    *
+   * @return int
    * @see sldeploy#run()
    */
   public function run() {
@@ -65,6 +62,20 @@ class SldeployPluginResetDb extends Sldeploy {
         $this->_resetDb();
       }
     }
+
+    return 0;
+  }
+
+  /**
+   * Get max steps of this plugin for progress view
+   *
+   * @param int $init initial value of counter
+   *
+   * @return int amount of working steps of this plugin
+   * @see Sldeploy#progressbar_init()
+   */
+  public function get_steps($init = 0) {
+    return $init++;
   }
 
   /**

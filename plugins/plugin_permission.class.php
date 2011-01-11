@@ -23,6 +23,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
+ * @package  sldeploy
+ * @author  Alexander Meindl
+ * @link    https://github.com/alexandermeindl/sldeploy
  */
 
 $plugin['info'] = 'set file and directory permissions';
@@ -33,6 +36,8 @@ class SldeployPluginPermission extends Sldeploy {
   /**
    * This function is run with the command
    *
+   * @return int
+   * @throws Exception
    * @see sldeploy#run()
    */
   public function run() {
@@ -40,6 +45,8 @@ class SldeployPluginPermission extends Sldeploy {
     $this->msg('Set permissions...');
 
     if (is_array($this->conf['permissions'])) {
+
+      $this->progressbar_init();
 
       foreach ($this->conf['permissions'] AS $permission) {
         if ($permission['name'] == '/') {
@@ -50,38 +57,58 @@ class SldeployPluginPermission extends Sldeploy {
         }
         else {
 
-          if (!empty($permission['mod'])) {
-            $this->_setPermissions(
-              'mod',
-              $permission['name'],
-              $permission['mod'],
-              $permission['rec']
-            );
+          if (isset($permission['mod']) && !empty($permission['mod'])) {
+            $this->_setPermissions('mod', $permission);
           }
 
-          if (!empty($permission['own'])) {
-            $this->_setPermissions(
-              'own',
-              $permission['name'],
-              $permission['own'],
-              $permission['rec']
-            );
+          if (isset($permission['own']) && !empty($permission['own'])) {
+            $this->_setPermissions('own', $permission);
           }
         }
       }
     }
+
+    return 0;
+  }
+
+  /**
+   * Get max steps of this plugin for progress view
+   *
+   * @param int $init initial value of counter
+   *
+   * @return int amount of working steps of this plugin
+   * @see Sldeploy#progressbar_init()
+   */
+  public function get_steps($init = 0) {
+
+    foreach ($this->conf['permissions'] AS $permission) {
+      if (isset($permission['mod']) && !empty($permission['mod'])) {
+        $init++;
+      }
+      if (isset($permission['own']) && !empty($permission['own'])) {
+        $init++;
+      }
+    }
+
+    return $init;
   }
 
   /**
     * Set permissions
     *
-    * @params string $mode
-    * @params string $directory
-    * @params string $value
-    * @params string $recursive
+    * @param string $mode
+    * @param array $permission (name = directory, mod = value, rec = recursive
     *
+    * @return void
     */
-  private function _setPermissions($mode, $directory, $value, $recursive = NULL) {
+  private function _setPermissions($mode, $permission) {
+
+    if (!isset($permission['name']) || empty($permission['name'])) {
+      throw new Exception('name value (directory) is required for permissions.');
+    }
+    elseif (!isset($permission['mod']) || empty($permission['mod'])) {
+      throw new Exception('mod value is required for permissions.');
+    }
 
     if ($mode == 'own') {
       $command = 'chown';
@@ -90,27 +117,31 @@ class SldeployPluginPermission extends Sldeploy {
       $command = 'chmod';
     }
 
-    if (!empty($value)) {
+    if (isset($permission['rec']) && $permission['rec']) {
+      $recursive = TRUE;
+    }
+    else {
+      $recursive = FALSE;
+    }
 
-      $this->msg('Set permissions (' . $value . ') to ' . $directory . '...');
+    $this->show_progress('Set permissions (' . $permission['mod'] . ') to ' . $permission['name'] . '...');
 
-      switch ($recursive) {
+    switch ($recursive) {
 
-        case 'files':
-          $this->system('find ' . $directory . ' -type f -exec ' . $command . ' ' . $value . ' {} \;');
-          break;
+      case 'files':
+        $this->system('find ' . $permission['name'] . ' -type f -exec ' . $command . ' ' . $permission['mod'] . ' {} \;');
+        break;
 
-        case 'dirs':
-          $this->system('find ' . $directory . ' -type d -exec ' . $command . ' ' . $value . ' {} \;');
-          break;
+      case 'dirs':
+        $this->system('find ' . $permission['name'] . ' -type d -exec ' . $command . ' ' . $permission['mod'] . ' {} \;');
+        break;
 
-        case 'yes':
-          $this->system($command . ' -R ' . $value . ' ' . $directory);
-          break;
+      case 'yes':
+        $this->system($command . ' -R ' . $permission['mod'] . ' ' . $permission['name']);
+        break;
 
-        default: // not recursive
-          $this->system($command . ' ' . $value . ' ' . $directory);
-      }
+      default: // not recursive
+        $this->system($command . ' ' . $permission['mod'] . ' ' . $permission['name']);
     }
   }
 }

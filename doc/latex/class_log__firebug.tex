@@ -1,0 +1,184 @@
+\hypertarget{class_log__firebug}{
+\section{Log\_\-firebug Class Reference}
+\label{class_log__firebug}\index{Log\_\-firebug@{Log\_\-firebug}}
+}
+Inheritance diagram for Log\_\-firebug:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_log__firebug}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_log__firebug_ae64309117fe92dce5b6891c99de32e0e}{Log\_\-firebug} (\$name= '', \$ident= 'PHP', \$conf=array(), \$level=PEAR\_\-LOG\_\-DEBUG)
+\item 
+\hyperlink{class_log__firebug_a44a2ac59a3b91f8c18905dce700934d6}{open} ()
+\item 
+\hyperlink{class_log__firebug_a816e9b6c561ffff05e735153013c727d}{\_\-Log\_\-firebug} ()
+\item 
+\hyperlink{class_log__firebug_aa69c8bf1f1dcf4e72552efff1fe3e87e}{close} ()
+\item 
+\hyperlink{class_log__firebug_a7751f77b5263bcf940ece6e824a05b38}{flush} ()
+\item 
+\hyperlink{class_log__firebug_ac3758dfa38a67df158a446847cf06413}{log} (\$message, \$priority=null)
+\end{DoxyCompactItemize}
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_log__firebug_a98b9d77ecf20adfbbdcf04e375ca2366}{
+{\bfseries \$\_\-buffering} = false}
+\label{class_log__firebug_a98b9d77ecf20adfbbdcf04e375ca2366}
+
+\item 
+\hypertarget{class_log__firebug_a79d65a505a68daa9b33764798f34b0c7}{
+{\bfseries \$\_\-buffer} = array()}
+\label{class_log__firebug_a79d65a505a68daa9b33764798f34b0c7}
+
+\item 
+\hypertarget{class_log__firebug_a987ec493419026385e852e1fbbc68543}{
+{\bfseries \$\_\-lineFormat} = '\%2\$s \mbox{[}\%3\$s\mbox{]} \%4\$s'}
+\label{class_log__firebug_a987ec493419026385e852e1fbbc68543}
+
+\item 
+\hypertarget{class_log__firebug_a7b5dae11e5c85b90db946240cb9d4e42}{
+{\bfseries \$\_\-timeFormat} = '\%b \%d \%H:\%M:\%S'}
+\label{class_log__firebug_a7b5dae11e5c85b90db946240cb9d4e42}
+
+\item 
+{\bfseries \$\_\-methods}
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_log__firebug_a816e9b6c561ffff05e735153013c727d}{
+\index{Log\_\-firebug@{Log\_\-firebug}!\_\-Log\_\-firebug@{\_\-Log\_\-firebug}}
+\index{\_\-Log\_\-firebug@{\_\-Log\_\-firebug}!Log_firebug@{Log\_\-firebug}}
+\subsubsection[{\_\-Log\_\-firebug}]{\setlength{\rightskip}{0pt plus 5cm}\_\-Log\_\-firebug (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__firebug_a816e9b6c561ffff05e735153013c727d}
+Destructor \hypertarget{class_log__firebug_aa69c8bf1f1dcf4e72552efff1fe3e87e}{
+\index{Log\_\-firebug@{Log\_\-firebug}!close@{close}}
+\index{close@{close}!Log_firebug@{Log\_\-firebug}}
+\subsubsection[{close}]{\setlength{\rightskip}{0pt plus 5cm}close (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__firebug_aa69c8bf1f1dcf4e72552efff1fe3e87e}
+Closes the firebug handler.
+
+public 
+
+Reimplemented from \hyperlink{class_log_aa69c8bf1f1dcf4e72552efff1fe3e87e}{Log}.
+
+\hypertarget{class_log__firebug_a7751f77b5263bcf940ece6e824a05b38}{
+\index{Log\_\-firebug@{Log\_\-firebug}!flush@{flush}}
+\index{flush@{flush}!Log_firebug@{Log\_\-firebug}}
+\subsubsection[{flush}]{\setlength{\rightskip}{0pt plus 5cm}flush (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__firebug_a7751f77b5263bcf940ece6e824a05b38}
+Flushes all pending (\char`\"{}buffered\char`\"{}) data.
+
+public 
+
+Reimplemented from \hyperlink{class_log_a7751f77b5263bcf940ece6e824a05b38}{Log}.
+
+\hypertarget{class_log__firebug_ac3758dfa38a67df158a446847cf06413}{
+\index{Log\_\-firebug@{Log\_\-firebug}!log@{log}}
+\index{log@{log}!Log_firebug@{Log\_\-firebug}}
+\subsubsection[{log}]{\setlength{\rightskip}{0pt plus 5cm}log (
+\begin{DoxyParamCaption}
+\item[{\$}]{message, }
+\item[{\$}]{priority = {\ttfamily null}}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__firebug_ac3758dfa38a67df158a446847cf06413}
+Writes \$message to Firebug console. Also, passes the message along to any \hyperlink{class_log__observer}{Log\_\-observer} instances that are observing this \hyperlink{class_log}{Log}.
+
+
+\begin{DoxyParams}[1]{Parameters}
+mixed & {\em \$message} & String or object containing the message to log. \\
+\hline
+string & {\em \$priority} & The priority of the message. Valid values are: PEAR\_\-LOG\_\-EMERG, PEAR\_\-LOG\_\-ALERT, PEAR\_\-LOG\_\-CRIT, PEAR\_\-LOG\_\-ERR, PEAR\_\-LOG\_\-WARNING, PEAR\_\-LOG\_\-NOTICE, PEAR\_\-LOG\_\-INFO, and PEAR\_\-LOG\_\-DEBUG. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean True on success or false on failure.  public 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{class_log_ac3758dfa38a67df158a446847cf06413}{Log}.
+
+\hypertarget{class_log__firebug_ae64309117fe92dce5b6891c99de32e0e}{
+\index{Log\_\-firebug@{Log\_\-firebug}!Log\_\-firebug@{Log\_\-firebug}}
+\index{Log\_\-firebug@{Log\_\-firebug}!Log_firebug@{Log\_\-firebug}}
+\subsubsection[{Log\_\-firebug}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Log\_\-firebug} (
+\begin{DoxyParamCaption}
+\item[{\$}]{name = {\ttfamily ''}, }
+\item[{\$}]{ident = {\ttfamily 'PHP'}, }
+\item[{\$}]{conf = {\ttfamily array()}, }
+\item[{\$}]{level = {\ttfamily PEAR\_\-LOG\_\-DEBUG}}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__firebug_ae64309117fe92dce5b6891c99de32e0e}
+Constructs a new \hyperlink{class_log__firebug}{Log\_\-firebug} object.
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$name} & Ignored. \\
+\hline
+string & {\em \$ident} & The identity string. \\
+\hline
+array & {\em \$conf} & The configuration array. \\
+\hline
+int & {\em \$level} & \hyperlink{class_log}{Log} messages up to and including this level.  public \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_log__firebug_a44a2ac59a3b91f8c18905dce700934d6}{
+\index{Log\_\-firebug@{Log\_\-firebug}!open@{open}}
+\index{open@{open}!Log_firebug@{Log\_\-firebug}}
+\subsubsection[{open}]{\setlength{\rightskip}{0pt plus 5cm}open (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_log__firebug_a44a2ac59a3b91f8c18905dce700934d6}
+Opens the firebug handler.
+
+public 
+
+Reimplemented from \hyperlink{class_log_a44a2ac59a3b91f8c18905dce700934d6}{Log}.
+
+
+
+\subsection{Field Documentation}
+\hypertarget{class_log__firebug_a148e2042f169cec802078e58a46ace92}{
+\index{Log\_\-firebug@{Log\_\-firebug}!\$\_\-methods@{\$\_\-methods}}
+\index{\$\_\-methods@{\$\_\-methods}!Log_firebug@{Log\_\-firebug}}
+\subsubsection[{\$\_\-methods}]{\setlength{\rightskip}{0pt plus 5cm}\$\_\-methods}}
+\label{class_log__firebug_a148e2042f169cec802078e58a46ace92}
+{\bfseries Initial value:}
+\begin{DoxyCode}
+ array(
+                        PEAR_LOG_EMERG   => 'error',
+                        PEAR_LOG_ALERT   => 'error',
+                        PEAR_LOG_CRIT    => 'error',
+                        PEAR_LOG_ERR     => 'error',
+                        PEAR_LOG_WARNING => 'warn',
+                        PEAR_LOG_NOTICE  => 'info',
+                        PEAR_LOG_INFO    => 'info',
+                        PEAR_LOG_DEBUG   => 'debug'
+                    )
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/system/sldeploy/lib/Log/firebug.php\end{DoxyCompactItemize}

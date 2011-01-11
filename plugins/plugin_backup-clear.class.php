@@ -14,6 +14,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
+ * @package  sldeploy
+ * @author  Alexander Meindl
+ * @link    https://github.com/alexandermeindl/sldeploy
  */
 
 $plugin['info'] = 'remove old backups';
@@ -24,6 +27,8 @@ class SldeployPluginBackupClear extends Sldeploy {
   /**
    * This function is run with the command
    *
+   * @return int
+   * @throws Exception
    * @see sldeploy#run()
    */
   public function run() {
@@ -35,22 +40,42 @@ class SldeployPluginBackupClear extends Sldeploy {
       throw new Exception('Backup directory does not exist.');
     }
 
-    $this->_clearBackups();
+    $this->progressbar_init();
+    return $this->_clearBackups();
+  }
+
+  /**
+   * Get max steps of this plugin for progress view
+   *
+   * @param int $init initial value of counter
+   *
+   * @return int amount of working steps of this plugin
+   * @see Sldeploy#progressbar_init()
+   */
+  public function get_steps($init = 0) {
+    return $init + 3;
   }
 
   /**
    * Clear exisiting backups
+   *
+   * @return int
    */
   private function _clearBackups() {
 
-    $this->msg('Remove old backups on ' . $this->hostname . '...');
+    $this->msg('Remove old backups on ' . $this->hostname . ':');
 
     $max_minutes = $this->conf['backup_max_days'] * 24 * 60;
 
+    $this->show_progress('Removing old tar.gz files...');
     $this->system('find "' . $this->conf['backup_dir'] . '/" ! -mmin -' . $max_minutes . ' -name "*.tar.gz*" -type f -exec rm {} \;', TRUE);
+    $this->show_progress('Removing old sql.gz files...');
     $this->system('find "' . $this->conf['backup_dir'] . '/" ! -mmin -' . $max_minutes . ' -name "*sql.gz*" -type f -exec rm {} \;', TRUE);
 
     // delete files, which no longer in use
-    $this->system('find "' . $this->conf['backup_dir'] . '/" -name "*.tar" -type f -exec rm {} \;', TRUE);
+    $this->show_progress('Removing tar files...');
+    $rc = $this->system('find "' . $this->conf['backup_dir'] . '/" -name "*.tar" -type f -exec rm {} \;', TRUE);
+
+    return $rc['rc'];
   }
 }

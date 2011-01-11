@@ -14,6 +14,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
+ * @package  sldeploy
+ * @author  Alexander Meindl
+ * @link    https://github.com/alexandermeindl/sldeploy
  */
 
 $plugin['info'] = 'run drupal updates on all drupal projects';
@@ -24,9 +27,12 @@ class SldeployPluginUpdateDrupal extends Sldeploy {
   /**
    * This function is run with the command
    *
+   * @return int
    * @see sldeploy#run()
    */
   public function run() {
+
+    $rc = 0;
 
     // check for existing projects
     $this->validate_projects();
@@ -36,20 +42,42 @@ class SldeployPluginUpdateDrupal extends Sldeploy {
 
       if (isset($this->project['drush'])) {
         $this->msg('Drupal updatedb on ' . $this->project_name);
-        $this->_drushExec($this->project['drush']);
+        $r = $this->_drushExec($this->project['drush']);
+        if ($r) {
+          $rc += $r;
+        }
       }
     }
+
+    return $rc;
+  }
+
+  /**
+   * Get max steps of this plugin for progress view
+   *
+   * @param int $init initial value of counter
+   *
+   * @return int amount of working steps of this plugin
+   * @see Sldeploy#progressbar_init()
+   */
+  public function get_steps($init = 0) {
+    return $init + 3;
   }
 
   /**
    * Run drush updatedb
    *
    * @param   string  $script
+   *
+   * @return void
    */
   private function _drushExec($script) {
 
     $this->system($script . ' --yes updatedb', TRUE);
     $this->system($script . ' cache-clear all', TRUE);
-    $this->system($script . ' cron', TRUE);
+
+    $rc = $this->system($script . ' cron', TRUE);
+
+    return $rc['rc'];
   }
 }

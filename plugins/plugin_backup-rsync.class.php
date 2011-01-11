@@ -14,6 +14,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
+ * @package  sldeploy
+ * @author  Alexander Meindl
+ * @link    https://github.com/alexandermeindl/sldeploy
  */
 
 $plugin['info'] = 'Rsync backup files with remote system';
@@ -24,6 +27,8 @@ class SldeployPluginBackupRsync extends Sldeploy {
   /**
    * This function is run with the command
    *
+   * @return int
+   * @throws Exception
    * @see sldeploy#run()
    */
   public function run() {
@@ -40,6 +45,20 @@ class SldeployPluginBackupRsync extends Sldeploy {
     $remote_dir = $this->conf['backup_remote_host'] . ':' . $this->conf['backup_remote_dir'] . '/';
     $command = $this->conf['rsync_bin'] . ' -e ssh -avzp --exclude "*.journal" --exclude ".nfs*" --exclude "*.tar" --delete';
 
-    $this->system($command . ' ' . $this->conf['backup_dir'] . '/ ' . $remote_dir);
+    $rc = $this->system($command . ' ' . $this->conf['backup_dir'] . '/ ' . $remote_dir);
+
+    return $rc['rc'];
+  }
+
+  /**
+   * Get max steps of this plugin for progress view
+   *
+   * @param int $init initial value of counter
+   *
+   * @return int amount of working steps of this plugin
+   * @see Sldeploy#progressbar_init()
+   */
+  public function get_steps($init = 0) {
+    return $init++;
   }
 }

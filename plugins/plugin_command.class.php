@@ -14,92 +14,102 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
+ * @package  sldeploy
+ * @author  Alexander Meindl
+ * @link    https://github.com/alexandermeindl/sldeploy
  */
 
 $plugin['info'] = 'run commands';
-$plugin['root_only'] = TRUE;
+$plugin['root_only'] = FALSE;
 
-$plugin['options']['list'] = array(
-                              'short_name'  => '-l',
-                              'long_name'   => '--list',
-                              'action'      => 'StoreTrue',
-                              'description' => 'List all available commands',
-                            );
-
-$plugin['args']['command'] = 'command to run. If no command is specified, you get a list of all available commands';
+$plugin['args']['command'] = 'command to run. Use \'command-ls\' to get a list with all available commands';
 
 class SldeployPluginCommand extends Sldeploy {
 
+  /**
+   * Current active command
+   *
+   * @var string
+   */
   private $active_command;
 
   /**
    * This function is run with the command
    *
+   * @return int
+   * @throws Exception
    * @see sldeploy#run()
    */
   public function run() {
 
-    // show list
-    if (isset($this->paras->command->options['list'])) {
-      $this->msg('Available commands:');
-      foreach ($this->get_available_commands() AS $command) {
-        $this->msg('* ' . $command);
-      }
+    if (isset($this->paras->command->args['command']) && !empty($this->paras->command->args['command'])) {
+      $this->active_command = $this->paras->command->args['command'];
     }
     else {
+      throw new Exception('No command specified. Use \'command-ls\' to list available commands');
+    }
 
-      if (isset($this->paras->command->args['command']) && !empty($this->paras->command->args['command'])) {
-        $this->active_command = $this->paras->command->args['command'];
-      }
-      else {
-        throw new Exception('No command specified. Use option -l to list available commands');
-      }
-
-      if (array_key_exists($this->active_command, $this->conf['commands'])) {
-        $this->run_command();
-      }
-      else {
-        throw new Exception('Unknown command has been used. Use option -l to list available commands');
-      }
+    if (array_key_exists($this->active_command, $this->conf['commands'])) {
+      return $this->run_command();
+    }
+    else {
+      throw new Exception('Unknown command has been used. Use \'command-ls\' to list available commands');
     }
   }
 
   /**
-    * Get all available commands
-    *
-    * @return array
-    */
-  public function get_available_commands() {
-    $commands = array();
-    foreach ($this->conf['commands'] AS $command_name => $command) {
-      $commands[] = $command_name;
+   * Get max steps of this plugin for progress view
+   *
+   * @param int $init initial value of counter
+   *
+   * @return int amount of working steps of this plugin
+   * @see Sldeploy#progressbar_init()
+   */
+  public function get_steps($init = 0) {
+
+    $command = $this->conf['commands'][$this->active_command];
+    if (is_array($command)) {
+
     }
-    return $commands;
+    else {
+      $init++;
+    }
+    return $init;
   }
 
   /**
     * run a system command or a group of commands
     *
+    * @return int
     */
   public function run_command() {
+
+    $r = 0;
 
     $command = $this->conf['commands'][$this->active_command];
     if (is_array($command)) {
       $runs = 0;
+
       foreach ($command AS $command_atom) {
         if ($command_atom != $this->active_command && array_key_exists($command_atom, $this->conf['commands'])) {
           if ($runs) {
             $this->msg('---');
           }
-          $this->msg('Run ' . $command_atom . '...');
-          $this->system($this->conf['commands'][$command_atom], TRUE);
+          $this->show_progress('Run ' . $command_atom . '...');
+          $rc = $this->system($this->conf['commands'][$command_atom], TRUE);
+          if ($rc['rc']) {
+            $r++;
+          }
           $runs++;
         }
       }
       $this->msg($runs . ' commands have been executed');
     }
     else {
-      $this->system($command, TRUE);
+      $rc = $this->system($command, TRUE);
+      $r = $rc['rc'];
     }
+
+    return $r;
   }
 }

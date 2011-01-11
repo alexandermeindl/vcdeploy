@@ -14,6 +14,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
+ * @package  sldeploy
+ * @author  Alexander Meindl
+ * @link    https://github.com/alexandermeindl/sldeploy
  */
 
 $plugin['info'] = 'Create backup of files';
@@ -24,29 +27,53 @@ class SldeployPluginBackupFiles extends Sldeploy {
   /**
    * This function is run with the command
    *
+   * @return int
    * @see sldeploy#run()
    */
   public function run() {
 
     $this->msg('Run backups...');
-    $this->_backupFiles();
+    return $this->_backupFiles();
+  }
+
+  /**
+   * Get max steps of this plugin for progress view
+   *
+   * @param int $init initial value of counter
+   *
+   * @return int amount of working steps of this plugin
+   * @see Sldeploy#progressbar_init()
+   */
+  public function get_steps($init = 0) {
+
+    $backups = count($this->conf['backup_daily']);
+
+    // backups x 2 because of gzip compression
+    return $init + $backups * 2 ;
   }
 
   /**
    * Create backup of specified directories
    *
+   * @return int amount of errors
    */
   private function _backupFiles() {
 
+    $rc = 0;
+
     if (is_array($this->conf['backup_daily'])) {
+
+      $this->progressbar_init();
 
       foreach ($this->conf['backup_daily'] AS $name => $values) {
 
         if (!isset($values['dir'])) {
           $this->msg('Missing dir for ' . $name . ' backup set!');
+          $rc++;
         }
         elseif (!file_exists($values['dir'])) {
           $this->msg('Backup target directory does not exist: ' . $values['dir']);
+          $rc++;
         }
         else {
 
@@ -63,23 +90,25 @@ class SldeployPluginBackupFiles extends Sldeploy {
             $source_dirs = $this->_getMultiSourceDirs($values['dir'], $values['multi_excludes']);
             foreach ($source_dirs AS $source_name => $source_dir) {
               $backup_name = $name . '_' . $source_name;
-              $this->msg('creating backup for ' . $backup_name . ' (' . $source_dir . ')...');
               $this->create_data_dump($source_dir, $this->_getTargetBackupFilename($backup_name), $values['excludes']);
             }
           }
           else {                                               // SINGLE
-            $this->msg('creating backup for ' . $name . ' (' . $values['dir'] . ')...');
             $this->create_data_dump($values['dir'], $this->_getTargetBackupFilename($name), $values['excludes']);
           }
         }
       }
     }
+
+    return $rc;
   }
 
   /**
    * Get filename for backup
    *
    * @param string $name
+   *
+   * @return string
    */
   private function _getTargetBackupFilename($name) {
     return $this->conf['backup_dir'] . '/' . $name . '-' . $this->date_stamp . '.tar';
@@ -90,6 +119,8 @@ class SldeployPluginBackupFiles extends Sldeploy {
    *
    * @param string  $source_dir
    * @param array   $excludes
+   *
+   * @return array
    */
   private function _getMultiSourceDirs($source_dir, $excludes) {
 

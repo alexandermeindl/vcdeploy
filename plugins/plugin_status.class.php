@@ -17,16 +17,20 @@
  * TODO: - branch support for git
  *     - bzr support
  *
+ * @package  sldeploy
+ * @author  Alexander Meindl
+ * @link    https://github.com/alexandermeindl/sldeploy
  */
 
 $plugin['info'] = 'status messages and information of sldeploy environment';
 $plugin['root_only'] = FALSE;
 
-class SldeployPluginStatus extends Sldeploy {
+class SldeployPluginStatus extends Sldeploy implements ISldeployPlugin {
 
   /**
    * This function is run with the command
    *
+   * @return int
    * @see sldeploy#run()
    */
   public function run() {
@@ -39,5 +43,19 @@ class SldeployPluginStatus extends Sldeploy {
     $this->msg("Backup dir:\t\t" . $this->conf['backup_dir']);
     $this->msg("Project (active):\t" . count($this->get_projects()));
     $this->msg("Project (all):\t\t" . count($this->get_all_projects()));
+
+    return 0;
+  }
+
+  /**
+   * Get max steps of this plugin for progress view
+   *
+   * @param int $init initial value of counter
+   *
+   * @return int amount of working steps of this plugin
+   * @see Sldeploy#progressbar_init()
+   */
+  public function get_steps($init = 0) {
+    return $init++;
   }
 }

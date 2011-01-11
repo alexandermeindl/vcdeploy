@@ -1,0 +1,865 @@
+\hypertarget{class_sldeploy}{
+\section{Sldeploy Class Reference}
+\label{class_sldeploy}\index{Sldeploy@{Sldeploy}}
+}
+Inheritance diagram for Sldeploy:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=12.000000cm]{class_sldeploy}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_sldeploy_ab0bebdee3aac24a983f6a88c07aecf76}{\_\-\_\-construct} (\$conf, \$plugin\_\-name, \$paras, \$version)
+\item 
+\hyperlink{class_sldeploy_a644c8fdb9d886050e2e228fb3127f567}{show\_\-progress} (\$msg, \$with\_\-step=TRUE)
+\item 
+\hyperlink{class_sldeploy_a2316dc6f8ea2e9715cb258fd86857ccc}{progressbar\_\-update} (\$with\_\-step=TRUE)
+\item 
+\hyperlink{class_sldeploy_a009a2dc0fc814d827457eec10b76c398}{progressbar\_\-step} ()
+\item 
+\hyperlink{class_sldeploy_a98577db0f72ad6b6b4f1286761bcc243}{get\_\-progressbar\_\-pos} ()
+\item 
+\hyperlink{class_sldeploy_ab8a708b4554e8cc14355a1ce8e7e61b4}{progressbar\_\-init} (\$init=0)
+\item 
+\hyperlink{class_sldeploy_a428efd510eae25311c07442072ff8956}{set\_\-project} (\$project\_\-name, \$project)
+\item 
+\hyperlink{class_sldeploy_acf6093ed82132d7cbcf689a23d8a8cf2}{get\_\-all\_\-projects} ()
+\item 
+\hyperlink{class_sldeploy_a8430e36a0da117fa0dbf865f024127a3}{get\_\-projects} ()
+\item 
+\hyperlink{class_sldeploy_a6783d304144e744f827f42db88ae6b20}{set\_\-projects} ()
+\item 
+\hyperlink{class_sldeploy_a5fd893253840f623be6d141bfd3b880f}{set\_\-nice} (\$level)
+\item 
+\hyperlink{class_sldeploy_a7a29394a5c49356fe0e53a9150813186}{system} (\$command, \$passthru=FALSE)
+\item 
+\hyperlink{class_sldeploy_ab125a718f83e7a41c5ab09d0fa9146a5}{msg} (\$msg, \$error\_\-code=0)
+\item 
+\hyperlink{class_sldeploy_a725c114f690cecb9c5e07044fb7daa63}{post\_\-commands} (\$post\_\-commands)
+\item 
+\hyperlink{class_sldeploy_ab86d69acf6b7804b417c085e6b815f6f}{ssh\_\-check} ()
+\item 
+\hyperlink{class_sldeploy_a61701a328aa2b1deab91d83dc6ddb196}{ssh\_\-get\_\-file} (\$remote\_\-file, \$local\_\-file)
+\item 
+\hyperlink{class_sldeploy_ad13a7b10365361da78af141bec5f5bbf}{ssh\_\-put\_\-file} (\$local\_\-file, \$remote\_\-file)
+\item 
+\hyperlink{class_sldeploy_ad5d0153681d636227aac630f1c32629f}{ssh\_\-system} (\$command, \$passthru=FALSE)
+\item 
+\hyperlink{class_sldeploy_a922035a7c68551ad5d34fb7144b067dc}{gzip\_\-file} (\$filename, \$only\_\-command=FALSE)
+\item 
+\hyperlink{class_sldeploy_a9ac401887df6b6d3f118fa1af8c987b5}{md5\_\-file} (\$filename)
+\item 
+\hyperlink{class_sldeploy_abd3212048b835599fef4a37f2125eb6c}{remove\_\-directory} (\$dir)
+\item 
+\hyperlink{class_sldeploy_a279f8f924b7fd3d7db68b0a7a2d0aba1}{validate\_\-projects} ()
+\item 
+\hyperlink{class_sldeploy_aa1e5d1ffc4ded770bea1de400df24ec5}{create\_\-project\_\-data\_\-backup} ()
+\item 
+\hyperlink{class_sldeploy_ac140d8c2f59866e282ac00360d897b2b}{get\_\-source\_\-db} (\$identifier)
+\item 
+\hyperlink{class_sldeploy_ac6ff35c515c37878eab4478c783db6f9}{get\_\-source\_\-data} (\$identifier)
+\item 
+\hyperlink{class_sldeploy_a3b7be4fb4a21ce685eba5cb19256e288}{create\_\-data\_\-dump} (\$source\_\-dir, \$target\_\-file, \$excludes=NULL)
+\item 
+\hyperlink{class_sldeploy_afec1390b8a27d38293cdfab28764cf05}{create\_\-db\_\-dump} (\$db\_\-name, \$target\_\-file=NULL)
+\item 
+\hyperlink{class_sldeploy_a36bcdb4527d4cfd29820243c4855f3dd}{get\_\-remote\_\-db\_\-file} (\$identifier, \$db)
+\item 
+\hyperlink{class_sldeploy_a64454a6b24f9442a9bc7be51b9ab666d}{get\_\-source\_\-data\_\-file} (\$identifier, \$source\_\-dir)
+\item 
+\hyperlink{class_sldeploy_a046789750c550ebe7371985782ff2ebb}{sanitize\_\-database\_\-sanitize} (\$database)
+\item 
+\hyperlink{class_sldeploy_a7630a30023f845a4ade82d2b93d5c7d9}{sanitize\_\-database} (\$sql\_\-file, \$source\_\-db=NULL, \$sanitize=TRUE)
+\end{DoxyCompactItemize}
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_sldeploy_aa36f57c62963507498e1181f9a75bbb9}{
+{\bfseries \$base\_\-dir}}
+\label{class_sldeploy_aa36f57c62963507498e1181f9a75bbb9}
+
+\item 
+\hypertarget{class_sldeploy_ae4901046cc3e1deebf77ccc785384a78}{
+{\bfseries \$conf}}
+\label{class_sldeploy_ae4901046cc3e1deebf77ccc785384a78}
+
+\item 
+\hypertarget{class_sldeploy_a85ae3e64cd40e9564adceb010085e9dd}{
+{\bfseries \$debug} = FALSE}
+\label{class_sldeploy_a85ae3e64cd40e9564adceb010085e9dd}
+
+\item 
+\hypertarget{class_sldeploy_ac5d5f66bf0113d0d35de8d8720b191fa}{
+{\bfseries \$ssh}}
+\label{class_sldeploy_ac5d5f66bf0113d0d35de8d8720b191fa}
+
+\item 
+\hypertarget{class_sldeploy_a52a32e3f7e0139738aa790669077adf6}{
+{\bfseries \$projects}}
+\label{class_sldeploy_a52a32e3f7e0139738aa790669077adf6}
+
+\item 
+\hypertarget{class_sldeploy_abf708320ca00ee626231215a037fcf88}{
+{\bfseries \$project\_\-name}}
+\label{class_sldeploy_abf708320ca00ee626231215a037fcf88}
+
+\item 
+\hypertarget{class_sldeploy_a26a7d69cd5cc291d752925dd312b5d1c}{
+{\bfseries \$project}}
+\label{class_sldeploy_a26a7d69cd5cc291d752925dd312b5d1c}
+
+\item 
+\hypertarget{class_sldeploy_a69272bce4de7864ace436e6603ac5ba2}{
+{\bfseries \$date\_\-stamp}}
+\label{class_sldeploy_a69272bce4de7864ace436e6603ac5ba2}
+
+\item 
+\hypertarget{class_sldeploy_a12f5443cc19cb33ae0292013c53a7b19}{
+{\bfseries \$current\_\-user}}
+\label{class_sldeploy_a12f5443cc19cb33ae0292013c53a7b19}
+
+\item 
+\hypertarget{class_sldeploy_a6bc5d2df100994fbd98e304f392219fb}{
+{\bfseries \$nice} = 0}
+\label{class_sldeploy_a6bc5d2df100994fbd98e304f392219fb}
+
+\item 
+\hypertarget{class_sldeploy_aebfec76216371ef236acc5910e90933d}{
+{\bfseries \$logger}}
+\label{class_sldeploy_aebfec76216371ef236acc5910e90933d}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_sldeploy_a82e49f81c7b6d1433872270f0065e339}{set\_\-scm} (\$mode= 'system')
+\item 
+\hyperlink{class_sldeploy_a38980f2b9e4c06a156136d9e0de6b212}{get\_\-hostname} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_sldeploy_a17c8948c68aa44fa9961ae169b6a8961}{
+{\bfseries \$version}}
+\label{class_sldeploy_a17c8948c68aa44fa9961ae169b6a8961}
+
+\item 
+\hypertarget{class_sldeploy_a8bf9ffb42ed554b203b55377d1fc9aa4}{
+{\bfseries \$hostname}}
+\label{class_sldeploy_a8bf9ffb42ed554b203b55377d1fc9aa4}
+
+\item 
+\hypertarget{class_sldeploy_a3170850828bcc6cb52f2b50eb01c2dca}{
+{\bfseries \$common\_\-project\_\-name} = '\_\-common\_\-'}
+\label{class_sldeploy_a3170850828bcc6cb52f2b50eb01c2dca}
+
+\item 
+\hypertarget{class_sldeploy_a6f7a4656a8d612174a9329139b049d91}{
+{\bfseries \$scm}}
+\label{class_sldeploy_a6f7a4656a8d612174a9329139b049d91}
+
+\item 
+\hypertarget{class_sldeploy_aebacc51188e2a01d35a6a6fe9161d0ce}{
+{\bfseries \$plugin\_\-name}}
+\label{class_sldeploy_aebacc51188e2a01d35a6a6fe9161d0ce}
+
+\item 
+\hypertarget{class_sldeploy_a8da817ab7bef44a909e4901d724ee402}{
+{\bfseries \$paras}}
+\label{class_sldeploy_a8da817ab7bef44a909e4901d724ee402}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{class_sldeploy_ab0bebdee3aac24a983f6a88c07aecf76}{
+\index{Sldeploy@{Sldeploy}!\_\-\_\-construct@{\_\-\_\-construct}}
+\index{\_\-\_\-construct@{\_\-\_\-construct}!Sldeploy@{Sldeploy}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}\_\-\_\-construct (
+\begin{DoxyParamCaption}
+\item[{\$}]{conf, }
+\item[{\$}]{plugin\_\-name, }
+\item[{\$}]{paras, }
+\item[{\$}]{version}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_ab0bebdee3aac24a983f6a88c07aecf76}
+Constructor
+
+
+\begin{DoxyParams}[1]{Parameters}
+array & {\em \$conf} & configuration from configuration file \\
+\hline
+string & {\em \$plugin\_\-name} & name of the active plugin \\
+\hline
+object & {\em \$paras} & command line parameters \\
+\hline
+string & {\em \$version} & sldeploy application version\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_sldeploy_a3b7be4fb4a21ce685eba5cb19256e288}{
+\index{Sldeploy@{Sldeploy}!create\_\-data\_\-dump@{create\_\-data\_\-dump}}
+\index{create\_\-data\_\-dump@{create\_\-data\_\-dump}!Sldeploy@{Sldeploy}}
+\subsubsection[{create\_\-data\_\-dump}]{\setlength{\rightskip}{0pt plus 5cm}create\_\-data\_\-dump (
+\begin{DoxyParamCaption}
+\item[{\$}]{source\_\-dir, }
+\item[{\$}]{target\_\-file, }
+\item[{\$}]{excludes = {\ttfamily NULL}}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a3b7be4fb4a21ce685eba5cb19256e288}
+Create a tar.gz file of a directory
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$source\_\-dir} & \\
+\hline
+string & {\em \$target\_\-file} & \\
+\hline
+array & {\em \$excludes} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+array created files (dump and hash file) 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{class_sldeploy_afec1390b8a27d38293cdfab28764cf05}{
+\index{Sldeploy@{Sldeploy}!create\_\-db\_\-dump@{create\_\-db\_\-dump}}
+\index{create\_\-db\_\-dump@{create\_\-db\_\-dump}!Sldeploy@{Sldeploy}}
+\subsubsection[{create\_\-db\_\-dump}]{\setlength{\rightskip}{0pt plus 5cm}create\_\-db\_\-dump (
+\begin{DoxyParamCaption}
+\item[{\$}]{db\_\-name, }
+\item[{\$}]{target\_\-file = {\ttfamily NULL}}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_afec1390b8a27d38293cdfab28764cf05}
+Create database dump
+
+If the target file already exists, it will be overwritten
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$db\_\-name} & \\
+\hline
+string & {\em \$target\_\-file} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+array created files (dump and hash file) 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{class_sldeploy_aa1e5d1ffc4ded770bea1de400df24ec5}{
+\index{Sldeploy@{Sldeploy}!create\_\-project\_\-data\_\-backup@{create\_\-project\_\-data\_\-backup}}
+\index{create\_\-project\_\-data\_\-backup@{create\_\-project\_\-data\_\-backup}!Sldeploy@{Sldeploy}}
+\subsubsection[{create\_\-project\_\-data\_\-backup}]{\setlength{\rightskip}{0pt plus 5cm}create\_\-project\_\-data\_\-backup (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_aa1e5d1ffc4ded770bea1de400df24ec5}
+Create backup of data directories
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{class_sldeploy_acf6093ed82132d7cbcf689a23d8a8cf2}{
+\index{Sldeploy@{Sldeploy}!get\_\-all\_\-projects@{get\_\-all\_\-projects}}
+\index{get\_\-all\_\-projects@{get\_\-all\_\-projects}!Sldeploy@{Sldeploy}}
+\subsubsection[{get\_\-all\_\-projects}]{\setlength{\rightskip}{0pt plus 5cm}get\_\-all\_\-projects (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_acf6093ed82132d7cbcf689a23d8a8cf2}
+Get active and inactive projects
+
+\begin{DoxyReturn}{Returns}
+array with project names 
+\end{DoxyReturn}
+\hypertarget{class_sldeploy_a38980f2b9e4c06a156136d9e0de6b212}{
+\index{Sldeploy@{Sldeploy}!get\_\-hostname@{get\_\-hostname}}
+\index{get\_\-hostname@{get\_\-hostname}!Sldeploy@{Sldeploy}}
+\subsubsection[{get\_\-hostname}]{\setlength{\rightskip}{0pt plus 5cm}get\_\-hostname (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{class_sldeploy_a38980f2b9e4c06a156136d9e0de6b212}
+Get hostname
+
+\begin{DoxyReturn}{Returns}
+string 
+\end{DoxyReturn}
+\hypertarget{class_sldeploy_a98577db0f72ad6b6b4f1286761bcc243}{
+\index{Sldeploy@{Sldeploy}!get\_\-progressbar\_\-pos@{get\_\-progressbar\_\-pos}}
+\index{get\_\-progressbar\_\-pos@{get\_\-progressbar\_\-pos}!Sldeploy@{Sldeploy}}
+\subsubsection[{get\_\-progressbar\_\-pos}]{\setlength{\rightskip}{0pt plus 5cm}get\_\-progressbar\_\-pos (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a98577db0f72ad6b6b4f1286761bcc243}
+Get current progress counter \hypertarget{class_sldeploy_a8430e36a0da117fa0dbf865f024127a3}{
+\index{Sldeploy@{Sldeploy}!get\_\-projects@{get\_\-projects}}
+\index{get\_\-projects@{get\_\-projects}!Sldeploy@{Sldeploy}}
+\subsubsection[{get\_\-projects}]{\setlength{\rightskip}{0pt plus 5cm}get\_\-projects (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a8430e36a0da117fa0dbf865f024127a3}
+Get active projects
+
+Returns an array with all active projects, which are defined.
+
+\begin{DoxyReturn}{Returns}
+array 
+\end{DoxyReturn}
+\hypertarget{class_sldeploy_a36bcdb4527d4cfd29820243c4855f3dd}{
+\index{Sldeploy@{Sldeploy}!get\_\-remote\_\-db\_\-file@{get\_\-remote\_\-db\_\-file}}
+\index{get\_\-remote\_\-db\_\-file@{get\_\-remote\_\-db\_\-file}!Sldeploy@{Sldeploy}}
+\subsubsection[{get\_\-remote\_\-db\_\-file}]{\setlength{\rightskip}{0pt plus 5cm}get\_\-remote\_\-db\_\-file (
+\begin{DoxyParamCaption}
+\item[{\$}]{identifier, }
+\item[{\$}]{db}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a36bcdb4527d4cfd29820243c4855f3dd}
+Get SQL file
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$identifier} & database identifier \\
+\hline
+string & {\em \$db} & name of the database\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string absolute filename to the local transfered sql file 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{class_sldeploy_ac6ff35c515c37878eab4478c783db6f9}{
+\index{Sldeploy@{Sldeploy}!get\_\-source\_\-data@{get\_\-source\_\-data}}
+\index{get\_\-source\_\-data@{get\_\-source\_\-data}!Sldeploy@{Sldeploy}}
+\subsubsection[{get\_\-source\_\-data}]{\setlength{\rightskip}{0pt plus 5cm}get\_\-source\_\-data (
+\begin{DoxyParamCaption}
+\item[{\$}]{identifier}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_ac6ff35c515c37878eab4478c783db6f9}
+Get source data name from data identifier
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$identifier} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{class_sldeploy_a64454a6b24f9442a9bc7be51b9ab666d}{
+\index{Sldeploy@{Sldeploy}!get\_\-source\_\-data\_\-file@{get\_\-source\_\-data\_\-file}}
+\index{get\_\-source\_\-data\_\-file@{get\_\-source\_\-data\_\-file}!Sldeploy@{Sldeploy}}
+\subsubsection[{get\_\-source\_\-data\_\-file}]{\setlength{\rightskip}{0pt plus 5cm}get\_\-source\_\-data\_\-file (
+\begin{DoxyParamCaption}
+\item[{\$}]{identifier, }
+\item[{\$}]{source\_\-dir}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a64454a6b24f9442a9bc7be51b9ab666d}
+Get tar file
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$identifier} & \\
+\hline
+string & {\em \$dir} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{class_sldeploy_ac140d8c2f59866e282ac00360d897b2b}{
+\index{Sldeploy@{Sldeploy}!get\_\-source\_\-db@{get\_\-source\_\-db}}
+\index{get\_\-source\_\-db@{get\_\-source\_\-db}!Sldeploy@{Sldeploy}}
+\subsubsection[{get\_\-source\_\-db}]{\setlength{\rightskip}{0pt plus 5cm}get\_\-source\_\-db (
+\begin{DoxyParamCaption}
+\item[{\$}]{identifier}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_ac140d8c2f59866e282ac00360d897b2b}
+Get source database name from database identifier
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$identifier} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string 
+\end{DoxyReturn}
+\hypertarget{class_sldeploy_a922035a7c68551ad5d34fb7144b067dc}{
+\index{Sldeploy@{Sldeploy}!gzip\_\-file@{gzip\_\-file}}
+\index{gzip\_\-file@{gzip\_\-file}!Sldeploy@{Sldeploy}}
+\subsubsection[{gzip\_\-file}]{\setlength{\rightskip}{0pt plus 5cm}gzip\_\-file (
+\begin{DoxyParamCaption}
+\item[{\$}]{filename, }
+\item[{\$}]{only\_\-command = {\ttfamily FALSE}}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a922035a7c68551ad5d34fb7144b067dc}
+Compress file
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$filename} & \\
+\hline
+bool & {\em \$only\_\-command} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string files 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{class_sldeploy_a9ac401887df6b6d3f118fa1af8c987b5}{
+\index{Sldeploy@{Sldeploy}!md5\_\-file@{md5\_\-file}}
+\index{md5\_\-file@{md5\_\-file}!Sldeploy@{Sldeploy}}
+\subsubsection[{md5\_\-file}]{\setlength{\rightskip}{0pt plus 5cm}md5\_\-file (
+\begin{DoxyParamCaption}
+\item[{\$}]{filename}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a9ac401887df6b6d3f118fa1af8c987b5}
+Create md5 hash and create hash file
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$filename} & name of file\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string filename of hash file 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{class_sldeploy_ab125a718f83e7a41c5ab09d0fa9146a5}{
+\index{Sldeploy@{Sldeploy}!msg@{msg}}
+\index{msg@{msg}!Sldeploy@{Sldeploy}}
+\subsubsection[{msg}]{\setlength{\rightskip}{0pt plus 5cm}msg (
+\begin{DoxyParamCaption}
+\item[{\$}]{msg, }
+\item[{\$}]{error\_\-code = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_ab125a718f83e7a41c5ab09d0fa9146a5}
+Print message to console
+
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+\hypertarget{class_sldeploy_a725c114f690cecb9c5e07044fb7daa63}{
+\index{Sldeploy@{Sldeploy}!post\_\-commands@{post\_\-commands}}
+\index{post\_\-commands@{post\_\-commands}!Sldeploy@{Sldeploy}}
+\subsubsection[{post\_\-commands}]{\setlength{\rightskip}{0pt plus 5cm}post\_\-commands (
+\begin{DoxyParamCaption}
+\item[{\$}]{post\_\-commands}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a725c114f690cecb9c5e07044fb7daa63}
+Run this post commands after plugin action (if supported by plugin)
+
+\begin{DoxyReturn}{Returns}
+bool 
+\end{DoxyReturn}
+\hypertarget{class_sldeploy_ab8a708b4554e8cc14355a1ce8e7e61b4}{
+\index{Sldeploy@{Sldeploy}!progressbar\_\-init@{progressbar\_\-init}}
+\index{progressbar\_\-init@{progressbar\_\-init}!Sldeploy@{Sldeploy}}
+\subsubsection[{progressbar\_\-init}]{\setlength{\rightskip}{0pt plus 5cm}progressbar\_\-init (
+\begin{DoxyParamCaption}
+\item[{\$}]{init = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_ab8a708b4554e8cc14355a1ce8e7e61b4}
+Initialize progressbar
+
+only active on non-\/verbose mode
+
+maximum steps are fetch from \$this-\/$>$get\_\-progress\_\-steps()
+
+
+\begin{DoxyParams}[1]{Parameters}
+int & {\em \$init} & initial value of counter\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\hypertarget{class_sldeploy_a009a2dc0fc814d827457eec10b76c398}{
+\index{Sldeploy@{Sldeploy}!progressbar\_\-step@{progressbar\_\-step}}
+\index{progressbar\_\-step@{progressbar\_\-step}!Sldeploy@{Sldeploy}}
+\subsubsection[{progressbar\_\-step}]{\setlength{\rightskip}{0pt plus 5cm}progressbar\_\-step (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a009a2dc0fc814d827457eec10b76c398}
+Add next step to progress bar \hypertarget{class_sldeploy_a2316dc6f8ea2e9715cb258fd86857ccc}{
+\index{Sldeploy@{Sldeploy}!progressbar\_\-update@{progressbar\_\-update}}
+\index{progressbar\_\-update@{progressbar\_\-update}!Sldeploy@{Sldeploy}}
+\subsubsection[{progressbar\_\-update}]{\setlength{\rightskip}{0pt plus 5cm}progressbar\_\-update (
+\begin{DoxyParamCaption}
+\item[{\$}]{with\_\-step = {\ttfamily TRUE}}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a2316dc6f8ea2e9715cb258fd86857ccc}
+Update progressbar
+
+
+\begin{DoxyParams}[1]{Parameters}
+int & {\em \$current\_\-pos} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\hypertarget{class_sldeploy_abd3212048b835599fef4a37f2125eb6c}{
+\index{Sldeploy@{Sldeploy}!remove\_\-directory@{remove\_\-directory}}
+\index{remove\_\-directory@{remove\_\-directory}!Sldeploy@{Sldeploy}}
+\subsubsection[{remove\_\-directory}]{\setlength{\rightskip}{0pt plus 5cm}remove\_\-directory (
+\begin{DoxyParamCaption}
+\item[{\$}]{dir}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_abd3212048b835599fef4a37f2125eb6c}
+Remove directory (with content and subdirectories
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$dir} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{class_sldeploy_a7630a30023f845a4ade82d2b93d5c7d9}{
+\index{Sldeploy@{Sldeploy}!sanitize\_\-database@{sanitize\_\-database}}
+\index{sanitize\_\-database@{sanitize\_\-database}!Sldeploy@{Sldeploy}}
+\subsubsection[{sanitize\_\-database}]{\setlength{\rightskip}{0pt plus 5cm}sanitize\_\-database (
+\begin{DoxyParamCaption}
+\item[{\$}]{sql\_\-file, }
+\item[{\$}]{source\_\-db = {\ttfamily NULL}, }
+\item[{\$}]{sanitize = {\ttfamily TRUE}}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a7630a30023f845a4ade82d2b93d5c7d9}
+Sanitize database
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$source} & \\
+\hline
+string & {\em \$source\_\-db} & if specified, this database is used as source, otherwise sql\_\-file is also used as target and source \\
+\hline
+bool & {\em \$sanitize} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\hypertarget{class_sldeploy_a046789750c550ebe7371985782ff2ebb}{
+\index{Sldeploy@{Sldeploy}!sanitize\_\-database\_\-sanitize@{sanitize\_\-database\_\-sanitize}}
+\index{sanitize\_\-database\_\-sanitize@{sanitize\_\-database\_\-sanitize}!Sldeploy@{Sldeploy}}
+\subsubsection[{sanitize\_\-database\_\-sanitize}]{\setlength{\rightskip}{0pt plus 5cm}sanitize\_\-database\_\-sanitize (
+\begin{DoxyParamCaption}
+\item[{\$}]{database}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a046789750c550ebe7371985782ff2ebb}
+Sanitize database
+
+Use by \$this-\/$>$\hyperlink{class_sldeploy_a7630a30023f845a4ade82d2b93d5c7d9}{sanitize\_\-database()} and reset\_\-db
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$database} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\hypertarget{class_sldeploy_a5fd893253840f623be6d141bfd3b880f}{
+\index{Sldeploy@{Sldeploy}!set\_\-nice@{set\_\-nice}}
+\index{set\_\-nice@{set\_\-nice}!Sldeploy@{Sldeploy}}
+\subsubsection[{set\_\-nice}]{\setlength{\rightskip}{0pt plus 5cm}set\_\-nice (
+\begin{DoxyParamCaption}
+\item[{\$}]{level}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a5fd893253840f623be6d141bfd3b880f}
+Set nice level to high or low
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\hypertarget{class_sldeploy_a428efd510eae25311c07442072ff8956}{
+\index{Sldeploy@{Sldeploy}!set\_\-project@{set\_\-project}}
+\index{set\_\-project@{set\_\-project}!Sldeploy@{Sldeploy}}
+\subsubsection[{set\_\-project}]{\setlength{\rightskip}{0pt plus 5cm}set\_\-project (
+\begin{DoxyParamCaption}
+\item[{\$}]{project\_\-name, }
+\item[{\$}]{project}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a428efd510eae25311c07442072ff8956}
+Set current project to
+
+\$this-\/$>$project\_\-name \$this-\/$>$project
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$project\_\-name} & name of project \\
+\hline
+array & {\em \$project} & project details\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\hypertarget{class_sldeploy_a6783d304144e744f827f42db88ae6b20}{
+\index{Sldeploy@{Sldeploy}!set\_\-projects@{set\_\-projects}}
+\index{set\_\-projects@{set\_\-projects}!Sldeploy@{Sldeploy}}
+\subsubsection[{set\_\-projects}]{\setlength{\rightskip}{0pt plus 5cm}set\_\-projects (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a6783d304144e744f827f42db88ae6b20}
+Set active projects to \$this-\/$>$projects
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\hypertarget{class_sldeploy_a82e49f81c7b6d1433872270f0065e339}{
+\index{Sldeploy@{Sldeploy}!set\_\-scm@{set\_\-scm}}
+\index{set\_\-scm@{set\_\-scm}!Sldeploy@{Sldeploy}}
+\subsubsection[{set\_\-scm}]{\setlength{\rightskip}{0pt plus 5cm}set\_\-scm (
+\begin{DoxyParamCaption}
+\item[{\$}]{mode = {\ttfamily 'system'}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{class_sldeploy_a82e49f81c7b6d1433872270f0065e339}
+Set \$this-\/$>$scm object for SCM operations
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$mode} & values: system, project\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{class_sldeploy_a644c8fdb9d886050e2e228fb3127f567}{
+\index{Sldeploy@{Sldeploy}!show\_\-progress@{show\_\-progress}}
+\index{show\_\-progress@{show\_\-progress}!Sldeploy@{Sldeploy}}
+\subsubsection[{show\_\-progress}]{\setlength{\rightskip}{0pt plus 5cm}show\_\-progress (
+\begin{DoxyParamCaption}
+\item[{\$}]{msg, }
+\item[{\$}]{with\_\-step = {\ttfamily TRUE}}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a644c8fdb9d886050e2e228fb3127f567}
+Show progress bar in non-\/verbose mode, otherwise show \$msg
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$msg} & \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_sldeploy_ab86d69acf6b7804b417c085e6b815f6f}{
+\index{Sldeploy@{Sldeploy}!ssh\_\-check@{ssh\_\-check}}
+\index{ssh\_\-check@{ssh\_\-check}!Sldeploy@{Sldeploy}}
+\subsubsection[{ssh\_\-check}]{\setlength{\rightskip}{0pt plus 5cm}ssh\_\-check (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_ab86d69acf6b7804b417c085e6b815f6f}
+Check ssh configuration
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{class_sldeploy_a61701a328aa2b1deab91d83dc6ddb196}{
+\index{Sldeploy@{Sldeploy}!ssh\_\-get\_\-file@{ssh\_\-get\_\-file}}
+\index{ssh\_\-get\_\-file@{ssh\_\-get\_\-file}!Sldeploy@{Sldeploy}}
+\subsubsection[{ssh\_\-get\_\-file}]{\setlength{\rightskip}{0pt plus 5cm}ssh\_\-get\_\-file (
+\begin{DoxyParamCaption}
+\item[{\$}]{remote\_\-file, }
+\item[{\$}]{local\_\-file}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a61701a328aa2b1deab91d83dc6ddb196}
+Get remote file with ssh
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$remote\_\-file} & \\
+\hline
+string & {\em \$local\_\-file} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{class_sldeploy_ad13a7b10365361da78af141bec5f5bbf}{
+\index{Sldeploy@{Sldeploy}!ssh\_\-put\_\-file@{ssh\_\-put\_\-file}}
+\index{ssh\_\-put\_\-file@{ssh\_\-put\_\-file}!Sldeploy@{Sldeploy}}
+\subsubsection[{ssh\_\-put\_\-file}]{\setlength{\rightskip}{0pt plus 5cm}ssh\_\-put\_\-file (
+\begin{DoxyParamCaption}
+\item[{\$}]{local\_\-file, }
+\item[{\$}]{remote\_\-file}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_ad13a7b10365361da78af141bec5f5bbf}
+Tranfer file to remote server with ssh
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$local\_\-file} & \\
+\hline
+string & {\em \$remote\_\-file} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{class_sldeploy_ad5d0153681d636227aac630f1c32629f}{
+\index{Sldeploy@{Sldeploy}!ssh\_\-system@{ssh\_\-system}}
+\index{ssh\_\-system@{ssh\_\-system}!Sldeploy@{Sldeploy}}
+\subsubsection[{ssh\_\-system}]{\setlength{\rightskip}{0pt plus 5cm}ssh\_\-system (
+\begin{DoxyParamCaption}
+\item[{\$}]{command, }
+\item[{\$}]{passthru = {\ttfamily FALSE}}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_ad5d0153681d636227aac630f1c32629f}
+Execute system call over SSH
+
+\$this-\/$>$ssh\_\-user  \$this-\/$>$ssh\_\-server
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$command} & system command to execute over ssh \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string command output 
+\end{DoxyReturn}
+\hypertarget{class_sldeploy_a7a29394a5c49356fe0e53a9150813186}{
+\index{Sldeploy@{Sldeploy}!system@{system}}
+\index{system@{system}!Sldeploy@{Sldeploy}}
+\subsubsection[{system}]{\setlength{\rightskip}{0pt plus 5cm}system (
+\begin{DoxyParamCaption}
+\item[{\$}]{command, }
+\item[{\$}]{passthru = {\ttfamily FALSE}}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a7a29394a5c49356fe0e53a9150813186}
+Execute system call
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$command} & system command to execute\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string system command output 
+\end{DoxyReturn}
+\hypertarget{class_sldeploy_a279f8f924b7fd3d7db68b0a7a2d0aba1}{
+\index{Sldeploy@{Sldeploy}!validate\_\-projects@{validate\_\-projects}}
+\index{validate\_\-projects@{validate\_\-projects}!Sldeploy@{Sldeploy}}
+\subsubsection[{validate\_\-projects}]{\setlength{\rightskip}{0pt plus 5cm}validate\_\-projects (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_sldeploy_a279f8f924b7fd3d7db68b0a7a2d0aba1}
+Validate, if any project is configurated
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/system/sldeploy/lib/sldeploy/\hyperlink{sldeploy_8class_8php}{sldeploy.class.php}\end{DoxyCompactItemize}

@@ -14,6 +14,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
+ * @package  sldeploy
+ * @author  Alexander Meindl
+ * @link    https://github.com/alexandermeindl/sldeploy
  */
 
 class Sldeploy {
@@ -134,8 +137,6 @@ class Sldeploy {
   /**
    * Active plugin
    *
-   * (see $this->_checkParas for available plugins)
-   *
    * @var string
    */
   protected $plugin_name;
@@ -148,10 +149,29 @@ class Sldeploy {
   protected $paras;
 
   /**
+   * Progress bar
+   *
+   * @var object
+   */
+  private $progressbar;
+
+  /**
+   * Current position for progress bar
+   *
+   * @var int
+   * @see progressbar_update
+   */
+  private $progressbar_current_pos = 0;
+
+  /**
    * Constructor
    *
-   * @param array $conf
-   * @param bool $write_to_log
+   * @param array $conf configuration from configuration file
+   * @param string $plugin_name name of the active plugin
+   * @param object $paras command line parameters
+   * @param string $version sldeploy application version
+   *
+   * @return void
    */
   public function __construct($conf, $plugin_name, $paras, $version) {
 
@@ -177,23 +197,82 @@ class Sldeploy {
   }
 
   /**
-   * This function is run before batch plugins are running
+   * Show progress bar in non-verbose mode, otherwise show $msg
+   *
+   * @param string $msg
    */
-  public function run_batch_before() {
+  public function show_progress($msg, $with_step = TRUE) {
 
+    // show verbose message
+    if ((isset($this->paras->options['verbose']) && $this->paras->options['verbose']) || !is_object($this->progressbar)) {
+      $this->msg($msg);
+    }
+    else {
+      $this->progressbar_update($with_step);
+    }
   }
 
   /**
-   * This function is run before batch plugins are running
+   * Update progressbar
+   *
+   * @param  int  $current_pos
+   *
+   * @return void
    */
-  public function run_batch_after() {
+  public function progressbar_update($with_step = TRUE) {
 
+    if (!isset($this->paras->options['verbose']) || !$this->paras->options['verbose']) {
+
+      if ($with_step) {
+        $this->progressbar_step();
+      }
+
+      $this->progressbar->update($this->progressbar_current_pos);
+    }
+  }
+
+  /**
+   * Add next step to progress bar
+   *
+   */
+  public function progressbar_step() {
+    $this->progressbar_current_pos++;
+  }
+
+  /**
+   * Get current progress counter
+   *
+   */
+  public function get_progressbar_pos() {
+    return $this->progressbar_current_pos;
+  }
+
+  /**
+   * Initialize progressbar
+   *
+   * only active on non-verbose mode
+   *
+   * maximum steps are fetch from $this->get_progress_steps()
+   *
+   * @param int $init initial value of counter
+   *
+   * @return void
+   */
+  public function progressbar_init($init = 0) {
+
+    // initialize progress bar for non-verbose
+    if (!isset($this->paras->options['verbose']) || !$this->paras->options['verbose']) {
+      $this->progressbar = new Console_ProgressBar(' %fraction% [%bar%] %percent%  ', '=', ' ', 50, $this->get_steps($init));
+    }
   }
 
   /**
    * Set $this->scm object for SCM operations
    *
-   * @param string $mode = system, project
+   * @param string $mode values: system, project
+   *
+   * @return void
+   * @throws Exception
    */
   protected function set_scm($mode = 'system') {
 
@@ -227,6 +306,10 @@ class Sldeploy {
    * $this->project_name
    * $this->project
    *
+   * @param  string $project_name  name of project
+   * @param  array $project  project details
+   *
+   * @return  void
    */
   public function set_project($project_name, $project) {
 
@@ -281,6 +364,10 @@ class Sldeploy {
 
   /**
    * Get active projects
+   *
+   * Returns an array with all active projects, which are defined.
+   *
+   * @return array
    */
   public function get_projects() {
 
@@ -331,6 +418,7 @@ class Sldeploy {
   /**
    * Set active projects to $this->projects
    *
+   * @return void
    */
   public function set_projects() {
      $this->projects = $this->get_projects();
@@ -338,6 +426,7 @@ class Sldeploy {
 
   /**
    * Get hostname
+   *
    * @return  string
    */
   protected function get_hostname() {
@@ -347,6 +436,8 @@ class Sldeploy {
 
   /**
    * Set nice level to high or low
+   *
+   * @return void
    */
   public function set_nice($level) {
     $known_levels = array('high', 'low');
@@ -367,8 +458,9 @@ class Sldeploy {
   /**
    * Execute system call
    *
-   * @param   string  $command    - command to execute
-   * @return  string              - command output
+   * @param   string  $command  system command to execute
+   *
+   * @return  string system command output
    */
   public function system($command, $passthru = FALSE) {
     if ($this->debug) {
@@ -398,6 +490,8 @@ class Sldeploy {
 
   /**
    * Print message to console
+   *
+   * @return int
    */
   public function msg($msg, $error_code = 0) {
     if (is_array($msg)) {
@@ -435,6 +529,9 @@ class Sldeploy {
 
   /**
    * Check ssh configuration
+   *
+   * @return void
+   * @throws Exception
    */
   public function ssh_check() {
 
@@ -509,6 +606,9 @@ class Sldeploy {
    *
    * @param string  $remote_file
    * @param string  $local_file
+   *
+   * @return void
+   * @throws Exception
    */
   public function ssh_get_file($remote_file, $local_file) {
 
@@ -527,6 +627,9 @@ class Sldeploy {
    *
    * @param string  $local_file
    * @param string  $remote_file
+   *
+   * @return void
+   * @throws Exception
    */
   public function ssh_put_file($local_file, $remote_file) {
 
@@ -546,8 +649,8 @@ class Sldeploy {
    * @require $this->ssh_user
    * @require $this->ssh_server
    *
-   * @param   string  $command  - command to execute
-   * @return  string            - command output
+   * @param   string  $command system command to execute over ssh
+   * @return  string command output
    */
   public function ssh_system($command, $passthru = FALSE) {
 
@@ -563,9 +666,11 @@ class Sldeploy {
    *
    * @param string  $filename
    * @param bool    $only_command
+   *
    * @return string files
+   * @throws Exception
    */
-  public function gzip_file($filename, $only_command = FALSE, $verbose = TRUE) {
+  public function gzip_file($filename, $only_command = FALSE) {
 
     $command = $this->conf['gzip_bin'] . ' -f ' . $filename;
 
@@ -574,9 +679,7 @@ class Sldeploy {
       $files = array($gz_filename);
 
       $this->set_nice('low');
-      if ($verbose) {
-        $this->msg('compressing file: ' . $filename);
-      }
+      $this->show_progress('compressing file: ' . $filename);
       $rc = $this->system($command, TRUE);
       if ($rc['rc']) {
         throw new Exception('Error while compress file ' . $file);
@@ -594,7 +697,10 @@ class Sldeploy {
   /**
    * Create md5 hash and create hash file
    *
-   * return string filename of hash file
+   * @param string $filename name of file
+   *
+   * @return string filename of hash file
+   * @throws Exception
    */
   public function md5_file($filename) {
 
@@ -614,6 +720,8 @@ class Sldeploy {
    * Remove directory (with content and subdirectories
    *
    * @param string $dir
+   *
+   * @return void
    * @throws Exception
    */
   public function remove_directory($dir) {
@@ -631,10 +739,6 @@ class Sldeploy {
     // remove existing target directory
     if ($dir != '/') {
       $rc = $this->system('rm -r ' . $dir);
-      // restore permissions for workaround
-      if ($active_workaround) {
-        chmod(dirname($dir), '0' . $dirperm);
-      }
       if ($rc['rc']) {
         throw new Exception('Error with removing directory \'' . $dir. '\'');
       }
@@ -653,6 +757,8 @@ class Sldeploy {
    * unique
    *
    * calling: result = _arrayMergeRecursiveDistinct(a1, a2, ... aN)
+   *
+   * @return array
    */
   private function _arrayMergeRecursiveDistinct() {
     $arrays = func_get_args();
@@ -688,6 +794,7 @@ class Sldeploy {
   /**
    * Validate, if any project is configurated
    *
+   * @throws Exception
    */
   public function validate_projects() {
     if (!count($this->projects)) {
@@ -697,6 +804,9 @@ class Sldeploy {
 
   /**
    * Create backup of data directories
+   *
+   * @return void
+   * @throws Exception
    */
   public function create_project_data_backup() {
 
@@ -718,6 +828,7 @@ class Sldeploy {
    * Get source database name from database identifier
    *
    * @param string $identifier
+   *
    * @return string
    */
   public function get_source_db($identifier) {
@@ -738,7 +849,9 @@ class Sldeploy {
    * Get source data name from data identifier
    *
    * @param string $identifier
+   *
    * @return string
+   * @throws Exception
    */
   public function get_source_data($identifier) {
 
@@ -758,11 +871,13 @@ class Sldeploy {
    * @param string $source_dir
    * @param string $target_file
    * @param array $excludes
+   *
    * @return array created files (dump and hash file)
+   * @throws Exception
    */
   public function create_data_dump($source_dir, $target_file, $excludes = NULL) {
 
-    $this->msg('Creating tar file of director ' . $source_dir . '...');
+    $this->show_progress('Creating tar file of directory ' . $source_dir . '...');
 
     // change to parent directory
     $current_dir = getcwd();
@@ -800,28 +915,24 @@ class Sldeploy {
    *
    * @param string $db_name
    * @param string $target_file
-   * @param bool $verbose
    *
-   * @throws Exception
    * @return array created files (dump and hash file)
+   * @throws Exception
    */
-  public function create_db_dump($db_name, $target_file = NULL, $verbose = TRUE) {
+  public function create_db_dump($db_name, $target_file = NULL) {
 
     if (!isset($target_file)) {
       $target_file = $this->conf['backup_dir'] . '/db-' . $db_name . '-' . $this->date_stamp . '.sql';
     }
 
-    // verbose view
-    if ($verbose) {
-      $this->msg('Creating database dump of ' . $db_name . '...');
-    }
+    $this->show_progress('Creating database dump of ' . $db_name . '...');
 
     $this->set_nice('high');
     $rc = $this->system($this->conf['mysqldump_bin'] . ' ' . $this->conf['mysqldump_options'] . ' ' . $db_name . '>' . $target_file);
 
     // if no error, compress sql dump
     if (!$rc['rc']) {
-      return $this->gzip_file($target_file, NULL, $verbose);
+      return $this->gzip_file($target_file);
     }
     else {
       throw new Exception('Error creating database dump of "' . $db_name . '"');
@@ -831,10 +942,10 @@ class Sldeploy {
   /**
    * Get base filename for database dump
    *
-   * used be $this->get_sql_file()
-   *
    * @param string $name
+   *
    * @return string
+   * @see get_sql_file
    */
   private function _getRemoteBasename($name) {
 
@@ -848,10 +959,13 @@ class Sldeploy {
   /**
    * Get SQL file
    *
-   * @param string $db_name
-   * @return string
+   * @param string $identifier database identifier
+   * @param string $db name of the database
+   *
+   * @return string  absolute filename to the local transfered sql file
+   * @throws Exception
    */
-  public function get_remote_db_file($db_name, $db) {
+  public function get_remote_db_file($identifier, $db) {
 
     switch ($this->project['source_type']) {
 
@@ -862,7 +976,7 @@ class Sldeploy {
 
       case 'remote':
 
-        $remote_file = $this->project['remote_tmp_dir'] . '/' . $this->_getRemoteBasename('db_' . $db_name) . '.sql';
+        $remote_file = $this->project['remote_tmp_dir'] . '/' . $this->_getRemoteBasename('db_' . $identifier) . '.sql';
 
         $this->msg('Create Dump on remote server...');
         $rc = $this->ssh_system($this->conf['mysqldump_bin'] . ' ' . $db . ' > ' . $remote_file, TRUE);
@@ -876,7 +990,7 @@ class Sldeploy {
           throw new Exception('Error compress remote file.');
         }
 
-        $sql_file = $this->conf['tmp_dir'] . '/' . $this->_getRemoteBasename('db_' . $db_name) . '.sql.gz';
+        $sql_file = $this->conf['tmp_dir'] . '/' . $this->_getRemoteBasename('db_' . $identifier) . '.sql.gz';
 
         $this->ssh_get_file($remote_file . '.gz', $sql_file);
         break;
@@ -893,7 +1007,9 @@ class Sldeploy {
    *
    * @param string $identifier
    * @param string $dir
+   *
    * @return string
+   * @throws Exception
    */
   public function get_source_data_file($identifier, $source_dir) {
 
@@ -935,6 +1051,8 @@ class Sldeploy {
    * Use by $this->sanitize_database() and reset_db
    *
    * @param string $database
+   *
+   * @return void
    */
   public function sanitize_database_sanitize($database) {
 
@@ -977,6 +1095,8 @@ class Sldeploy {
    * @param string $source
    * @param string $source_db if specified, this database is used as source, otherwise sql_file is also used as target and source
    * @param bool $sanitize
+   *
+   * @return void
    */
   public function sanitize_database($sql_file, $source_db = NULL, $sanitize = TRUE) {
 

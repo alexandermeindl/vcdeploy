@@ -1,0 +1,152 @@
+\hypertarget{class_console___command_line___message_provider___default}{
+\section{Console\_\-CommandLine\_\-MessageProvider\_\-Default Class Reference}
+\label{class_console___command_line___message_provider___default}\index{Console\_\-CommandLine\_\-MessageProvider\_\-Default@{Console\_\-CommandLine\_\-MessageProvider\_\-Default}}
+}
+Inheritance diagram for Console\_\-CommandLine\_\-MessageProvider\_\-Default:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=1.830065cm]{class_console___command_line___message_provider___default}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_console___command_line___message_provider___default_af448a5f2e64ff7a482a69ea3197d0389}{get} (\$code, \$vars=array())
+\item 
+\hyperlink{class_console___command_line___message_provider___default_acdb5c6fb4f925e7b0c846875d1cc8186}{getWithCustomMessages} (\$code, \$vars=array(), \$messages=array())
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_console___command_line___message_provider___default_af7d8089e2f5a59a12cbf6ae46ea7b7aa}{replaceTemplateVars} (\$message, \$vars=array())
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_console___command_line___message_provider___default_aaf8d38bd4e7d07a3d97cc2f497f6d13f}{\$messages}
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_console___command_line___message_provider___default_af448a5f2e64ff7a482a69ea3197d0389}{
+\index{Console\_\-CommandLine\_\-MessageProvider\_\-Default@{Console\_\-CommandLine\_\-MessageProvider\_\-Default}!get@{get}}
+\index{get@{get}!Console_CommandLine_MessageProvider_Default@{Console\_\-CommandLine\_\-MessageProvider\_\-Default}}
+\subsubsection[{get}]{\setlength{\rightskip}{0pt plus 5cm}get (
+\begin{DoxyParamCaption}
+\item[{\$}]{code, }
+\item[{\$}]{vars = {\ttfamily array()}}
+\end{DoxyParamCaption}
+)}}
+\label{class_console___command_line___message_provider___default_af448a5f2e64ff7a482a69ea3197d0389}
+Retrieve the given string identifier corresponding message.
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$code} & The string identifier of the message \\
+\hline
+array & {\em \$vars} & An array of template variables\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{interface_console___command_line___message_provider_af448a5f2e64ff7a482a69ea3197d0389}{Console\_\-CommandLine\_\-MessageProvider}.
+
+\hypertarget{class_console___command_line___message_provider___default_acdb5c6fb4f925e7b0c846875d1cc8186}{
+\index{Console\_\-CommandLine\_\-MessageProvider\_\-Default@{Console\_\-CommandLine\_\-MessageProvider\_\-Default}!getWithCustomMessages@{getWithCustomMessages}}
+\index{getWithCustomMessages@{getWithCustomMessages}!Console_CommandLine_MessageProvider_Default@{Console\_\-CommandLine\_\-MessageProvider\_\-Default}}
+\subsubsection[{getWithCustomMessages}]{\setlength{\rightskip}{0pt plus 5cm}getWithCustomMessages (
+\begin{DoxyParamCaption}
+\item[{\$}]{code, }
+\item[{\$}]{vars = {\ttfamily array()}, }
+\item[{\$}]{messages = {\ttfamily array()}}
+\end{DoxyParamCaption}
+)}}
+\label{class_console___command_line___message_provider___default_acdb5c6fb4f925e7b0c846875d1cc8186}
+Retrieve the given string identifier corresponding message.
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$code} & The string identifier of the message \\
+\hline
+array & {\em \$vars} & An array of template variables \\
+\hline
+array & {\em \$messages} & An optional array of messages to use. Array indexes are message codes.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{interface_console___command_line___custom_message_provider_acdb5c6fb4f925e7b0c846875d1cc8186}{Console\_\-CommandLine\_\-CustomMessageProvider}.
+
+\hypertarget{class_console___command_line___message_provider___default_af7d8089e2f5a59a12cbf6ae46ea7b7aa}{
+\index{Console\_\-CommandLine\_\-MessageProvider\_\-Default@{Console\_\-CommandLine\_\-MessageProvider\_\-Default}!replaceTemplateVars@{replaceTemplateVars}}
+\index{replaceTemplateVars@{replaceTemplateVars}!Console_CommandLine_MessageProvider_Default@{Console\_\-CommandLine\_\-MessageProvider\_\-Default}}
+\subsubsection[{replaceTemplateVars}]{\setlength{\rightskip}{0pt plus 5cm}replaceTemplateVars (
+\begin{DoxyParamCaption}
+\item[{\$}]{message, }
+\item[{\$}]{vars = {\ttfamily array()}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{class_console___command_line___message_provider___default_af7d8089e2f5a59a12cbf6ae46ea7b7aa}
+Replaces template vars in a message
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$message} & The message \\
+\hline
+array & {\em \$vars} & An array of template variables\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string 
+\end{DoxyReturn}
+
+
+\subsection{Field Documentation}
+\hypertarget{class_console___command_line___message_provider___default_aaf8d38bd4e7d07a3d97cc2f497f6d13f}{
+\index{Console\_\-CommandLine\_\-MessageProvider\_\-Default@{Console\_\-CommandLine\_\-MessageProvider\_\-Default}!\$messages@{\$messages}}
+\index{\$messages@{\$messages}!Console_CommandLine_MessageProvider_Default@{Console\_\-CommandLine\_\-MessageProvider\_\-Default}}
+\subsubsection[{\$messages}]{\setlength{\rightskip}{0pt plus 5cm}array \$messages\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{class_console___command_line___message_provider___default_aaf8d38bd4e7d07a3d97cc2f497f6d13f}
+{\bfseries Initial value:}
+\begin{DoxyCode}
+ array(
+        'OPTION_VALUE_REQUIRED'   => 'Option "{$name}" requires a value.',
+        'OPTION_VALUE_UNEXPECTED' => 'Option "{$name}" does not expect a value (g
+      ot "{$value}").',
+        'OPTION_VALUE_NOT_VALID'  => 'Option "{$name}" must be one of the followi
+      ng: "{$choices}" (got "{$value}").',
+        'OPTION_VALUE_TYPE_ERROR' => 'Option "{$name}" requires a value of type {
+      $type} (got "{$value}").',
+        'OPTION_AMBIGUOUS'        => 'Ambiguous option "{$name}", can be one of t
+      he following: {$matches}.',
+        'OPTION_UNKNOWN'          => 'Unknown option "{$name}".',
+        'ARGUMENT_REQUIRED'       => 'You must provide at least {$argnum} argumen
+      t{$plural}.',
+        'PROG_HELP_LINE'          => 'Type "{$progname} --help" to get help.',
+        'PROG_VERSION_LINE'       => '{$progname} version {$version}.',
+        'COMMAND_HELP_LINE'       => 'Type "{$progname} <command> --help" to get 
+      help on specific command.',
+        'USAGE_WORD'              => 'Usage',
+        'OPTION_WORD'             => 'Options',
+        'ARGUMENT_WORD'           => 'Arguments',
+        'COMMAND_WORD'            => 'Commands',
+        'PASSWORD_PROMPT'         => 'Password: ',
+        'PASSWORD_PROMPT_ECHO'    => 'Password (warning: will echo): ',
+        'INVALID_CUSTOM_INSTANCE' => 'Instance does not implement the required in
+      terface',
+        'LIST_OPTION_MESSAGE'     => 'lists valid choices for option {$name}',
+        'LIST_DISPLAYED_MESSAGE'  => 'Valid choices are: ',
+        'INVALID_SUBCOMMAND'      => 'Command "{$command}" is not valid.',
+    )
+\end{DoxyCode}
+Associative array of messages 
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/system/sldeploy/lib/Console/CommandLine/MessageProvider/Default.php\end{DoxyCompactItemize}

@@ -32,6 +32,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
+ * @package  sldeploy
+ * @author  Alexander Meindl
+ * @link    https://github.com/alexandermeindl/sldeploy
  */
 
 $plugin['info'] = 'Create a new release. If no project is specified, for all projects a new release will be created';
@@ -74,10 +77,34 @@ $plugin['options']['without_data'] = array(
                                           'description' => 'Do not create data dump with this release (overwrites [release][with_data]',
                                         );
 
+$plugin['options']['create_tag'] = array(
+                                        'short_name'  => '-t',
+                                        'long_name'   => '--create_tag',
+                                        'action'      => 'StoreTrue',
+                                        'description' => 'Create a tag for this release (overwrites [release][create_tag]',
+                                      );
+
+$plugin['options']['dontcreate_tag'] = array(
+                                          'short_name'  => '-T',
+                                          'long_name'   => '--dont_create_tag',
+                                          'action'      => 'StoreTrue',
+                                          'description' => 'Do not create tag for this release (overwrites [release][create_tag]',
+                                        );
+
 class SldeployPluginReleaseCreate extends sldeploy {
 
+  /**
+   * Push files to SCM server
+   *
+   * @var bool
+   */
   private $with_push = FALSE;
 
+  /**
+   * files to commit
+   *
+   * @var array
+   */
   private $commit_files = array();
 
   /**
@@ -100,6 +127,8 @@ class SldeployPluginReleaseCreate extends sldeploy {
   /**
    * This function is run with the command
    *
+   * @return int
+   * @throws Exception
    * @see sldeploy#run()
    */
   public function run() {
@@ -125,31 +154,53 @@ class SldeployPluginReleaseCreate extends sldeploy {
   }
 
   /**
+   * Get max steps of this plugin for progress view
+   *
+   * @param int $init initial value of counter
+   *
+   * @return int amount of working steps of this plugin
+   * @see Sldeploy#progressbar_init()
+   */
+  public function get_steps($init = 0) {
+    return $init++;
+  }
+
+  /**
    * Create a release for all active projects
    *
-   * @return bool
+   * @return int
    */
   private function _projectReleases() {
 
     // check for existing projects
     $this->validate_projects();
 
+    $rc = 0;
+
     foreach ($this->projects AS $project_name => $project) {
       $this->set_project($project_name, $project);
       $this->msg('Project: ' . $this->project_name);
-      $this->_projectRelease($this->project_name);
+
+      $r = $this->_projectRelease($this->project_name);
+      if ($r) {
+        $rc += $r;
+      }
     }
 
-    return TRUE;
+    return $rc;
   }
 
   /**
    * Create a release for a project
    *
    * @param string $project_name
-   * @return bool
+   *
+   * @return int amount of errors
+   * @throws Exception
    */
   private function _projectRelease($project_name) {
+
+    $rc = 0;
 
     if (!is_array($this->project)) {
 
@@ -171,16 +222,23 @@ class SldeployPluginReleaseCreate extends sldeploy {
     // files to commit
     $commit_files = array();
 
+    $with_commit = FALSE;
+
     // set tag
-    // TODO: activate tag
-    $this->_setTag();
+    if ((isset($this->paras->command->options['create_tag']) && ($this->paras->command->options['create_tag']))
+      || (isset($this->project['release']['create_tag']) && $this->project['release']['create_tag'])
+    ) {
+      if (!isset($this->paras->command->options['dontcreate_tag']) || (!$this->paras->command->options['dontcreate_tag'])) {
+        $this->_setTag();
+        $with_commit = TRUE;
+      }
+    }
 
     try {
 
       if ((isset($this->paras->command->options['with_db']) && ($this->paras->command->options['with_db']))
         || (isset($this->project['release']['with_db']) && $this->project['release']['with_db'])
-      )
-      {
+      ) {
         if (!isset($this->paras->command->options['without_db']) || (!$this->paras->command->options['without_db'])) {
           $this->_createDbDump();
         }
@@ -188,8 +246,7 @@ class SldeployPluginReleaseCreate extends sldeploy {
 
       if ((isset($this->paras->command->options['with_data']) && ($this->paras->command->options['with_data']))
         || (isset($this->project['release']['with_data']) && $this->project['release']['with_data'])
-      )
-      {
+      ) {
         if (!isset($this->paras->command->options['without_data']) || (!$this->paras->command->options['without_data'])) {
           $this->_createDataArchive();
         }
@@ -202,23 +259,30 @@ class SldeployPluginReleaseCreate extends sldeploy {
     } catch (Exception $e) {
 
       // remove local tag
-      $this->_removeTag();
+      if ($with_commit) {
+        $this->_removeTag();
+      }
 
       print 'Message: ' . $e->getMessage();
-      die('test: fix it');
     }
 
-    // only disabled for testing
-    if ($this->with_push && count($this->commit_files)) {
+    if ($with_commit && count($this->commit_files)) {
 
-      // TODO: commit files
       $this->system($this->scm->commit('Files for release ' . $this->tag . ' have been added.', $this->commit_files));
+
+      // only disabled for testing
+      if ($this->with_push) {
+        $this->system($this->scm->push());
+      }
     }
+
+    return $rc;
   }
 
   /**
    * Prepare build environment
    *
+   * @return void
    * @throws Exception
    */
   private function _prepareEnvironment() {
@@ -235,6 +299,8 @@ class SldeployPluginReleaseCreate extends sldeploy {
   /**
    * Set new tag
    *
+   * @return void
+   * @throws Exception
    */
   private function _setTag() {
 
@@ -248,6 +314,9 @@ class SldeployPluginReleaseCreate extends sldeploy {
 
   /**
    * Remove a local tag
+   *
+   * @return void
+   * @throws Exception
    */
   private function _removeTag() {
 
@@ -264,6 +333,8 @@ class SldeployPluginReleaseCreate extends sldeploy {
    * Add files to $this->commit_files
    *
    * @param array $files
+   *
+   * @return void
    */
   private function _addCommitFiles($files) {
     if (is_array($files)) {
@@ -274,6 +345,7 @@ class SldeployPluginReleaseCreate extends sldeploy {
   /**
    * Create database dump
    *
+   * @return void
    */
   private function _createDbDump() {
 
@@ -314,6 +386,8 @@ class SldeployPluginReleaseCreate extends sldeploy {
 
   /**
    * create archive of data directories
+   *
+   * @return void
    */
   private function _createDataArchive() {
 
@@ -352,6 +426,9 @@ class SldeployPluginReleaseCreate extends sldeploy {
    * - remove unwanted files
    * - create archive file of directory or subdirectory
    * - remove temporary directory
+   *
+   * @return void
+   * @throws Exception
    */
   private function _createProjectArchive() {
 

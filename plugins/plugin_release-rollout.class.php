@@ -19,6 +19,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
+ * @package  sldeploy
+ * @author  Alexander Meindl
+ * @link    https://github.com/alexandermeindl/sldeploy
  */
 
 $plugin['info'] = 'rollout a new release';
@@ -73,6 +76,8 @@ class SldeployPluginReleaseRollout extends Sldeploy {
   /**
    * This function is run with the command
    *
+   * @return int
+   * @throws Exception
    * @see sldeploy#run()
    */
   public function run() {
@@ -114,6 +119,18 @@ class SldeployPluginReleaseRollout extends Sldeploy {
   }
 
   /**
+   * Get max steps of this plugin for progress view
+   *
+   * @param int $init initial value of counter
+   *
+   * @return int amount of working steps of this plugin
+   * @see Sldeploy#progressbar_init()
+   */
+  public function get_steps($init = 0) {
+    return $init++;
+  }
+
+  /**
    * Rollout project
    *
    * Three type of archive files are supported
@@ -128,6 +145,8 @@ class SldeployPluginReleaseRollout extends Sldeploy {
    * ['rollout']['with_data'] = TRUE
    * directories/files (data) of the release (tag) will replace the project data
    *
+   * @return int
+   * @throws Exception
    */
   private function _projectRollout() {
 
@@ -156,8 +175,7 @@ class SldeployPluginReleaseRollout extends Sldeploy {
     // 2. databases
     if ((isset($this->paras->command->options['with_db']) && ($this->paras->command->options['with_db']))
       || (isset($this->project['rollout']['with_db']) && $this->project['rollout']['with_db'])
-    )
-    {
+    ) {
       if (!isset($this->paras->command->options['without_db']) || (!$this->paras->command->options['without_db'])) {
         $rc = $this->_dbRollout();
       }
@@ -166,8 +184,7 @@ class SldeployPluginReleaseRollout extends Sldeploy {
     // 3. data (files/directories)
     if ((isset($this->paras->command->options['with_data']) && ($this->paras->command->options['with_data']))
       || (isset($this->project['rollout']['with_data']) && $this->project['rollout']['with_data'])
-    )
-    {
+    ) {
       if (!isset($this->paras->command->options['without_data']) || (!$this->paras->command->options['without_data'])) {
         $rc = $this->_dataRollout();
       }
@@ -177,11 +194,14 @@ class SldeployPluginReleaseRollout extends Sldeploy {
     if (isset($this->project['rollout']['post_commands'])) {
       $this->post_commands($this->project['rollout']['post_commands']);
     }
+
+    return $rc;
   }
 
   /**
    * Make backup of data, database and project code
    *
+   * @return void
    */
   private function _backup() {
 
@@ -221,6 +241,8 @@ class SldeployPluginReleaseRollout extends Sldeploy {
    * The existing database will be replaced
    * with the database from the release tag
    *
+   * @return int
+   * @throws Exception
    */
   private function _dbRollout() {
 
@@ -244,13 +266,17 @@ class SldeployPluginReleaseRollout extends Sldeploy {
 
       $this->msg('Database ' . $db . ' has been successfully reseted.');
     }
+
+    return 0;
   }
 
   /**
    * Get database restore file
    *
    * @param string $db
+   *
    * @return string
+   * @throws Exception
    */
   private function _getRestoreSqlFile($db) {
 
@@ -270,7 +296,9 @@ class SldeployPluginReleaseRollout extends Sldeploy {
    * Get data restore file
    *
    * @param string $name
+   *
    * @return string
+   * @throws Exception
    */
   private function _getRestoreDataFile($name) {
 
@@ -292,6 +320,7 @@ class SldeployPluginReleaseRollout extends Sldeploy {
    * Existing directories/files will be replaced
    * with the archive of the release tag
    *
+   * @return int
    */
   private function _dataRollout() {
 
@@ -311,7 +340,7 @@ class SldeployPluginReleaseRollout extends Sldeploy {
 
     }
 
-    return TRUE;
+    return 0;
   }
 
   /**
@@ -320,6 +349,7 @@ class SldeployPluginReleaseRollout extends Sldeploy {
    * The existing project code will be replaced
    * with the archive of the release tag
    *
+   * @return bool
    */
   private function _codeRollout() {
 
