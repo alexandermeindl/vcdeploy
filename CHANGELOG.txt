@@ -1,0 +1,41 @@
+// CHANGELOG.txt
+
+sldeploy 0.41, 2011-01-11
+-------------------------
+- Added documentation first draft (doxygen)
+- better support for progressbar
+- Added plugin command-ls (option command -l has been removed)
+- Added plugin releases-ls
+
+sldeploy 0.40, 2011-01-08
+-------------------------
+- Switched to PEAR CommandLine
+- Switched to PEAR ProgressBar
+- Switched to PEAR Log
+- Added plugin release-create
+- Added plugin release-rollout
+- Added custom exception handler
+- Parameter syntax changed, a plugin is called without -p, e.g. sldeploy status
+- Cleanup for command plugin
+- Fixed notice with PHP 5.2.x
+- Lots of cleanup
+
+sldeploy 0.23, 2010-10-10
+-------------------------
+- Added plugin status
+- Added plugin command
+
+sldeploy 0.21, 2010-10-09
+-------------------------
+- Added plugins for backups: backup-db, backup-files, backup-rsync, backup-ls, backup-clear
+- Added SuSE support for update-system
+
+sldeploy 0.20, 2010-03-08
+-------------------------
+- multi project support with reset-db
+- Added plugin reset-dir
+- Added plugin system-log
+
+sldeploy 0.10, 2010-02-17
+-------------------------
+- first release
