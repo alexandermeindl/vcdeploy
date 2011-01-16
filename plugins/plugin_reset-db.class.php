@@ -45,6 +45,9 @@ class SldeployPluginResetDb extends Sldeploy {
     // check for existing projects
     $this->validate_projects();
 
+    // check backup directory if exists and is writable
+    $this->prepare_backup_dir();
+
     if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
       $project_name = $this->paras->command->options['project'];
       if (!array_key_exists($project_name, $this->projects)) {

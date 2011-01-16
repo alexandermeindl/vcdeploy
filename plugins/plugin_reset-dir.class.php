@@ -46,6 +46,9 @@ class SldeployPluginResetDir extends Sldeploy {
     // check for existing projects
     $this->validate_projects();
 
+    // check backup directory if exists and is writable
+    $this->prepare_backup_dir();
+
     if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
       $project_name = $this->paras->command->options['project'];
       if (!array_key_exists($project_name, $this->projects)) {
@@ -102,7 +105,7 @@ class SldeployPluginResetDir extends Sldeploy {
 
           // Restore Tar file
           chdir(dirname($dir)); // go to parent directory
-          $this->system($this->conf['tar_bin'] . ' xfz ' . $tar_file);
+          $this->system($this->conf['tar_bin'] . ' -xz --no-same-owner -f ' . $tar_file);
 
           if (isset($this->project['reset_dir']['post_commands'])) {
             $this->post_commands($this->project['reset_dir']['post_commands']);

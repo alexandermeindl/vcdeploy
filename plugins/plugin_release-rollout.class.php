@@ -170,6 +170,10 @@ class SldeployPluginReleaseRollout extends Sldeploy {
       if ($rc['rc']) {
         throw new Exception('Error on updating project code from SCM');
       }
+      $rc = $this->system($this->activate_tag($this->tag));
+      if ($rc['rc']) {
+        throw new Exception('Error switching to tag \'' . $this->tag . '\'');
+      }
     }
 
     // 2. databases
@@ -204,6 +208,9 @@ class SldeployPluginReleaseRollout extends Sldeploy {
    * @return void
    */
   private function _backup() {
+
+    // check backup directory if exists and is writable
+    $this->prepare_backup_dir();
 
     // create backup of existing data
     if (isset($this->project['data_dir'])) {
@@ -336,8 +343,7 @@ class SldeployPluginReleaseRollout extends Sldeploy {
 
       // Restore Tar file
       chdir(dirname($dir)); // go to parent directory
-      $this->system($this->conf['tar_bin'] . ' xfz ' . $tar_file);
-
+      $this->system($this->conf['tar_bin'] . ' -xz --no-same-owner -f ' . $tar_file);
     }
 
     return 0;

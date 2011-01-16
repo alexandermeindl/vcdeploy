@@ -1,5 +1,13 @@
 // CHANGELOG.txt
 
+sldeploy 0.42, 2011-01-16
+-------------------------
+- Added switch to tag for SCMs
+- Fixed rollout with tag
+- Changed no permission are restored of archive file
+- Improved backup_dir status (if directory does not exist)
+- Fixed backup_dir directory is created automatically
+
 sldeploy 0.41, 2011-01-11
 -------------------------
 - Added documentation first draft (doxygen)

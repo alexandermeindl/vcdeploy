@@ -54,12 +54,8 @@ class SldeployPluginBackupDb extends Sldeploy {
    */
   public function run() {
 
-    if (empty($this->conf['backup_dir'])) {
-      throw new Exception('Backup directory not specified.');
-    }
-    elseif (!file_exists($this->conf['backup_dir'])) {
-      throw new Exception('Backup directory does not exist.');
-    }
+    // check backup directory if exists and is writable
+    $this->prepare_backup_dir();
 
     if (isset($this->paras->command->options['database']) && !empty($this->paras->command->options['database'])) {
       $this->create_db_dump($this->paras->command->options['database']);
@@ -75,6 +71,8 @@ class SldeployPluginBackupDb extends Sldeploy {
    * Create database dump
    *
    * @param string $db_name
+   *
+   * @return void
    */
   private function _singleDb($db_name) {
     $this->create_db_dump($db_name);

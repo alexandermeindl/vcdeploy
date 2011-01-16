@@ -19,7 +19,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">sldeploy&#160;<span id="projectnumber">0.41</span></div>
+   <div id="projectname">sldeploy&#160;<span id="projectnumber">0.42</span></div>
   </td>
  </tr>
  </tbody>
@@ -131,6 +131,7 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sldeploy.html#a64454a6b24f9442a9bc7be51b9ab666d">get_source_data_file</a> ($identifier, $source_dir)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sldeploy.html#a046789750c550ebe7371985782ff2ebb">sanitize_database_sanitize</a> ($database)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sldeploy.html#a7630a30023f845a4ade82d2b93d5c7d9">sanitize_database</a> ($sql_file, $source_db=NULL, $sanitize=TRUE)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sldeploy.html#a6cceac6da9c91f175ac7e186cc411465">prepare_backup_dir</a> ()</td></tr>
 <tr><td colspan="2"><h2><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa36f57c62963507498e1181f9a75bbb9"></a><!-- doxytag: member="Sldeploy::$base_dir" ref="aa36f57c62963507498e1181f9a75bbb9" args="" -->
@@ -391,7 +392,8 @@ Protected Attributes</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Get current progress counter </p>
+<p>Get current progress counter</p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>int </dd></dl>
 
 </div>
 </div>
@@ -439,6 +441,7 @@ Protected Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 <p>Get SQL file</p>
+<p>Dump a sql file on a remote server with ssl connection and transfer file to build server</p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramtype">string</td><td class="paramname">$identifier</td><td>database identifier </td></tr>
@@ -586,7 +589,7 @@ Protected Attributes</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>string files </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>string files list of files (compressed file and hash file) </dd></dl>
 <dl><dt><b>Exceptions:</b></dt><dd>
   <table class="exception">
     <tr><td class="paramname">Exception</td><td></td></tr>
@@ -652,6 +655,13 @@ Protected Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 <p>Print message to console</p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">string</td><td class="paramname">$msg</td><td>message to print </td></tr>
+    <tr><td class="paramtype">int</td><td class="paramname">$error_code</td><td>if greater 0, script exit with $error_code as return value</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>int </dd></dl>
 
 </div>
@@ -671,7 +681,41 @@ Protected Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 <p>Run this post commands after plugin action (if supported by plugin)</p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>bool </dd></dl>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">array</td><td class="paramname">$post_commands</td><td>commands for system calls</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>int </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a6cceac6da9c91f175ac7e186cc411465"></a><!-- doxytag: member="Sldeploy::prepare_backup_dir" ref="a6cceac6da9c91f175ac7e186cc411465" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">prepare_backup_dir </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Check backup directory</p>
+<ul>
+<li>if directory can be created, it will be created</li>
+<li>if directory cannot be created, throw exception</li>
+</ul>
+<dl class="return"><dt><b>Returns:</b></dt><dd>void </dd></dl>
+<dl><dt><b>Exceptions:</b></dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">Exception</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -715,7 +759,8 @@ Protected Attributes</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Add next step to progress bar </p>
+<p>Add next step to progress bar</p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>void </dd></dl>
 
 </div>
 </div>
@@ -758,7 +803,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Remove directory (with content and subdirectories</p>
+<p>Remove directory (with content and subdirectories)</p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramtype">string</td><td class="paramname">$dir</td><td></td></tr>
@@ -858,7 +903,13 @@ Protected Attributes</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Set nice level to high or low</p>
+<p>Set nice level</p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">string</td><td class="paramname">$level</td><td>high or low are allowed values</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>void </dd></dl>
 
 </div>
@@ -980,6 +1031,7 @@ Protected Attributes</h2></td></tr>
   </table>
   </dd>
 </dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>void </dd></dl>
 
 </div>
 </div>
@@ -1154,7 +1206,8 @@ Protected Attributes</h2></td></tr>
 <p>Execute system call</p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramtype">string</td><td class="paramname">$command</td><td>system command to execute</td></tr>
+    <tr><td class="paramtype">string</td><td class="paramname">$command</td><td>system command to execute </td></tr>
+    <tr><td class="paramtype">bool</td><td class="paramname">$passthru</td><td></td></tr>
   </table>
   </dd>
 </dl>
@@ -1186,7 +1239,7 @@ Protected Attributes</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>www/system/sldeploy/lib/sldeploy/<a class="el" href="sldeploy_8class_8php.html">sldeploy.class.php</a></li>
+<li>/Users/alex/www/system/sldeploy/lib/sldeploy/<a class="el" href="sldeploy_8class_8php.html">sldeploy.class.php</a></li>
 </ul>
 </div>
 <!--- window showing the filter options -->
@@ -1203,8 +1256,9 @@ Protected Attributes</h2></td></tr>
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Tue Jan 11 2011 19:13:20 for sldeploy by&#160;
-<a href="http://www.doxygen.org/index.html">
-<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.3 </small></address>
+<div style="text-align: center; padding-top: 20px;">
+  <a href="http://www.squatlabs.com/">Powered by squatlabs</a> - <a href="http://www.squatlabs.com/imprint">Imprint/Impressum</a>
+</div>
+
 </body>
 </html>

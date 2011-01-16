@@ -40,7 +40,7 @@ class SldeployPluginStatus extends Sldeploy implements ISldeployPlugin {
     $this->msg("System OS:\t\t" . $this->conf['system_os']);
     $this->msg("Config file:\t\t" . $this->conf['config_file']);
     $this->msg("System source:\t\t" . $this->conf['system_source']);
-    $this->msg("Backup dir:\t\t" . $this->conf['backup_dir']);
+    $this->msg("Backup dir:\t\t" . $this->conf['backup_dir'] . $this->_checkDir($this->conf['backup_dir']));
     $this->msg("Project (active):\t" . count($this->get_projects()));
     $this->msg("Project (all):\t\t" . count($this->get_all_projects()));
 
@@ -57,5 +57,36 @@ class SldeployPluginStatus extends Sldeploy implements ISldeployPlugin {
    */
   public function get_steps($init = 0) {
     return $init++;
+  }
+
+  /**
+   * Check directory
+   * - if it exist
+   * - if it is a directory
+   * - if sldeloy has write permission
+   *
+   * @param string $dir
+   * @return string if a problem exist, message is returned
+   */
+  private function _checkDir($dir) {
+
+    $msg = '';
+
+    if (!file_exists($dir)) {
+      $msg = 'does not exist';
+    }
+    elseif (!is_dir($dir)) {
+      $msg = 'is not a directory';
+    }
+    elseif (!is_writable($dir)) {
+      $msg = 'is not writable';
+    }
+
+    if (empty($msg)) {
+      return $msg;
+    }
+    else {
+      return ' (' . $msg . ')';
+    }
   }
 }

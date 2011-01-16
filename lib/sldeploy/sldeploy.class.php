@@ -200,6 +200,8 @@ class Sldeploy {
    * Show progress bar in non-verbose mode, otherwise show $msg
    *
    * @param string $msg
+   *
+   * @return void
    */
   public function show_progress($msg, $with_step = TRUE) {
 
@@ -234,6 +236,7 @@ class Sldeploy {
   /**
    * Add next step to progress bar
    *
+   * @return void
    */
   public function progressbar_step() {
     $this->progressbar_current_pos++;
@@ -242,6 +245,7 @@ class Sldeploy {
   /**
    * Get current progress counter
    *
+   * @return int
    */
   public function get_progressbar_pos() {
     return $this->progressbar_current_pos;
@@ -292,7 +296,7 @@ class Sldeploy {
 
     include_once 'sldeploy/scm/' . $scm_type . '.inc.php';
     $class = 'SldeployScm' . ucwords($scm_type);
-    if ($mode=='project') {
+    if ($mode == 'project') {
       $this->scm = new $class($this->conf, $this->project);
     }
     else {
@@ -435,7 +439,9 @@ class Sldeploy {
   }
 
   /**
-   * Set nice level to high or low
+   * Set nice level
+   *
+   * @param  string $level high or low are allowed values
    *
    * @return void
    */
@@ -459,6 +465,7 @@ class Sldeploy {
    * Execute system call
    *
    * @param   string  $command  system command to execute
+   * @param   bool  $passthru
    *
    * @return  string system command output
    */
@@ -491,6 +498,9 @@ class Sldeploy {
   /**
    * Print message to console
    *
+   * @param string $msg message to print
+   * @param int $error_code if greater 0, script exit with $error_code as return value
+   *
    * @return int
    */
   public function msg($msg, $error_code = 0) {
@@ -509,7 +519,9 @@ class Sldeploy {
   /**
    * Run this post commands after plugin action (if supported by plugin)
    *
-   * @return bool
+   * @param array $post_commands commands for system calls
+   *
+   * @return int
    */
   public function post_commands($post_commands) {
 
@@ -522,8 +534,10 @@ class Sldeploy {
         }
 
         $this->msg('Running post command: ' . $command);
-        $this->system($command);
+        $rc = $this->system($command);
       }
+
+      return $rc['rc'];
     }
   }
 
@@ -667,7 +681,7 @@ class Sldeploy {
    * @param string  $filename
    * @param bool    $only_command
    *
-   * @return string files
+   * @return string files list of files (compressed file and hash file)
    * @throws Exception
    */
   public function gzip_file($filename, $only_command = FALSE) {
@@ -710,14 +724,14 @@ class Sldeploy {
     try {
       file_put_contents($md5_filename, $md5 . '  ' . basename($filename));
     } catch (Exception $e) {
-      $this->msg('Could not create hash file \'' . $md5_filename . '\'',1);
+      $this->msg('Could not create hash file \'' . $md5_filename . '\'', 1);
     }
 
     return $md5_filename;
   }
 
   /**
-   * Remove directory (with content and subdirectories
+   * Remove directory (with content and subdirectories)
    *
    * @param string $dir
    *
@@ -730,7 +744,7 @@ class Sldeploy {
 
     // workaround for wrong permission settings
     $dirperm = substr(decoct(fileperms(dirname($dir))), 2);
-    if ($dirperm<700) {
+    if ($dirperm < 700) {
       $this->msg('Fix directory permissions to 0750 (workaround)...');
       chmod(dirname($dir), 0750);
       $active_workaround = TRUE;
@@ -740,7 +754,7 @@ class Sldeploy {
     if ($dir != '/') {
       $rc = $this->system('rm -r ' . $dir);
       if ($rc['rc']) {
-        throw new Exception('Error with removing directory \'' . $dir. '\'');
+        throw new Exception('Error with removing directory \'' . $dir . '\'');
       }
     }
     else {
@@ -838,7 +852,8 @@ class Sldeploy {
       $source_db = $this->project['source_db'][$identifier];
     }
     else {
-      // if no source database has been specified, same name as local will be used
+      // if no source database has been specified,
+      // same name as local will be used
       $source_db = $this->project['db'][$identifier];
     }
 
@@ -958,6 +973,9 @@ class Sldeploy {
 
   /**
    * Get SQL file
+   *
+   * Dump a sql file on a remote server with ssl connection
+   * and transfer file to build server
    *
    * @param string $identifier database identifier
    * @param string $db name of the database
@@ -1083,7 +1101,7 @@ class Sldeploy {
       foreach ($this->project['sanitize']['sql'] AS $sql) {
         if (!empty($sql)) {
           $this->msg('Run sanitize SQL query...');
-          $this->system($this->conf['mysql_bin'] . ' ' . $database . ' -e "' . $sql .'"', TRUE);
+          $this->system($this->conf['mysql_bin'] . ' ' . $database . ' -e "' . $sql . '"', TRUE);
         }
       }
     }
@@ -1093,7 +1111,9 @@ class Sldeploy {
    * Sanitize database
    *
    * @param string $source
-   * @param string $source_db if specified, this database is used as source, otherwise sql_file is also used as target and source
+   * @param string $source_db if specified, this database is used as source,
+   *                          otherwise sql_file is also used as target
+   *                          and source
    * @param bool $sanitize
    *
    * @return void
@@ -1121,5 +1141,38 @@ class Sldeploy {
     // 4. Create dump
     $this->msg('Creating scm dump for ' . $this->project_name . '...');
     $this->system($this->conf['mysqldump_bin'] . ' ' . $this->conf['mysqldump_options'] . ' ' . $this->conf['tmp_db'] . ' > ' . $sql_file, TRUE);
+  }
+
+  /**
+   * Check backup directory
+   * - if directory can be created, it will be created
+   * - if directory cannot be created, throw exception
+   *
+   * @return void
+   * @throws Exception
+   */
+  function prepare_backup_dir() {
+
+    if (empty($this->conf['backup_dir'])) {
+      throw new Exception('Backup directory not specified.');
+    }
+    elseif (file_exists($this->conf['backup_dir'])) {
+      if (!is_writable($this->conf['backup_dir'])) {
+        throw new Exception('Backup directory \'' . $this->conf['backup_dir'] . '\' is not writable.');
+      }
+    }
+    else {
+
+      try {
+        mkdir($this->conf['backup_dir'], 0700, TRUE);
+      } catch (Exception $e) {
+        $this->msg($e->message(), 1);
+      }
+
+      // TODO: check exception handler to die with warnings
+      if (!file_exists($this->conf['backup_dir'])) {
+        throw new Exception('Backup directory \'' . $this->conf['backup_dir'] . '\' does not exist and couldn\'t created automatically.');
+      }
+    }
   }
 }

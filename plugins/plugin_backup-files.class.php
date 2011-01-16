@@ -33,6 +33,10 @@ class SldeployPluginBackupFiles extends Sldeploy {
   public function run() {
 
     $this->msg('Run backups...');
+
+    // check backup directory if exists and is writable
+    $this->prepare_backup_dir();
+
     return $this->_backupFiles();
   }
 
