@@ -63,6 +63,7 @@ class SldeployPluginUpdateSystem extends Sldeploy {
     $this->show_progress('Update system files...');
     $this->system($this->conf['cp_bin'] . ' -ru . /', TRUE);
 
+    $this->_modsConfig();
     $this->_vhostsConfig();
     $this->_servicesConfig();
     $this->_servicesRestart();
@@ -83,13 +84,16 @@ class SldeployPluginUpdateSystem extends Sldeploy {
     // 1.  system file update
     $init++;
 
-    // 2. vhostsConfig
+    // 2. modsConfig
+    $init += $this->_modsConfig(TRUE);
+
+    // 3. vhostsConfig
     $init += $this->_vhostsConfig(TRUE);
 
-    // 3. serviceConfig
+    // 4. serviceConfig
     $init += $this->_servicesConfig(TRUE);
 
-    // 4. serviceRestart
+    // 5. serviceRestart
     $init += $this->_servicesRestart(TRUE);
 
     return $init;
@@ -98,44 +102,55 @@ class SldeployPluginUpdateSystem extends Sldeploy {
   /**
    * Configure vhosts: enable or disable vhosts
    *
-   * @param bool $try if true, this is test run without system calls
+   * @param bool $try if true, this is a test run without system calls
    *
    * @return int amount of system commands
    */
   private function _vhostsConfig($try = FALSE) {
 
-    $count = 0;
-
-    // Enable and disable apache vhosts
-    if (!empty($this->conf['apache_sites'])) {
-      $vhosts = explode(' ', $this->conf['apache_sites']);
-      $vhosts_enable = array();
-      if (!empty($this->conf['apache_sites_enable'])) {
-        $vhosts_enable = explode(' ', $this->conf['apache_sites_enable']);
-      }
-
-      if (is_array($vhosts)) {
-        foreach ($vhosts AS $vhost) {
-          if (!empty($vhost)) {
-            if (!$try) {
-              if (in_array($vhost, $vhosts_enable)) {
-                  $this->show_progress('Enable vhost ' . $vhost . '...');
-                  $this->_systemCommand('vhost_enable', $vhost);
-              }
-              else {
-                $this->show_progress('Disable vhost ' . $vhost . '...');
-                $this->_systemCommand('vhost_disable', $vhost);
-              }
-            }
-
-            // Count runs
-            $count++;
-          }
-        }
-      }
+    if (!isset($this->conf['apache_sites'])) {
+      $this->conf['apache_sites'] = '';
+    }
+    if (!isset($this->conf['apache_sites_enable'])) {
+      $this->conf['apache_sites_enable'] = '';
     }
 
-    return $count;
+    return $this->_activationRun(
+      $this->conf['apache_sites'],
+      $this->conf['apache_sites_enable'],
+      'vhost_enable',
+      'Enable vhost',
+      'vhost_disable',
+      'Disable vhost',
+      $try
+    );
+  }
+
+  /**
+   * Apache modules configuration: enable or disable a module
+   *
+   * @param bool $try if TRUE, this is a test run without system calls
+   *
+   * @return int amount of system commands
+   */
+  private function _modsConfig($try = FALSE) {
+
+    if (!isset($this->conf['apache_mods'])) {
+      $this->conf['apache_mods'] = '';
+    }
+    if (!isset($this->conf['apache_mods_enable'])) {
+      $this->conf['apache_mods_enable'] = '';
+    }
+
+    return $this->_activationRun(
+      $this->conf['apache_mods'],
+      $this->conf['apache_mods_enable'],
+      'mod_enable',
+      'Enable apache module',
+      'mod_disable',
+      'Disable apache module',
+      $try
+    );
   }
 
   /**
@@ -147,27 +162,55 @@ class SldeployPluginUpdateSystem extends Sldeploy {
    */
   private function _servicesConfig($try = FALSE) {
 
+    if (!isset($this->conf['services'])) {
+      $this->conf['services'] = '';
+    }
+    if (!isset($this->conf['services_enable'])) {
+      $this->conf['services_enable'] = '';
+    }
+
+    return $this->_activationRun(
+      $this->conf['services'],
+      $this->conf['services_enable'],
+      'service_enable',
+      'Enable service',
+      'service_disable',
+      'Disable service',
+      $try
+    );
+  }
+
+
+  /**
+   * Configure internal subroutine
+   *
+   * @param bool $try if true, this is test run without system calls
+   *
+   * @return int amount of system commands
+   */
+  private function _activationRun($all_string, $active_string, $enable_command, $enable_message, $disable_command, $disable_message, $try = FALSE) {
+
     $count = 0;
 
-    // Enable and disable services
-    if (!empty($this->conf['services'])) {
-      $services = explode(' ', $this->conf['services']);
-      $services_enable = array();
-      if (!empty($this->conf['services_enable'])) {
-        $services_enable = explode(' ', $this->conf['services_enable']);
+    // Enable and disable
+    if (!empty($all_string)) {
+      $all = explode(' ', $all_string);
+      $enable = array();
+      if (!empty($active_string)) {
+        $enable = explode(' ', $active_string);
       }
 
-      if (is_array($services)) {
-        foreach ($services AS $service) {
-          if (!empty($service)) {
+      if (is_array($all)) {
+        foreach ($all AS $entry) {
+          if (!empty($entry)) {
             if (!$try) {
-              if (in_array($service, $services_enable)) {
-                $this->show_progress('Enable service ' . $service . '...');
-                $this->_systemCommand('service_enable', $service);
+              if (in_array($entry, $enable)) {
+                $this->show_progress($enable_message . ' ' . $entry . '...');
+                $this->_systemCommand($enable_command, $entry);
               }
               else {
-                $this->show_progress('Disable service ' . $service . '...');
-                $this->_systemCommand('service_disable', $service);
+                $this->show_progress($disable_message . ' ' . $entry . '...');
+                $this->_systemCommand($disable_command, $entry);
               }
             }
 
@@ -213,8 +256,10 @@ class SldeployPluginUpdateSystem extends Sldeploy {
   /**
    * Run defined command system independent
    *
-   * @param string  $command = restart, service_enable,
-   *                            service_disable, vhost_enable, vhost_disable
+   * @param string  $command = restart,
+   *                            service_enable, service_disable,
+   *                            vhost_enable, vhost_disable,
+   *                            mod_enable, mod_disable
    * @param string $para
    *
    * @return int
@@ -261,6 +306,26 @@ class SldeployPluginUpdateSystem extends Sldeploy {
         }
         else {
           $rc = $this->msg('vhost configuration not supported with ' . $this->conf['system_os'] . '.');
+          $rc = 1;
+        }
+        break;
+
+      case 'mod_enable':
+        if ($this->conf['system_os'] == 'debian') {
+          $rc = $this->system('a2enmod -q  ' . $para);
+        }
+        else {
+          $this->msg('apache modules configuration not supported with ' . $this->conf['system_os'] . '.');
+          $rc = 1;
+        }
+        break;
+
+      case 'mod_disable':
+        if ($this->conf['system_os'] == 'debian') {
+          $rc = $this->system('a2dismod -q  ' . $para);
+        }
+        else {
+          $rc = $this->msg('apache modules configuration not supported with ' . $this->conf['system_os'] . '.');
           $rc = 1;
         }
         break;

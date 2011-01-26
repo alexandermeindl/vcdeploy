@@ -64,6 +64,13 @@ $plugin['options']['without_data'] = array(
                                           'description' => 'Do not create data dump with this release (overwrites [rollout][with_data]',
                                         );
 
+$plugin['options']['without_backup'] = array(
+                                          'short_name'  => '-B',
+                                          'long_name'   => '--without_backup',
+                                          'action'      => 'StoreTrue',
+                                          'description' => 'Do not create a backup before the rollout',
+                                        );
+
 class SldeployPluginReleaseRollout extends Sldeploy {
 
   /**
@@ -150,8 +157,13 @@ class SldeployPluginReleaseRollout extends Sldeploy {
    */
   private function _projectRollout() {
 
-    // backup everything
-    $this->_backup();
+    if (!isset($this->paras->command->options['without_backup']) || !$this->paras->command->options['without_backup']) {
+      // backup everything
+      $this->_backup();
+    }
+    else {
+      $this->msg('Backup deactivated.');
+    }
 
     // 1. project code
     if (isset($this->project['rollout']['with_project_archive'])
