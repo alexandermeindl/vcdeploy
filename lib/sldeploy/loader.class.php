@@ -31,7 +31,7 @@ class SlDeployLoader {
    *
    * @var string
    */
-  protected $version = '0.43';
+  protected $version = '0.44';
 
   /**
    * Configuration

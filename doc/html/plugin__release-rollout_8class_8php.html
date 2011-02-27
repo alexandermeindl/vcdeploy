@@ -19,7 +19,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">sldeploy&#160;<span id="projectnumber">0.42</span></div>
+   <div id="projectname">sldeploy&#160;<span id="projectnumber">0.44</span></div>
   </td>
  </tr>
  </tbody>
@@ -87,6 +87,7 @@ Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><b>$plugin</b> ['options']['without_db']</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><b>$plugin</b> ['options']['with_data']</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><b>$plugin</b> ['options']['without_data']</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><b>$plugin</b> ['options']['without_backup']</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Plugin to rollout a project release</p>
@@ -99,6 +100,25 @@ Variables</h2></td></tr>
 <p>The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at <a href="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/</a></p>
 <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the specific language governing rights and limitations under the License. </p>
 </div><hr/><h2>Variable Documentation</h2>
+<a class="anchor" id="a2018d8ceb3c1d96fa5f64fd7b58875a4"></a><!-- doxytag: member="plugin_release&#45;rollout.class.php::$plugin" ref="a2018d8ceb3c1d96fa5f64fd7b58875a4" args="['options']['without_backup']" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">$plugin['options']['without_backup']</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<b>Initial value:</b><div class="fragment"><pre class="fragment"> array(
+                                          <span class="stringliteral">&#39;short_name&#39;</span>  =&gt; <span class="stringliteral">&#39;-B&#39;</span>,
+                                          <span class="stringliteral">&#39;long_name&#39;</span>   =&gt; <span class="stringliteral">&#39;--without_backup&#39;</span>,
+                                          <span class="stringliteral">&#39;action&#39;</span>      =&gt; <span class="stringliteral">&#39;StoreTrue&#39;</span>,
+                                          <span class="stringliteral">&#39;description&#39;</span> =&gt; <span class="stringliteral">&#39;Do not create a backup before the rollout&#39;</span>,
+                                        )
+</pre></div>
+</div>
+</div>
 <a class="anchor" id="a9238d4fa0d55f1851db6015dacb611a7"></a><!-- doxytag: member="plugin_release&#45;rollout.class.php::$plugin" ref="a9238d4fa0d55f1851db6015dacb611a7" args="['options']['without_data']" -->
 <div class="memitem">
 <div class="memproto">

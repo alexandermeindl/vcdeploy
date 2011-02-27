@@ -102,6 +102,8 @@ $conf['system_scm'] = 'git';
 // (this is used for daemon configuration and start/stop activity)
 // supported systems:
 // - debian (default)
+// - ubuntu
+// - centos
 // - suse
 $conf['system_os'] = 'debian';
 

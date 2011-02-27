@@ -270,9 +270,12 @@ class SldeployPluginUpdateSystem extends Sldeploy {
 
       case 'service_enable':
         if ($this->conf['system_os'] == 'suse') {
-          $rc = $this->system('chkconfig httpd ' . $para . ' --add');
+          $rc = $this->system('chkconfig --add ' . $para);
         }
-        else { // debian
+        elseif ($this->conf['system_os'] == 'centos') {
+          $rc = $this->system('chkconfig --add ' . $para);
+        }
+        else { // debian or ubuntu
           $rc = $this->system('update-rc.d ' . $para . ' defaults');
         }
         // gentoo
@@ -281,9 +284,12 @@ class SldeployPluginUpdateSystem extends Sldeploy {
 
       case 'service_disable':
         if ($this->conf['system_os'] == 'suse') {
-          $rc = $this->system('chkconfig httpd ' . $para . ' --del');
+          $rc = $this->system('chkconfig --del ' . $para);
         }
-        else { // debian
+        else if ($this->conf['system_os'] == 'centos') {
+          $rc = $this->system('chkconfig --del ' . $para);
+        }
+        else { // debian or ubuntu
            $rc = $this->system('update-rc.d -f  ' . $para . ' remove');
         }
         // gentoo
@@ -291,7 +297,7 @@ class SldeployPluginUpdateSystem extends Sldeploy {
         break;
 
       case 'vhost_enable':
-        if ($this->conf['system_os'] == 'debian') {
+        if ($this->conf['system_os'] == 'debian' || $this->conf['system_os'] == 'ubuntu') {
           $rc = $this->system('a2ensite -q  ' . $para);
         }
         else {
@@ -301,7 +307,7 @@ class SldeployPluginUpdateSystem extends Sldeploy {
         break;
 
       case 'vhost_disable':
-        if ($this->conf['system_os'] == 'debian') {
+        if ($this->conf['system_os'] == 'debian' || $this->conf['system_os'] == 'ubuntu') {
           $rc = $this->system('a2dissite -q  ' . $para);
         }
         else {
@@ -311,7 +317,7 @@ class SldeployPluginUpdateSystem extends Sldeploy {
         break;
 
       case 'mod_enable':
-        if ($this->conf['system_os'] == 'debian') {
+        if ($this->conf['system_os'] == 'debian' || $this->conf['system_os'] == 'ubuntu') {
           $rc = $this->system('a2enmod -q  ' . $para);
         }
         else {
@@ -321,7 +327,7 @@ class SldeployPluginUpdateSystem extends Sldeploy {
         break;
 
       case 'mod_disable':
-        if ($this->conf['system_os'] == 'debian') {
+        if ($this->conf['system_os'] == 'debian' || $this->conf['system_os'] == 'ubuntu') {
           $rc = $this->system('a2dismod -q  ' . $para);
         }
         else {
@@ -333,6 +339,12 @@ class SldeployPluginUpdateSystem extends Sldeploy {
       case 'restart':
         if ($this->conf['system_os'] == 'suse') {
           $rc = $this->system('rc' . $para . ' restart');
+        }
+        elseif ($this->conf['system_os'] == 'centos') {
+          $rc = $this->system('service ' . $para . ' restart');
+        }
+        elseif ($this->conf['system_os'] == 'ubuntu') {
+          $rc = $this->system('service ' . $para . ' restart');
         }
         else { // debian
           $rc = $this->system('invoke-rc.d ' . $para . ' restart');

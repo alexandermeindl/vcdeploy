@@ -42,9 +42,16 @@ class SldeployPluginInitSystem extends Sldeploy {
       case 'suse':
         $rc = $this->system('zypper --non-interactive update', TRUE);
         break;
+      case 'centos':
+        $rc = $this->system('yum -y update', TRUE);
+        break;
       case 'debian':
         $rc = $this->system('apt-get update', TRUE);
         $rc = $this->system('apt-get upgrade', TRUE);
+        break;
+      case 'ubuntu':
+        $rc = $this->system('aptitude update', TRUE);
+        $rc = $this->system('aptitude full-upgrade', TRUE);
         break;
       default:
         throw new Exception('init system not support on this platform');
@@ -69,6 +76,12 @@ class SldeployPluginInitSystem extends Sldeploy {
       $this->msg('Install linux packages...');
       if ($this->conf['system_os'] == 'suse') {
         $rc = $this->system('zypper --non-interactive install ' . $this->conf['init-system']['packages'], TRUE);
+      }
+      else if ($this->conf['system_os'] == 'centos') {
+        $rc = $this->system('yum install -y ' . $this->conf['init-system']['packages'], TRUE);
+      }
+      else if ($this->conf['system_os'] == 'ubuntu') {
+        $rc = $this->system('aptitude install -y ' . $this->conf['init-system']['packages'], TRUE);
       }
       else { // debian
         $rc = $this->system('apt-get install -y ' . $this->conf['init-system']['packages'], TRUE);
@@ -115,7 +128,7 @@ class SldeployPluginInitSystem extends Sldeploy {
       chown($php_log_file, 'wwwrun');
       chgrp($php_log_file, 'www');
     }
-    else {
+    else { // debian or ubuntu
       $this->system('apt-get clean');
       chown($php_log_file, 'www-data');
       chgrp($php_log_file, 'www-data');
