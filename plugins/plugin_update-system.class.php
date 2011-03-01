@@ -22,6 +22,13 @@
 $plugin['info'] = 'update system files/configuration';
 $plugin['root_only'] = TRUE;
 
+$plugin['options']['force'] = array(
+                                        'short_name'  => '-f',
+                                        'long_name'   => '--force',
+                                        'action'      => 'StoreTrue',
+                                        'description' => 'Overwrite files, even if existing files are newer than source files',
+                                      );
+
 class SldeployPluginUpdateSystem extends Sldeploy {
 
   /**
@@ -61,7 +68,13 @@ class SldeployPluginUpdateSystem extends Sldeploy {
 
     // update system
     $this->show_progress('Update system files...');
-    $this->system($this->conf['cp_bin'] . ' -ru . /', TRUE);
+
+    if (isset($this->paras->command->options['force']) && $this->paras->command->options['force']) {
+      $this->system($this->conf['cp_bin'] . ' -r . /', TRUE);
+    }
+    else {
+      $this->system($this->conf['cp_bin'] . ' -ru . /', TRUE);
+    }
 
     $this->_modsConfig();
     $this->_vhostsConfig();
