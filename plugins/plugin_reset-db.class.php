@@ -99,13 +99,8 @@ class SldeployPluginResetDb extends Sldeploy {
           // create backup of existing database
           $this->create_db_dump($db);
 
-          // drop database
-          $this->system($this->conf['mysqladmin_bin'] . ' -f drop ' . $db);
-
-          $this->msg('Recreating database ' . $db . '...');
-          sleep(2);
-
-          system($this->conf['mysqladmin_bin'] . ' create ' . $db);
+          // recreate database
+          $this->recreate_db($db);
 
           $this->msg('Import data...');
           $this->system($this->conf['gunzip_bin'] . ' < ' . $sql_file . ' | ' . $this->conf['mysql_bin'] . ' ' . $db);
@@ -123,7 +118,7 @@ class SldeployPluginResetDb extends Sldeploy {
 
       // run post commands
       if (isset($this->project['reset_db']['post_commands'])) {
-        $this->post_commands($this->project['reset_db']['post_commands']);
+        $this->hook_commands($this->project['reset_db']['post_commands'], 'post');
       }
     }
     else {

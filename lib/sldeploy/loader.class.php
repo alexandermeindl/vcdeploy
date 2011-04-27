@@ -31,7 +31,7 @@ class SlDeployLoader {
    *
    * @var string
    */
-  protected $version = '0.44';
+  protected $version = '0.45';
 
   /**
    * Configuration
@@ -71,7 +71,9 @@ class SlDeployLoader {
   /**
    * A list of all available plugins
    *
-   * @var array
+   * @var array     key => name of plugin
+   *                value => path to plugin
+   *
    */
   public $plugins;
 
@@ -113,17 +115,47 @@ class SlDeployLoader {
 
     $this->plugins = array();
 
-    $d = dir($this->plugin_dir);
+    $this->_setPluginFromDir($this->plugin_dir);
+
+    // overwrite sldeploy plugins with custom plugins
+    if (isset($this->conf['custom_plugins'])) {
+
+      if (substr($this->conf['custom_plugins'], 0, 1) == '/') {
+        $custom_plugin_path = $this->conf['custom_plugins'];
+      }
+      else {
+        $custom_plugin_path = $this->base_dir . '/' . $this->conf['custom_plugins'];
+      }
+
+      if (file_exists($custom_plugin_path)) {
+        $this->_setPluginFromDir($custom_plugin_path);
+      }
+      else {
+        throw new Exception('custom_plugins directory does not exist (' . $custom_plugin_path . ')');
+      }
+    }
+
+    $this->plugin_infos = $this->_getPluginInfo();
+  }
+
+  /**
+   * Set plugin info to $this->plugins
+   *
+   * @params string $dir
+   * @see $this->_setPlugins()
+   */
+  private function _setPluginFromDir($dir) {
+
+    $d = dir($dir);
     while (FALSE !== ($entry = $d->read())) {
       if ((substr($entry, 0, 7) == 'plugin_') && (substr($entry, -10) == '.class.php')) {
-        if ($entry != 'plugin_inerface.class.php') {
-          $this->plugins[] = substr($entry, 7, -10);
+        if ($entry != 'plugin_interface.class.php') {
+          $plugin_name = substr($entry, 7, -10);
+          $this->plugins[$plugin_name] = $dir;
         }
       }
     }
     $d->close();
-
-    $this->plugin_infos = $this->_getPluginInfo();
   }
 
   /**
@@ -135,12 +167,10 @@ class SlDeployLoader {
 
     $plugins = array();
 
-    foreach ($this->plugins AS $plugin_name) {
+    foreach ($this->plugins AS $plugin_name => $plugin_path) {
       unset($plugin);
-      include_once $this->plugin_dir . '/plugin_' . $plugin_name . '.class.php';
-
-      if (isset($plugin['root_only']) && $this->check_plugin_permission($plugin['root_only'])) {
-        unset($plugin['root_only']);
+      include_once $plugin_path . '/plugin_' . $plugin_name . '.class.php';
+      if ($this->_checkPluginStatus($plugin)) {
         $plugins[$plugin_name] = $plugin;
         if (!isset($plugin['info'])) {
           $plugins[$plugin_name]['description'] = 'No plugin info defined.';
@@ -149,6 +179,34 @@ class SlDeployLoader {
     }
 
     return $plugins;
+  }
+
+  /**
+   * Check access for a plugin
+   *
+   * @param array $plugin
+   * @return bool  TRUE, if status is enabled for execution
+   */
+  private function _checkPluginStatus(&$plugin) {
+
+    $rc = TRUE;
+
+    if (isset($plugin['disable']) && $plugin['disable']) {
+      $rc = FALSE;
+    }
+    elseif (isset($plugin['root_only']) && !$this->check_plugin_permission($plugin['root_only'])) {
+      $rc = FALSE;
+    }
+
+    if (isset($plugin['disable'])) {
+      unset($plugin['disable']);
+    }
+
+    if (isset($plugin['root_only'])) {
+      unset($plugin['root_only']);
+    }
+
+    return $rc;
   }
 
   /**
@@ -397,7 +455,7 @@ class SlDeployLoader {
       throw new Exception('sldeploy is already running with plugin ' . $this->plugin_name);
     }
 
-    include_once $this->plugin_dir . '/plugin_' . $this->plugin_name . '.class.php';
+    include_once $this->plugins[$this->plugin_name] . '/plugin_' . $this->plugin_name . '.class.php';
 
     $c = $this->_getPluginClass($this->plugin_name);
     $app = new $c($this->conf, $this->plugin_name, $result, $this->version);

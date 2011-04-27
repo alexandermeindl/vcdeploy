@@ -135,6 +135,10 @@ $conf['init-system'] = array();
 $conf['init-system']['dirs'] = array();
 $conf['init-system']['packages'] = '';
 
+// set path to custom plugin (relative to sldeploy directory or absolute path)
+$conf['custom_plugins'] = 'custom_plugins';
+
+// array of all commands, which are defined in configuration file
 $conf['commands'] = array();
 
 // default access for all plugins

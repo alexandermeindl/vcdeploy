@@ -79,7 +79,8 @@ class SldeployPluginUpdateSystem extends Sldeploy {
     $this->_modsConfig();
     $this->_vhostsConfig();
     $this->_servicesConfig();
-    $this->_servicesRestart();
+    $this->_service('reload');
+    $this->_service('restart');
 
     return 0;
   }
@@ -106,8 +107,11 @@ class SldeployPluginUpdateSystem extends Sldeploy {
     // 4. serviceConfig
     $init += $this->_servicesConfig(TRUE);
 
-    // 5. serviceRestart
-    $init += $this->_servicesRestart(TRUE);
+    // 5. serviceReload
+    $init += $this->_service('reload', TRUE);
+
+    // 6. serviceRestart
+    $init += $this->_service('restart', TRUE);
 
     return $init;
   }
@@ -240,23 +244,24 @@ class SldeployPluginUpdateSystem extends Sldeploy {
   /**
    * Restart services
    *
+   * @param string $command command for init script (e.g. reload or restart)
    * @param bool $try if true, this is test run without system calls
    *
    * @return int amount of system commands
    */
-  private function _servicesRestart($try = FALSE) {
+  private function _service($command, $try = FALSE) {
 
     $count = 0;
+    $config_key = 'services_' . $command;
 
-    if (!empty($this->conf['services_restart'])) {
-      $services = explode(' ', $this->conf['services_restart']);
+    if (!empty($this->conf[$config_key])) {
+      $services = explode(' ', $this->conf[$config_key]);
       if (is_array($services)) {
         foreach ($services AS $service) {
           if (!$try) {
-            $this->show_progress('Restart service ' . $service . '...');
-            $this->_systemCommand('restart', $service);
+            $this->show_progress(ucfirst($command) . ' service ' . $service . '...');
+            $this->_systemCommand($command, $service);
           }
-
           // Count runs
           $count++;
         }
@@ -269,7 +274,7 @@ class SldeployPluginUpdateSystem extends Sldeploy {
   /**
    * Run defined command system independent
    *
-   * @param string  $command = restart,
+   * @param string  $command = restart, reload
    *                            service_enable, service_disable,
    *                            vhost_enable, vhost_disable,
    *                            mod_enable, mod_disable
@@ -361,6 +366,21 @@ class SldeployPluginUpdateSystem extends Sldeploy {
         }
         else { // debian
           $rc = $this->system('invoke-rc.d ' . $para . ' restart');
+        }
+        break;
+
+      case 'reload':
+        if ($this->conf['system_os'] == 'suse') {
+          $rc = $this->system('rc' . $para . ' reload');
+        }
+        elseif ($this->conf['system_os'] == 'centos') {
+          $rc = $this->system('service ' . $para . ' reload');
+        }
+        elseif ($this->conf['system_os'] == 'ubuntu') {
+          $rc = $this->system('service ' . $para . ' reload');
+        }
+        else { // debian
+          $rc = $this->system('invoke-rc.d ' . $para . ' reload');
         }
         break;
 

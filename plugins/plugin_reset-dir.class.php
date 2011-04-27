@@ -108,7 +108,7 @@ class SldeployPluginResetDir extends Sldeploy {
           $this->system($this->conf['tar_bin'] . ' -xz --no-same-owner -f ' . $tar_file);
 
           if (isset($this->project['reset_dir']['post_commands'])) {
-            $this->post_commands($this->project['reset_dir']['post_commands']);
+            $this->hook_commands($this->project['reset_dir']['post_commands'], 'post');
           }
 
           $this->msg('Directory ' . $identifier . ' has been successfully restored.');

@@ -33,10 +33,17 @@ class SldeployPluginCommandLs extends Sldeploy {
    */
   public function run() {
 
-    // show list
-    $this->msg('Available commands:');
-    foreach ($this->get_available_commands() AS $command) {
-      $this->msg('* ' . $command);
+    $commands = $this->get_available_commands();
+
+    if (count($commands)) {
+      // show list
+      $this->msg('Available commands:');
+      foreach ($this->get_available_commands() AS $command) {
+        $this->msg('* ' . $command);
+      }
+    }
+    else {
+      $this->msg('No commands defined in sldeploy configuration file.');
     }
 
     return 0;

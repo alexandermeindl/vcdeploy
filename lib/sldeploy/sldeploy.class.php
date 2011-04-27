@@ -517,27 +517,31 @@ class Sldeploy {
   }
 
   /**
-   * Run this post commands after plugin action (if supported by plugin)
+   * Run this pre or post commands after plugin action (if supported by plugin)
    *
    * @param array $post_commands commands for system calls
+   * @param string $msg
    *
-   * @return int
+   * @return void
+   * @throws Exception
    */
-  public function post_commands($post_commands) {
+  public function hook_commands($commands, $msg) {
 
-    if (is_array($post_commands)) {
+    if (is_array($commands)) {
 
-      foreach ($post_commands AS $command) {
+      foreach ($commands AS $command) {
 
         if (isset($this->project['drush'])) {
           $command = str_replace('[drush]', $this->project['drush'], $command);
         }
 
-        $this->msg('Running post command: ' . $command);
+        $this->msg('Running ' . $msg . ' command: ' . $command);
         $rc = $this->system($command);
-      }
 
-      return $rc['rc'];
+        if ($rc['rc'] != 0) {
+          throw new Exception($msg . ' command error: ' . $command . ' (rc=' . $rc['rc'] . ')');
+        }
+      }
     }
   }
 
@@ -1151,7 +1155,7 @@ class Sldeploy {
    * @return void
    * @throws Exception
    */
-  function prepare_backup_dir() {
+  public function prepare_backup_dir() {
 
     if (empty($this->conf['backup_dir'])) {
       throw new Exception('Backup directory not specified.');
@@ -1173,6 +1177,30 @@ class Sldeploy {
       if (!file_exists($this->conf['backup_dir'])) {
         throw new Exception('Backup directory \'' . $this->conf['backup_dir'] . '\' does not exist and couldn\'t created automatically.');
       }
+    }
+  }
+
+  /**
+   * Recreate database
+   *
+   * 1. drop existing database
+   * 2. create database
+   *
+   * @param  string $db
+   * @throws Exception
+   */
+  public function recreate_db($db) {
+
+    // 1. drop database
+    $this->system($this->conf['mysqladmin_bin'] . ' -f drop ' . $db);
+
+    $this->msg('Recreating database ' . $db . '...');
+    sleep(2);
+
+    // 2. create database
+    $rc = $this->system($this->conf['mysqladmin_bin'] . ' create ' . $db);
+    if ($rc['rc']) {
+      throw new Exception('Error creating database \'' . $db . '\'!');
     }
   }
 }

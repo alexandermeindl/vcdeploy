@@ -1,0 +1,1 @@
+Put your custom plugins in this directory. You can change the location of this directory with $conf['custom_plugins']

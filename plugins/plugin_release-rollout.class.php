@@ -208,7 +208,7 @@ class SldeployPluginReleaseRollout extends Sldeploy {
 
     // 4. run post commands
     if (isset($this->project['rollout']['post_commands'])) {
-      $this->post_commands($this->project['rollout']['post_commands']);
+      $this->hook_commands($this->project['rollout']['post_commands'], 'post');
     }
 
     return $rc;
@@ -269,16 +269,8 @@ class SldeployPluginReleaseRollout extends Sldeploy {
 
       $sql_file = $this->_getRestoreSqlFile($identifier);
 
-      // drop database
-      $this->system($this->conf['mysqladmin_bin'] . ' -f drop ' . $db);
-
-      $this->msg('Recreating database ' . $db . '...');
-      sleep(2);
-
-      $rc = $this->system($this->conf['mysqladmin_bin'] . ' create ' . $db);
-      if ($rc['rc']) {
-        throw new Exception('Error creating database \'' . $db . '\'!');
-      }
+      // recreate database
+      $this->recreate_db($db);
 
       $this->msg('Rolling out database...');
       $this->system($this->conf['gunzip_bin'] . ' < ' . $sql_file . ' | ' . $this->conf['mysql_bin'] . ' ' . $db);
