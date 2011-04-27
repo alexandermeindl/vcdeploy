@@ -5,6 +5,7 @@ sldeploy 0.45, 2011-04-27
 - Custom plugin support
 - Service Reload support
 - Added plugin drupal-setup to install drupal installations
+- post_command and pre_command support for update-project has been added.
 
 sldeploy 0.44, 2011-02-27
 -------------------------

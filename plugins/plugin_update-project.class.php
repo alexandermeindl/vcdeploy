@@ -58,7 +58,18 @@ class SldeployPluginUpdateProject extends Sldeploy {
       else {
         // initialize scm
         $this->set_scm('project');
+
+        // 1. run pre commands
+        if (isset($this->project['update_project']['pre_commands'])) {
+          $this->hook_commands($this->project['update_project']['pre_commands'], 'pre');
+        }
+        // 2. Update repository
         $rc = $this->_updateRepository($this->scm->update(), $this->scm->get_name());
+
+        // 3. run post commands
+        if (isset($this->project['update_project']['post_commands'])) {
+          $this->hook_commands($this->project['update_project']['post_commands'], 'post');
+        }
       }
 
       if ($rc) {
