@@ -17,9 +17,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
- * @package  sldeploy
+ * @package  vcdeploy
  * @author  Alexander Meindl
- * @link    https://github.com/alexandermeindl/sldeploy
+ * @link    https://github.com/alexandermeindl/vcdeploy
  */
 
 $plugin['info'] = 'Reset database. If no project is specified, all active project databases will be reseted';
@@ -32,13 +32,27 @@ $plugin['options']['project'] = array(
                               'description' => 'Only reset database of this project',
                             );
 
-class SldeployPluginResetDb extends Sldeploy {
+$plugin['options']['with_backup'] = array(
+                                          'short_name'  => '-b',
+                                          'long_name'   => '--with_backup',
+                                          'action'      => 'StoreTrue',
+                                          'description' => 'Create a backup before the sync (default with setting without_backup=FALSE)',
+);
+
+$plugin['options']['without_backup'] = array(
+                                          'short_name'  => '-B',
+                                          'long_name'   => '--without_backup',
+                                          'action'      => 'StoreTrue',
+                                          'description' => 'Do not create a backup before the sync (default with setting without_backup=TRUE)',
+                                        );
+
+class VcdeployPluginResetDb extends Vcdeploy implements IVcdeployPlugin {
 
   /**
    * This function is run with the command
    *
    * @return int
-   * @see sldeploy#run()
+   * @see vcdeploy#run()
    */
   public function run() {
 
@@ -46,7 +60,9 @@ class SldeployPluginResetDb extends Sldeploy {
     $this->validate_projects();
 
     // check backup directory if exists and is writable
-    $this->prepare_backup_dir();
+    if ($this->is_backup_required()) {
+      $this->prepare_backup_dir();
+    }
 
     if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
       $project_name = $this->paras->command->options['project'];
@@ -75,7 +91,7 @@ class SldeployPluginResetDb extends Sldeploy {
    * @param int $init initial value of counter
    *
    * @return int amount of working steps of this plugin
-   * @see Sldeploy#progressbar_init()
+   * @see Vcdeploy#progressbar_init()
    */
   public function get_steps($init = 0) {
     return $init++;
@@ -97,10 +113,20 @@ class SldeployPluginResetDb extends Sldeploy {
         if (!empty($sql_file)) {
 
           // create backup of existing database
-          $this->create_db_dump($db);
+          if ($this->is_backup_required()) {
+            if ($this->db_exists($db)) {
+              $this->create_db_dump($db);
+            }
+            else {
+              $this->msg('Backup was not created, because database did not exist yet.');
+            }
+          }
+          else {
+            $this->msg('Backup deactivated.');
+          }
 
           // recreate database
-          $this->recreate_db($db);
+          $this->db_recreate($db);
 
           $this->msg('Import data...');
           $this->system($this->conf['gunzip_bin'] . ' < ' . $sql_file . ' | ' . $this->conf['mysql_bin'] . ' ' . $db);

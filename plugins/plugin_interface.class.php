@@ -14,19 +14,19 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
- * @package  sldeploy
+ * @package  vcdeploy
  * @author  Alexander Meindl
- * @link    https://github.com/alexandermeindl/sldeploy
+ * @link    https://github.com/alexandermeindl/vcdeploy
  */
 
 
-interface ISldeployPlugin {
+interface IVcdeployPlugin {
 
   /**
    * This function is run with the command
    *
    * @return int if no error occurred, return 0
-   * @see SlDeployLoader#run_plugin()
+   * @see VcDeployLoader#run_plugin()
    */
   public function run();
 
@@ -36,7 +36,7 @@ interface ISldeployPlugin {
    * @param int $init initial value of counter
    *
    * @return int amount of working steps of this plugin
-   * @see Sldeploy#progressbar_init()
+   * @see Vcdeploy#progressbar_init()
    */
   public function get_steps($init = 0);
 }

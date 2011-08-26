@@ -14,9 +14,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
- * @package  sldeploy
+ * @package  vcdeploy
  * @author  Alexander Meindl
- * @link    https://github.com/alexandermeindl/sldeploy
+ * @link    https://github.com/alexandermeindl/vcdeploy
  */
 
 $plugin['info'] = 'run commands';
@@ -24,7 +24,7 @@ $plugin['root_only'] = FALSE;
 
 $plugin['args']['command'] = 'command to run. Use \'command-ls\' to get a list with all available commands';
 
-class SldeployPluginCommand extends Sldeploy {
+class VcdeployPluginCommand extends Vcdeploy implements IVcdeployPlugin {
 
   /**
    * Current active command
@@ -38,7 +38,7 @@ class SldeployPluginCommand extends Sldeploy {
    *
    * @return int
    * @throws Exception
-   * @see sldeploy#run()
+   * @see vcdeploy#run()
    */
   public function run() {
 
@@ -63,7 +63,7 @@ class SldeployPluginCommand extends Sldeploy {
    * @param int $init initial value of counter
    *
    * @return int amount of working steps of this plugin
-   * @see Sldeploy#progressbar_init()
+   * @see Vcdeploy#progressbar_init()
    */
   public function get_steps($init = 0) {
 

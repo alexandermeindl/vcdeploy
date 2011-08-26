@@ -1,4 +1,4 @@
-sldeploy README
+vcdeploy README
 
 Requirements
 ============
@@ -15,11 +15,11 @@ Optional
 Installation
 ============
 
-Copy config.inc.php.dist to config.inc.php (or to /etc/sldeploy.inc.php). Change config.inc.php
+Copy config.inc.php.dist to config.inc.php (or to /etc/vcdeploy.inc.php). Change config.inc.php
 to fit your system and project settings.
 
 
 Usage
 =====
 
-Run sldeploy -h for more information
+Run vcdeploy -h for more information

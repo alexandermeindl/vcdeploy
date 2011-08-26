@@ -1,5 +1,14 @@
 // CHANGELOG.txt
 
+vcdeploy 0.50, 2011-08-26
+- project renamed from sldeploy to vcdeploy (verion controlled deployment)
+- update-project and release-rollout merged to rollout with lots of improvements
+- update-drupal has been dropped, because you can do this with pre/post commands
+- rename update-system to rollout-system
+- rename update-all to rollout-all
+- configuration setting without_backup has been added for default behaviour
+- rollout to tag has been improved for SCM deployment
+
 sldeploy 0.45, 2011-04-27
 -------------------------
 - Custom plugin support

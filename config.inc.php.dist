@@ -1,5 +1,5 @@
 <?php
-// default sldeploy configuration file
+// default vcdeploy configuration file
 
 // email for notification
 $conf['email_to'] = 'your@email.de';

@@ -32,9 +32,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
- * @package  sldeploy
+ * @package  vcdeploy
  * @author  Alexander Meindl
- * @link    https://github.com/alexandermeindl/sldeploy
+ * @link    https://github.com/alexandermeindl/vcdeploy
  */
 
 $plugin['info'] = 'Create a new release. If no project is specified, for all projects a new release will be created';
@@ -91,7 +91,7 @@ $plugin['options']['dontcreate_tag'] = array(
                                           'description' => 'Do not create tag for this release (overwrites [release][create_tag]',
                                         );
 
-class SldeployPluginReleaseCreate extends sldeploy {
+class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin {
 
   /**
    * Push files to SCM server
@@ -129,7 +129,7 @@ class SldeployPluginReleaseCreate extends sldeploy {
    *
    * @return int
    * @throws Exception
-   * @see sldeploy#run()
+   * @see vcdeploy#run()
    */
   public function run() {
 
@@ -159,7 +159,7 @@ class SldeployPluginReleaseCreate extends sldeploy {
    * @param int $init initial value of counter
    *
    * @return int amount of working steps of this plugin
-   * @see Sldeploy#progressbar_init()
+   * @see Vcdeploy#progressbar_init()
    */
   public function get_steps($init = 0) {
     return $init++;

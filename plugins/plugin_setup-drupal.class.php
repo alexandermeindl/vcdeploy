@@ -13,9 +13,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
- * @package  sldeploy
+ * @package  vcdeploy
  * @author  Alexander Meindl
- * @link    https://github.com/alexandermeindl/sldeploy
+ * @link    https://github.com/alexandermeindl/vcdeploy
  */
 
 $plugin['info'] = 'Setup a drupal installation';
@@ -30,13 +30,12 @@ $plugin['args']['command'] = 'Name of subcommand
 - reset: run \'reset-settings\', \'reset-files\' and \'reset-db\'
 - reinstall: run \'reset-settings\', \'reset-files\' and \'install\'';
 
-class SldeployPluginSetupDrupal extends Sldeploy {
+class VcdeployPluginSetupDrupal extends Vcdeploy implements IVcdeployPlugin {
 
   /**
    * Drupal base directory
    *
    * This is relative to project path
-   * (at the moment this path is not configurable)
    *
    * @var string
    */
@@ -47,7 +46,7 @@ class SldeployPluginSetupDrupal extends Sldeploy {
    *
    * @return int
    * @throws Exception
-   * @see sldeploy#run()
+   * @see vcdeploy#run()
    */
   public function run() {
 
@@ -61,6 +60,10 @@ class SldeployPluginSetupDrupal extends Sldeploy {
       throw new Exception('Project "' . $project_name . '" is not configured!');
     }
     $this->set_project($project_name, $this->projects[$project_name]);
+
+    if (isset($this->project['setup_drupal']['base_dir'])) {
+      $this->drupal_base_dir = $this->project['setup_drupal']['base_dir'];
+    }
 
     $commands = array('reset-files', 'reset-settings', 'reset-db', 'install', 'reinstall', 'reset');
 
@@ -178,7 +181,7 @@ class SldeployPluginSetupDrupal extends Sldeploy {
     $this->msg('Run reset db...');
 
     foreach ($this->project['db'] AS $identifier => $db) {
-      $this->recreate_db($db);
+      $this->db_recreate($db);
     }
   }
 
@@ -246,7 +249,7 @@ class SldeployPluginSetupDrupal extends Sldeploy {
    * @param int $init initial value of counter
    *
    * @return int amount of working steps of this plugin
-   * @see Sldeploy#progressbar_init()
+   * @see Vcdeploy#progressbar_init()
    */
   public function get_steps($init = 0) {
     return $init++;

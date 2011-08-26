@@ -17,15 +17,15 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
- * @package  sldeploy
+ * @package  vcdeploy
  * @author  Alexander Meindl
- * @link    https://github.com/alexandermeindl/sldeploy
+ * @link    https://github.com/alexandermeindl/vcdeploy
  */
 
 $plugin['info'] = 'log system changes';
 $plugin['root_only'] = FALSE;
 
-class SldeployPluginSystemLog extends Sldeploy {
+class VcdeployPluginSystemLog extends Vcdeploy implements IVcdeployPlugin {
 
   /**
    * File name for package list
@@ -46,7 +46,7 @@ class SldeployPluginSystemLog extends Sldeploy {
    *
    * @return int
    * @throws Exception
-   * @see sldeploy#run()
+   * @see vcdeploy#run()
    */
   public function run() {
 
@@ -91,7 +91,7 @@ class SldeployPluginSystemLog extends Sldeploy {
    * @param int $init initial value of counter
    *
    * @return int amount of working steps of this plugin
-   * @see Sldeploy#progressbar_init()
+   * @see Vcdeploy#progressbar_init()
    */
   public function get_steps($init = 0) {
     return $init++;

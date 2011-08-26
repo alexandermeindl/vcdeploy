@@ -14,9 +14,9 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
- * @package  sldeploy
+ * @package  vcdeploy
  * @author  Alexander Meindl
- * @link    https://github.com/alexandermeindl/sldeploy
+ * @link    https://github.com/alexandermeindl/vcdeploy
  */
 
 $plugin['info'] = 'Create database backup. If no database name is specified a backup of all databases will be created';
@@ -29,7 +29,7 @@ $plugin['options']['database'] = array(
                               'description' => 'Only create backup of this database',
                             );
 
-class SldeployPluginBackupDb extends Sldeploy {
+class VcdeployPluginBackupDb extends Vcdeploy implements IVcdeployPlugin {
 
   /**
    * Progress bar
@@ -50,7 +50,7 @@ class SldeployPluginBackupDb extends Sldeploy {
    *
    * @return int
    * @throws Exception
-   * @see sldeploy#run()
+   * @see vcdeploy#run()
    */
   public function run() {
 
@@ -84,7 +84,7 @@ class SldeployPluginBackupDb extends Sldeploy {
    * @param int $init initial value of counter
    *
    * @return int amount of working steps of this plugin
-   * @see Sldeploy#progressbar_init()
+   * @see Vcdeploy#progressbar_init()
    */
   public function get_steps($init = 0) {
 
