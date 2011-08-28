@@ -19,8 +19,15 @@
  * @link    https://github.com/alexandermeindl/vcdeploy
  */
 
-$plugin['info'] = 'Create database backup. If no database name is specified a backup of all databases will be created';
+$plugin['info'] = 'Create database backup. If no parameter is specfied all project database will be backuped';
 $plugin['root_only'] = FALSE;
+
+$plugin['options']['project'] = array(
+                              'short_name'  => '-p',
+                              'long_name'   => '--project',
+                              'action'      => 'StoreString',
+                              'description' => 'Create backup of this project database(s)',
+);
 
 $plugin['options']['database'] = array(
                               'short_name'  => '-d',
@@ -29,21 +36,21 @@ $plugin['options']['database'] = array(
                               'description' => 'Only create backup of this database',
                             );
 
+$plugin['options']['all_databases'] = array(
+                              'short_name'  => '-A',
+                              'long_name'   => '--all-databases',
+                              'action'      => 'StoreTrue',
+                              'description' => 'Create backup of all existing databases',
+                            );
+
 class VcdeployPluginBackupDb extends Vcdeploy implements IVcdeployPlugin {
 
   /**
-   * Progress bar
+   * Databases for created backup
    *
-   * @var object
+   * @var array
    */
-  private $bar;
-
-  /**
-   * Current project position
-   *
-   * @var int
-   */
-  private $current_pos = 0;
+  private $_databases;
 
   /**
    * This function is run with the command
@@ -54,29 +61,48 @@ class VcdeployPluginBackupDb extends Vcdeploy implements IVcdeployPlugin {
    */
   public function run() {
 
+    // combination of parameters are forbitten
+    if (isset($this->paras->command->options['project']) && isset($this->paras->command->options['database'])) {
+      throw new Exception('You cannot use --project and --database together');
+    }
+    else if (isset($this->paras->command->options['database']) && isset($this->paras->command->options['all_databases'])) {
+      throw new Exception('You cannot use --database and --all-database together');
+    }
+    else if (isset($this->paras->command->options['project']) && isset($this->paras->command->options['all_databases'])) {
+      throw new Exception('You cannot use --project and --all-database together');
+    }
+
+
     // check backup directory if exists and is writable
     $this->prepare_backup_dir();
 
     if (isset($this->paras->command->options['database']) && !empty($this->paras->command->options['database'])) {
-      $this->create_db_dump($this->paras->command->options['database']);
+      $this->_setDatabaseNames('db', $this->paras->command->options['database']);
+    }
+    else if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
+      // check for existing projects
+      $this->validate_projects();
+      $this->_setDatabaseNames('project', $this->paras->command->options['project']);
+    }
+    else if (isset($this->paras->command->options['all_databases']) && ($this->paras->command->options['all_databases'])) {
+      $this->_setDatabaseNames('dbs');
     }
     else {
-      $this->_allDbs();
+      // check for existing projects
+      $this->validate_projects();
+      $this->_setDatabaseNames('projects');
     }
 
-    return 0;
+    if (count($this->_databases)) {
+      $this->progressbar_init();
+      $this->_createDbBackups();
+      return 0;
+    }
+    else {
+      return 1;
+    }
   }
 
-  /**
-   * Create database dump
-   *
-   * @param string $db_name
-   *
-   * @return void
-   */
-  private function _singleDb($db_name) {
-    $this->create_db_dump($db_name);
-  }
 
   /**
    * Get max steps of this plugin for progress view
@@ -88,31 +114,76 @@ class VcdeployPluginBackupDb extends Vcdeploy implements IVcdeployPlugin {
    */
   public function get_steps($init = 0) {
 
-    $rc = $this->system($this->conf['mysql_bin'] . " -Bse 'show databases'");
+    $db_count = count($this->_databases);
 
     // 2 times, because of gzip compression
-    return $init + count($rc['output']) * 2;
+    return $init + $db_count * 2;
   }
 
   /**
-   * Create database dump of all existing databases
+   * Create backups for all calculated databases
    *
-   * @return void
+   * @throws Exception
    */
-  private function _allDbs() {
+  private function _createDbBackups() {
 
-    $rc = $this->system($this->conf['mysql_bin'] . " -Bse 'show databases'");
-
-    if (!$rc['rc']) {
-
-      $this->progressbar_init();
-
-      foreach ($rc['output'] AS $db_name) {
-          $this->create_db_dump($db_name);
+    foreach ($this->_databases AS $db_name) {
+      if ($this->db_exists($db_name)) {
+        $this->create_db_dump($db_name);
+      }
+      else {
+        throw new Exception('Database ' . $db_name . ' does not exist');
       }
     }
-    else {
-      $this->msg('Could not get list of available databases.');
+  }
+
+  /**
+   * Set database names for creating backup to $this->databases
+   *
+   * @param  string $mode
+   * @param  string $name name of datbase or project (only used for mode project/db)
+   * @throws Exception
+   */
+  private function _setDatabaseNames($mode, $name = null) {
+
+    // Reset databases
+    $this->_databases = array();
+
+    switch ($mode) {
+      case 'project':
+        if (!array_key_exists($name, $this->projects)) {
+          throw new Exception('Project "' . $name . '" is not configured!');
+        }
+        $this->set_project($name, $this->projects[$name]);
+        $this->_databases = $this->project['db'];
+        break;
+      case 'projects':
+        foreach ($this->projects AS $project_name => $project) {
+          $this->set_project($project_name, $project);
+          if (isset($this->project['db'])) {
+            foreach($this->project['db'] AS $db_name) {
+              $this->_databases[] = $db_name;
+            }
+          }
+          else {
+            $this->msg('Project ' . $this->project_name . ': no database has been specified.');
+          }
+        }
+        break;
+      case 'db':
+        $this->_databases = array($name);
+        break;
+      case 'dbs':
+        $rc = $this->system($this->conf['mysql_bin'] . " -Bse 'show databases'");
+        if (!$rc['rc']) {
+          $this->_databases = $rc['output'];
+        }
+        else {
+          throw new Exception('Could not get list of available databases.');
+        }
+        break;
+      default:
+        throw new Exception('Unknown mode for _getDatabaseNames: ' . $mode);
     }
   }
 }

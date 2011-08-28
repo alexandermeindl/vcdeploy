@@ -95,16 +95,37 @@ Namespaces</h2></td></tr>
 <tr><td colspan="2"><h2><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a95edf69ebbeaeedb03bab3bb010f2af9"></a><!-- doxytag: member="plugin_backup&#45;db.class.php::$plugin" ref="a95edf69ebbeaeedb03bab3bb010f2af9" args="['info']" -->
-&#160;</td><td class="memItemRight" valign="bottom"><b>$plugin</b> ['info'] = 'Create database backup. If no database name is specified a backup of all databases will be created'</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><b>$plugin</b> ['info'] = 'Create database backup. If no parameter is specfied all project database will be backuped'</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d302084fa15e3efe6c843cbb5096985"></a><!-- doxytag: member="plugin_backup&#45;db.class.php::$plugin" ref="a1d302084fa15e3efe6c843cbb5096985" args="['root_only']" -->
 &#160;</td><td class="memItemRight" valign="bottom"><b>$plugin</b> ['root_only'] = FALSE</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><b>$plugin</b> ['options']['project']</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><b>$plugin</b> ['options']['database']</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><b>$plugin</b> ['options']['all_databases']</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Backup for projects and independent files/directory</p>
 <p>The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at <a href="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/</a></p>
 <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the specific language governing rights and limitations under the License. </p>
 </div><hr/><h2>Variable Documentation</h2>
+<a class="anchor" id="ab3f61fdb66a7c26d551a861f8aee75c7"></a><!-- doxytag: member="plugin_backup&#45;db.class.php::$plugin" ref="ab3f61fdb66a7c26d551a861f8aee75c7" args="['options']['project']" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">$plugin['options']['project']</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<b>Initial value:</b><div class="fragment"><pre class="fragment"> array(
+                              <span class="stringliteral">&#39;short_name&#39;</span>  =&gt; <span class="stringliteral">&#39;-p&#39;</span>,
+                              <span class="stringliteral">&#39;long_name&#39;</span>   =&gt; <span class="stringliteral">&#39;--project&#39;</span>,
+                              <span class="stringliteral">&#39;action&#39;</span>      =&gt; <span class="stringliteral">&#39;StoreString&#39;</span>,
+                              <span class="stringliteral">&#39;description&#39;</span> =&gt; <span class="stringliteral">&#39;Create backup of this project database(s)&#39;</span>,
+)
+</pre></div>
+</div>
+</div>
 <a class="anchor" id="a65c50c96e967cddf682eb98f24f0532d"></a><!-- doxytag: member="plugin_backup&#45;db.class.php::$plugin" ref="a65c50c96e967cddf682eb98f24f0532d" args="['options']['database']" -->
 <div class="memitem">
 <div class="memproto">
@@ -120,6 +141,25 @@ Variables</h2></td></tr>
                               <span class="stringliteral">&#39;long_name&#39;</span>   =&gt; <span class="stringliteral">&#39;--database&#39;</span>,
                               <span class="stringliteral">&#39;action&#39;</span>      =&gt; <span class="stringliteral">&#39;StoreString&#39;</span>,
                               <span class="stringliteral">&#39;description&#39;</span> =&gt; <span class="stringliteral">&#39;Only create backup of this database&#39;</span>,
+                            )
+</pre></div>
+</div>
+</div>
+<a class="anchor" id="a5b8c6d8751ba39fb729a3c0521b517b4"></a><!-- doxytag: member="plugin_backup&#45;db.class.php::$plugin" ref="a5b8c6d8751ba39fb729a3c0521b517b4" args="['options']['all_databases']" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">$plugin['options']['all_databases']</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<b>Initial value:</b><div class="fragment"><pre class="fragment"> array(
+                              <span class="stringliteral">&#39;short_name&#39;</span>  =&gt; <span class="stringliteral">&#39;-A&#39;</span>,
+                              <span class="stringliteral">&#39;long_name&#39;</span>   =&gt; <span class="stringliteral">&#39;--all-databases&#39;</span>,
+                              <span class="stringliteral">&#39;action&#39;</span>      =&gt; <span class="stringliteral">&#39;StoreTrue&#39;</span>,
+                              <span class="stringliteral">&#39;description&#39;</span> =&gt; <span class="stringliteral">&#39;Create backup of all existing databases&#39;</span>,
                             )
 </pre></div>
 </div>

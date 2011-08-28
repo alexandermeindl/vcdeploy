@@ -205,9 +205,6 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
     if ($this->is_backup_required()) {
       $this->_backup();
     }
-    else {
-      $this->msg('Backup deactivated.');
-    }
 
     if (isset($this->project['rollout']['with_project_archive'])
       && $this->project['rollout']['with_project_archive']
@@ -488,7 +485,7 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
       }
 
       // update scm project code
-      $rc = $this->system($this->scm->update());
+      $rc = $this->system($this->scm->update(), TRUE);
       if ($rc['rc']) {
         throw new Exception('SCM type static is not supported with rollout');
       }

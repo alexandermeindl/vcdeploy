@@ -324,7 +324,7 @@ class VcDeployLoader {
 
     // create the parser
     $parser = new Console_CommandLine(array(
-        'description' => 'vcdeploy - php deployment script by http://www.squatlabs.com',
+        'description' => 'vcdeploy - version controlled deployment script powered by http://www.alphanodes.com',
         'version'     => $this->version,
     ));
 
