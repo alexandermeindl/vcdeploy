@@ -735,6 +735,24 @@ class Vcdeploy {
   }
 
   /**
+   * Check if directory is /
+   *
+   * @param string $dir
+   * @return bool
+   */
+  public function is_root_dir($dir) {
+    if (!empty($dir)) {
+      // check for one or more /
+      if ( preg_match('/^[\/]+$/', $dir) ) {
+        return TRUE;
+      }
+      if ($dir == '/') {
+        return TRUE;
+      }
+    }
+  }
+
+  /**
    * Remove directory (with content and subdirectories)
    *
    * @param string $dir
@@ -745,7 +763,7 @@ class Vcdeploy {
   public function remove_directory($dir) {
 
     // remove existing target directory
-    if ($dir != '/') {
+    if (!$this->is_root_dir($dir)) {
       // set permission, to force delete command for all files
       $this->system('chmod -R 700 ' . $dir);
       // remove directories and files
@@ -1249,18 +1267,21 @@ class Vcdeploy {
       $permission['name'] = $root_dir . $permission['name'];
     }
 
-    if ($permission['name'] == '/') {
+    if ($this->is_root_dir($permission['name'])) {
       throw new Exception('Permission should never ever set tor / (recursive)!');
-    }
-    else if (!isset($permission['mod']) || empty($permission['mod'])) {
-      throw new Exception('mod value is required for permissions.');
     }
 
     if ($mode == 'own') {
+      if (!isset($permission['own']) || empty($permission['own'])) {
+        throw new Exception('own value is required for permissions (mode=own).');
+      }
       $command = 'chown';
       $new_value = $permission['own'];
     }
     else {
+      if (!isset($permission['mod']) || empty($permission['mod'])) {
+        throw new Exception('mod value is required for permissions (mode=mod).');
+      }
       $command = 'chmod';
       $new_value = $permission['mod'];
     }

@@ -105,7 +105,6 @@ class VcdeployPluginSetupDrupal extends Vcdeploy implements IVcdeployPlugin {
 
       // 3. detect which .htaccess content has to be written
       // If data directory is within drupal base directory, private access is set - otherwise public access
-
       $base_dir = $this->project['path'] . '/' . $this->drupal_base_dir;
       if (substr_count($dir, $base_dir) && substr($identifier, 0, 7)!='private') {
         // within drupal document root - > public directory
@@ -115,9 +114,7 @@ class VcdeployPluginSetupDrupal extends Vcdeploy implements IVcdeployPlugin {
         // outsite drupal document root - > private directory
         $htaccess_content = "SetHandler Drupal_Security_Do_Not_Remove_See_SA_2006_006\nDeny from all\nOptions None\nOptions +FollowSymLinks\n";
       }
-
       // 4. Add .htaccess file
-
       if (!file_put_contents($dir . '/.htaccess', $htaccess_content)) {
         throw new Exception('Failed to write .htaccess file to ' . $dir . '/.htaccess');
       }
@@ -193,12 +190,12 @@ class VcdeployPluginSetupDrupal extends Vcdeploy implements IVcdeployPlugin {
 
     $this->msg('Run drupal installation of ' . $this->project_name . '...');
 
-    // 1. run pre commands
+    // 1. Run pre commands
     if (isset($this->project['setup_drupal']['pre_commands'])) {
       $this->hook_commands($this->project['setup_drupal']['pre_commands'], 'pre');
     }
 
-    // 2. run install
+    // 2. Run install
     $command  = '[drush] --yes si ' . $this->project['setup_drupal']['install_profile'] . ' ';
     $command .= '--account-name=' . $this->project['setup_drupal']['account_name'] . ' ';
     $command .= '--account-pass=' . $this->project['setup_drupal']['account_pass'] . ' ';
@@ -206,9 +203,21 @@ class VcdeployPluginSetupDrupal extends Vcdeploy implements IVcdeployPlugin {
 
     $this->hook_commands(array($command), 'install');
 
-    // 3. run post commands
+    // 3. Run post commands
     if (isset($this->project['setup_drupal']['post_commands'])) {
       $this->hook_commands($this->project['setup_drupal']['post_commands'], 'post');
+    }
+
+    // 4. Set file permissions (has to be after post commands to make sure all created files are affected)
+    if (isset($this->project['permissions']) && is_array($this->project['permissions'])) {
+      foreach ($this->project['permissions'] AS $permission) {
+        if (isset($permission['mod']) && !empty($permission['mod'])) {
+          $this->set_permissions('mod', $permission, $this->project['path']);
+        }
+        if (isset($permission['own']) && !empty($permission['own'])) {
+          $this->set_permissions('own', $permission, $this->project['path']);
+        }
+      }
     }
   }
 

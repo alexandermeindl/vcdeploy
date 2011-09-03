@@ -127,6 +127,7 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
         throw new Exception('Project "' . $project_name . '" is not configured!');
       }
       $this->set_project($project_name, $this->projects[$project_name]);
+      $this->progressbar_step();
       $this->msg('Project: ' . $this->project_name);
 
       if (!isset($this->project['path'])) {
@@ -174,11 +175,49 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
    */
   public function get_steps($init = 0) {
     if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
-      return $init + 1;
+      $rc = 1;
     }
     else {
-      return $init + count($this->projects);
+      $rc = count($this->projects);
     }
+
+    // with backup
+    if ($this->is_backup_required()) {
+      $rc *= 2;
+    }
+
+    // with permissions
+    if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
+      $project_name = $this->paras->command->options['project'];
+      $rc += $this->_countPermissions($this->projects[$project_name]);
+    }
+    else {
+      foreach ($this->projects AS $project_name => $project) {
+        $rc += $this->_countPermissions($project);
+      }
+    }
+
+    return $init + $rc;
+  }
+
+  /**
+   * Get number of permission loops
+   *
+   */
+  private function _countPermissions($project) {
+    $count = 0;
+    if (isset($project['permissions']) && is_array($project['permissions'])) {
+
+      foreach ($project['permissions'] AS $permission) {
+        if (isset($permission['mod']) && !empty($permission['mod'])) {
+          $count++;
+        }
+        if (isset($permission['own']) && !empty($permission['own'])) {
+          $count++;
+        }
+      }
+    }
+    return $count;
   }
 
   /**
@@ -252,13 +291,17 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
         }
       }
 
-      // 5. Permissions
+      // 5. run post commands
+      if (isset($this->project['rollout']['post_commands'])) {
+        $this->hook_commands($this->project['rollout']['post_commands'], 'post');
+      }
+
+      // 6. Permissions (has to be after post commands to make sure all created files are affected)
       if (isset($this->project['permissions']) && is_array($this->project['permissions'])) {
 
         if ($this->current_user != 'root') {
           throw new Exception('permission commands requires to run script with root privileges for project ' . $this->project_name);
         }
-
         foreach ($this->project['permissions'] AS $permission) {
           if (isset($permission['mod']) && !empty($permission['mod'])) {
             $this->set_permissions('mod', $permission, $this->project['path']);
@@ -267,11 +310,6 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
             $this->set_permissions('own', $permission, $this->project['path']);
           }
         }
-      }
-
-      // 6. run post commands
-      if (isset($this->project['rollout']['post_commands'])) {
-        $this->hook_commands($this->project['rollout']['post_commands'], 'post');
       }
     }
 
