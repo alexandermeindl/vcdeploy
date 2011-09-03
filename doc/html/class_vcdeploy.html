@@ -27,7 +27,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">vcdeploy
-   &#160;<span id="projectnumber">0.50</span>
+   &#160;<span id="projectnumber">0.51</span>
    </div>
    
   </td>
@@ -139,6 +139,7 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_vcdeploy.html#ad5d0153681d636227aac630f1c32629f">ssh_system</a> ($command, $passthru=FALSE)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_vcdeploy.html#a922035a7c68551ad5d34fb7144b067dc">gzip_file</a> ($filename, $only_command=FALSE)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_vcdeploy.html#a9ac401887df6b6d3f118fa1af8c987b5">md5_file</a> ($filename)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_vcdeploy.html#a7d96990ab926f7b0c0f599f82e371971">is_root_dir</a> ($dir)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_vcdeploy.html#abd3212048b835599fef4a37f2125eb6c">remove_directory</a> ($dir)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_vcdeploy.html#a279f8f924b7fd3d7db68b0a7a2d0aba1">validate_projects</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_vcdeploy.html#aa1e5d1ffc4ded770bea1de400df24ec5">create_project_data_backup</a> ()</td></tr>
@@ -155,9 +156,12 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_vcdeploy.html#a9a7de64f9e4360284831e06294fa875d">db_drop</a> ($db)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_vcdeploy.html#ad813faa6b9f1773da816f088b7c48276">db_create</a> ($db)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_vcdeploy.html#a5c9146cb1d242a1e2f3fdc6ad1abfd1b">db_recreate</a> ($db)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_vcdeploy.html#a3efbf3a368c0b6600b0db721ea567922">count_project_permissions</a> ($project)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_vcdeploy.html#a19622ea111816348ec0a1928f71ab3d8">set_permissions</a> ($mode, $permission, $root_dir=FALSE)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad44a633d2aa3ddcf217d0cf3c61aad58"></a><!-- doxytag: member="Vcdeploy::is_backup_required" ref="ad44a633d2aa3ddcf217d0cf3c61aad58" args="()" -->
 &#160;</td><td class="memItemRight" valign="bottom"><b>is_backup_required</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a631d6f3aa9f82be866157e7691192930"></a><!-- doxytag: member="Vcdeploy::is_permission_required" ref="a631d6f3aa9f82be866157e7691192930" args="()" -->
+&#160;</td><td class="memItemRight" valign="bottom"><b>is_permission_required</b> ()</td></tr>
 <tr><td colspan="2"><h2><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa36f57c62963507498e1181f9a75bbb9"></a><!-- doxytag: member="Vcdeploy::$base_dir" ref="aa36f57c62963507498e1181f9a75bbb9" args="" -->
@@ -253,6 +257,24 @@ Protected Attributes</h2></td></tr>
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a3efbf3a368c0b6600b0db721ea567922"></a><!-- doxytag: member="Vcdeploy::count_project_permissions" ref="a3efbf3a368c0b6600b0db721ea567922" args="($project)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">count_project_permissions </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>project</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Get number of project permission loops </p>
+
+</div>
+</div>
 <a class="anchor" id="a3b7be4fb4a21ce685eba5cb19256e288"></a><!-- doxytag: member="Vcdeploy::create_data_dump" ref="a3b7be4fb4a21ce685eba5cb19256e288" args="($source_dir, $target_file, $excludes=NULL)" -->
 <div class="memitem">
 <div class="memproto">
@@ -779,6 +801,31 @@ Protected Attributes</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a class="anchor" id="a7d96990ab926f7b0c0f599f82e371971"></a><!-- doxytag: member="Vcdeploy::is_root_dir" ref="a7d96990ab926f7b0c0f599f82e371971" args="($dir)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">is_root_dir </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>dir</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Check if directory is /</p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">string</td><td class="paramname">$dir</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>bool </dd></dl>
 
 </div>
 </div>

@@ -83,6 +83,13 @@ $plugin['options']['without_backup'] = array(
                                           'description' => 'Do not create a backup before the rollout (default with setting without_backup=TRUE)',
                                         );
 
+$plugin['options']['without_permission'] = array(
+                                          'short_name'  => '-P',
+                                          'long_name'   => '--without_permission',
+                                          'action'      => 'StoreTrue',
+                                          'description' => 'Do not apply specified permissions',
+);
+
 class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
 
   /**
@@ -138,7 +145,7 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
       $this->set_scm('project');
       $rc = $this->_projectRollout();
     }
-    else {
+    else { // all projects
 
       foreach ($this->projects AS $project_name => $project) {
 
@@ -174,6 +181,8 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
    * @see Vcdeploy#progressbar_init()
    */
   public function get_steps($init = 0) {
+
+    // with permissions
     if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
       $rc = 1;
     }
@@ -187,37 +196,19 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
     }
 
     // with permissions
-    if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
-      $project_name = $this->paras->command->options['project'];
-      $rc += $this->_countPermissions($this->projects[$project_name]);
-    }
-    else {
-      foreach ($this->projects AS $project_name => $project) {
-        $rc += $this->_countPermissions($project);
+    if ($this->is_permission_required()) {
+      if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
+        $project_name = $this->paras->command->options['project'];
+        $rc += $this->count_project_permissions($this->projects[$project_name]);
+      }
+      else {
+        foreach ($this->projects AS $project_name => $project) {
+          $rc += $this->count_project_permissions($project);
+        }
       }
     }
 
     return $init + $rc;
-  }
-
-  /**
-   * Get number of permission loops
-   *
-   */
-  private function _countPermissions($project) {
-    $count = 0;
-    if (isset($project['permissions']) && is_array($project['permissions'])) {
-
-      foreach ($project['permissions'] AS $permission) {
-        if (isset($permission['mod']) && !empty($permission['mod'])) {
-          $count++;
-        }
-        if (isset($permission['own']) && !empty($permission['own'])) {
-          $count++;
-        }
-      }
-    }
-    return $count;
   }
 
   /**
@@ -297,17 +288,19 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
       }
 
       // 6. Permissions (has to be after post commands to make sure all created files are affected)
-      if (isset($this->project['permissions']) && is_array($this->project['permissions'])) {
+      if ($this->is_permission_required()) {
+        if (isset($this->project['permissions']) && is_array($this->project['permissions'])) {
 
-        if ($this->current_user != 'root') {
-          throw new Exception('permission commands requires to run script with root privileges for project ' . $this->project_name);
-        }
-        foreach ($this->project['permissions'] AS $permission) {
-          if (isset($permission['mod']) && !empty($permission['mod'])) {
-            $this->set_permissions('mod', $permission, $this->project['path']);
+          if ($this->current_user != 'root') {
+            throw new Exception('permission commands requires to run script with root privileges for project ' . $this->project_name);
           }
-          if (isset($permission['own']) && !empty($permission['own'])) {
-            $this->set_permissions('own', $permission, $this->project['path']);
+          foreach ($this->project['permissions'] AS $permission) {
+            if (isset($permission['mod']) && !empty($permission['mod'])) {
+              $this->set_permissions('mod', $permission, $this->project['path']);
+            }
+            if (isset($permission['own']) && !empty($permission['own'])) {
+              $this->set_permissions('own', $permission, $this->project['path']);
+            }
           }
         }
       }

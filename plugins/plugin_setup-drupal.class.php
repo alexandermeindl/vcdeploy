@@ -30,6 +30,13 @@ $plugin['args']['command'] = 'Name of subcommand
 - reset: run \'reset-settings\', \'reset-files\' and \'reset-db\'
 - reinstall: run \'reset-settings\', \'reset-files\' and \'install\'';
 
+$plugin['options']['without_permission'] = array(
+                                          'short_name'  => '-P',
+                                          'long_name'   => '--without_permission',
+                                          'action'      => 'StoreTrue',
+                                          'description' => 'Do not apply specified permissions',
+);
+
 class VcdeployPluginSetupDrupal extends Vcdeploy implements IVcdeployPlugin {
 
   /**
@@ -209,13 +216,15 @@ class VcdeployPluginSetupDrupal extends Vcdeploy implements IVcdeployPlugin {
     }
 
     // 4. Set file permissions (has to be after post commands to make sure all created files are affected)
-    if (isset($this->project['permissions']) && is_array($this->project['permissions'])) {
-      foreach ($this->project['permissions'] AS $permission) {
-        if (isset($permission['mod']) && !empty($permission['mod'])) {
-          $this->set_permissions('mod', $permission, $this->project['path']);
-        }
-        if (isset($permission['own']) && !empty($permission['own'])) {
-          $this->set_permissions('own', $permission, $this->project['path']);
+    if ($this->is_permission_required()) {
+      if (isset($this->project['permissions']) && is_array($this->project['permissions'])) {
+        foreach ($this->project['permissions'] AS $permission) {
+          if (isset($permission['mod']) && !empty($permission['mod'])) {
+            $this->set_permissions('mod', $permission, $this->project['path']);
+          }
+          if (isset($permission['own']) && !empty($permission['own'])) {
+            $this->set_permissions('own', $permission, $this->project['path']);
+          }
         }
       }
     }

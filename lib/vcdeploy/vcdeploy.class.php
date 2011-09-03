@@ -1249,6 +1249,26 @@ class Vcdeploy {
   }
 
   /**
+  * Get number of project permission loops
+  *
+  */
+  public function count_project_permissions($project) {
+    $count = 0;
+    if (isset($project['permissions']) && is_array($project['permissions'])) {
+
+      foreach ($project['permissions'] AS $permission) {
+        if (isset($permission['mod']) && !empty($permission['mod'])) {
+          $count++;
+        }
+        if (isset($permission['own']) && !empty($permission['own'])) {
+          $count++;
+        }
+      }
+    }
+    return $count;
+  }
+
+  /**
    * Set permissions
    *
    * @param string $mode
@@ -1324,6 +1344,18 @@ class Vcdeploy {
       if (!isset($this->paras->command->options['without_backup']) || !$this->paras->command->options['without_backup']) {
         return TRUE;
       }
+    }
+  }
+
+  /**
+   * Check, if permission run is required
+   *
+   * @var bool command line option 'without_permission'
+   * @return bool
+   */
+  public function is_permission_required() {
+    if (!isset($this->paras->command->options['without_permission']) || !$this->paras->command->options['without_permission']) {
+      return TRUE;
     }
   }
 }

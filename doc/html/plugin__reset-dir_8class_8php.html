@@ -27,7 +27,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">vcdeploy
-   &#160;<span id="projectnumber">0.50</span>
+   &#160;<span id="projectnumber">0.51</span>
    </div>
    
   </td>
@@ -101,6 +101,7 @@ Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><b>$plugin</b> ['options']['project']</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><b>$plugin</b> ['options']['with_backup']</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><b>$plugin</b> ['options']['without_backup']</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><b>$plugin</b> ['options']['without_permission']</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Plugin to reset a directory</p>
@@ -162,6 +163,25 @@ Variables</h2></td></tr>
                                           <span class="stringliteral">&#39;action&#39;</span>      =&gt; <span class="stringliteral">&#39;StoreTrue&#39;</span>,
                                           <span class="stringliteral">&#39;description&#39;</span> =&gt; <span class="stringliteral">&#39;Do not create a backup before the sync (default with setting without_backup=TRUE)&#39;</span>,
                                         )
+</pre></div>
+</div>
+</div>
+<a class="anchor" id="a41cee76bda09753289860496efc928d8"></a><!-- doxytag: member="plugin_reset&#45;dir.class.php::$plugin" ref="a41cee76bda09753289860496efc928d8" args="['options']['without_permission']" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">$plugin['options']['without_permission']</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<b>Initial value:</b><div class="fragment"><pre class="fragment"> array(
+                                          <span class="stringliteral">&#39;short_name&#39;</span>  =&gt; <span class="stringliteral">&#39;-P&#39;</span>,
+                                          <span class="stringliteral">&#39;long_name&#39;</span>   =&gt; <span class="stringliteral">&#39;--without_permission&#39;</span>,
+                                          <span class="stringliteral">&#39;action&#39;</span>      =&gt; <span class="stringliteral">&#39;StoreTrue&#39;</span>,
+                                          <span class="stringliteral">&#39;description&#39;</span> =&gt; <span class="stringliteral">&#39;Do not apply specified permissions&#39;</span>,
+)
 </pre></div>
 </div>
 </div>
