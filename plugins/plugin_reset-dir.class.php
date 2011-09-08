@@ -147,7 +147,7 @@ class VcdeployPluginResetDir extends Vcdeploy implements IVcdeployPlugin {
 
           // 1. pre commands
           if (isset($this->project['reset_dir']['pre_commands'])) {
-            $this->hook_commands($this->project['reset_dir']['pre_commands'], 'post');
+            $this->hook_commands($this->project['reset_dir']['pre_commands'], 'pre');
           }
 
           // 2. create backup of existing data

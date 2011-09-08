@@ -106,6 +106,11 @@ class VcdeployPluginResetDb extends Vcdeploy implements IVcdeployPlugin {
 
     if (isset($this->project['db'])) {
 
+      // run post commands
+      if (isset($this->project['reset_db']['pre_commands'])) {
+        $this->hook_commands($this->project['reset_db']['pre_commands'], 'pre');
+      }
+
       foreach ($this->project['db'] AS $identifier => $db) {
 
         $sql_file = $this->get_remote_db_file($identifier, $this->get_source_db($identifier));

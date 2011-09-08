@@ -403,6 +403,7 @@ class Vcdeploy {
             }
 
             // set command configuration, if available
+            // if plugin name is used as array key, this entries are shift to $this->project root level!
             if (isset($projects[$project_name][$this->plugin_name])) {
               $projects[$project_name] = array_merge($projects[$project_name], $projects[$project_name][$this->plugin_name]);
               unset($projects[$project_name][$this->plugin_name]);
@@ -633,7 +634,7 @@ class Vcdeploy {
     $this->ssh_check();
     $remote_file = $this->_getSshHost() . ':' . $remote_file;
 
-    $this->msg('Transfer file...');
+    $this->msg('Transfer file from ' . $this->_getSshHost() . '...');
     $rc = $this->system($this->_getScpBin() . ' ' . $remote_file . ' ' . $local_file, TRUE);
     if ($rc['rc']) {
       throw new Exception('File could not be transfered. (' . $remote_file . ')');
@@ -654,7 +655,7 @@ class Vcdeploy {
     $this->ssh_check();
     $remote_file = $this->_getSshHost() . ':' . $remote_file;
 
-    $this->msg('Transfer file...');
+    $this->msg('Transfer file to ' . $this->_getSshHost() . '...');
     $rc = $this->system($this->_getScpBin() . ' ' . $local_file . ' ' . $remote_file, TRUE);
     if ($rc['rc']) {
       throw new Exception('File could not be transfered. (' . $local_file . ')');
@@ -762,19 +763,24 @@ class Vcdeploy {
    */
   public function remove_directory($dir) {
 
-    // remove existing target directory
-    if (!$this->is_root_dir($dir)) {
-      // set permission, to force delete command for all files
-      $this->system('chmod -R 700 ' . $dir);
-      // remove directories and files
-      $rc = $this->system('rm -r ' . $dir);
-      if ($rc['rc']) {
-        throw new Exception('Error with removing directory \'' . $dir . '\'');
-      }
-    }
-    else {
-      throw new Exception('Never ever use / as target directory!');
-    }
+		if (file_exists($dir)) {
+			// remove existing target directory
+			if (!$this->is_root_dir($dir)) {
+				// set permission, to force delete command for all files
+				$this->system('chmod -R 700 ' . $dir);
+				// remove directories and files
+				$rc = $this->system('rm -r ' . $dir);
+				if ($rc['rc']) {
+					throw new Exception('Error with removing directory \'' . $dir . '\'');
+				}
+			}
+			else {
+				throw new Exception('Never ever use / as target directory!');
+			}
+		}
+		else {
+			$this->msg('Directory ' . $dir . ' does not exists, removing is not required.');
+		}
   }
 
   /**
@@ -842,13 +848,14 @@ class Vcdeploy {
     if (!is_array($this->project)) {
       throw new Exception('set_scm error: scm mode project requires $this->project');
     }
-
+    print_r($this->project);
+    print_r($this->project['data_dir']);
     foreach ($this->project['data_dir'] AS $name => $dir) {
 
       $target_file = $this->conf['backup_dir']
                           . '/' . $this->project_name
                           . $name . '-' . $this->date_stamp . '.tar';
-
+print('dir: ' . $dir . ' name=' . $name);
       $this->create_data_dump($dir, $target_file);
     }
   }
@@ -1011,7 +1018,7 @@ class Vcdeploy {
 
         $remote_file = $this->project['remote_tmp_dir'] . '/' . $this->_getRemoteBasename('db_' . $identifier) . '.sql';
 
-        $this->msg('Create Dump on remote server...');
+        $this->msg('Create Dump on remote server...(' . $this->ssh['host'] . ')');
         $rc = $this->ssh_system($this->conf['mysqldump_bin'] . ' ' . $db . ' > ' . $remote_file, TRUE);
         if ($rc['rc']) {
           throw new Exception('Error creating remote dump.');
