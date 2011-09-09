@@ -525,6 +525,15 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
         }
       }
 
+      // only if TAG is defined
+      if ($this->tag) {
+        // switch back to master before git pull
+        $rc = $this->system($this->scm->activate_tag('master'));
+        if ($rc['rc']) {
+          throw new Exception('Error switching to master');
+        }
+      }
+
       // update scm project code
       $rc = $this->system($this->scm->update(), TRUE);
       if ($rc['rc']) {
