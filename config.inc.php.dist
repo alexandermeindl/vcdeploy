@@ -57,7 +57,8 @@ $project['my-project']['reset-db']['post_commands'][] = $project['my-project']['
 
 /**
  * project permissions
- *  name = filename or directory name
+ *  name = filename or directory name (required)
+ *  filter = filter of name, e.g. *.sh
  *  rec  = recursive: yes, files (files only) dirs (directories only) or no [default]
  *  mod  = permissions
  *  own  = owner
