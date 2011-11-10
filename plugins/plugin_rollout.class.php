@@ -461,12 +461,12 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
   }
 
   /**
-  * Check if TAG is required to run rollout
-  *
-  * Only SCM rollout without TAG is possible
-  *
-  * @return bool
-  */
+   * Check if TAG is required to run rollout
+   *
+   * Only SCM rollout without TAG is possible
+   *
+   * @return bool
+   */
   private function _isTagRequired() {
 
   // required for TAG files
@@ -491,6 +491,21 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
 
     return FALSE;
   }
+
+  /**
+   * Check if SCM tag switch is required
+   *
+   * @return bool
+   */
+	private function _isTagSwitchRequired() {
+
+		if ($this->tag) {
+
+			if (!isset($this->project['with_scm_tag_switch']) || $this->project['with_scm_tag_switch']) {
+				return TRUE;
+			}
+		}
+	}
 
   /**
    * Rollout project code
@@ -525,8 +540,8 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
         }
       }
 
-      // only if TAG is defined
-      if ($this->tag) {
+      // check if switch to tag is used
+      if ($this->_isTagSwitchRequired()) {
         // switch back to master before git pull
         $rc = $this->system($this->scm->activate_tag('master'));
         if ($rc['rc']) {
@@ -539,8 +554,8 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
       if ($rc['rc']) {
         throw new Exception('SCM type static is not supported with rollout');
       }
-      // only if TAG is defined
-      if ($this->tag) {
+      // check if switch to tag is used
+      if ($this->_isTagSwitchRequired()) {
         $rc = $this->system($this->scm->activate_tag($this->tag));
         if ($rc['rc']) {
           throw new Exception('Error switching to tag \'' . $this->tag . '\'');

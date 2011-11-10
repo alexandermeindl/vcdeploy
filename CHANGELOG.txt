@@ -1,8 +1,9 @@
 // CHANGELOG.txt
 
-vcdeploy 0.51, 2011-09-03
+vcdeploy 0.51, 2011-11-10
 - add permission support to setup-drupal
 - add project support to permission (syntax changed)
+- filter support for permissios
 
 vcdeploy 0.50, 2011-08-28
 - update-project and release-rollout merged to rollout with lots of improvements

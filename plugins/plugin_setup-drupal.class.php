@@ -68,6 +68,10 @@ class VcdeployPluginSetupDrupal extends Vcdeploy implements IVcdeployPlugin {
     }
     $this->set_project($project_name, $this->projects[$project_name]);
 
+    if (!isset($this->project['setup_drupal']['install_profile'])) {
+      throw new Exception('install_profile is not configured');
+    }
+
     if (isset($this->project['setup_drupal']['base_dir'])) {
       $this->drupal_base_dir = $this->project['setup_drupal']['base_dir'];
     }

@@ -763,24 +763,24 @@ class Vcdeploy {
    */
   public function remove_directory($dir) {
 
-		if (file_exists($dir)) {
-			// remove existing target directory
-			if (!$this->is_root_dir($dir)) {
-				// set permission, to force delete command for all files
-				$this->system('chmod -R 700 ' . $dir);
-				// remove directories and files
-				$rc = $this->system('rm -r ' . $dir);
-				if ($rc['rc']) {
-					throw new Exception('Error with removing directory \'' . $dir . '\'');
-				}
-			}
-			else {
-				throw new Exception('Never ever use / as target directory!');
-			}
-		}
-		else {
-			$this->msg('Directory ' . $dir . ' does not exists, removing is not required.');
-		}
+    if (file_exists($dir)) {
+      // remove existing target directory
+      if (!$this->is_root_dir($dir)) {
+        // set permission, to force delete command for all files
+        $this->system('chmod -R 700 ' . $dir);
+        // remove directories and files
+        $rc = $this->system('rm -r ' . $dir);
+        if ($rc['rc']) {
+          throw new Exception('Error with removing directory \'' . $dir . '\'');
+        }
+      }
+      else {
+        throw new Exception('Never ever use / as target directory!');
+      }
+    }
+    else {
+      $this->msg('Directory ' . $dir . ' does not exists, removing is not required.');
+    }
   }
 
   /**
@@ -848,14 +848,11 @@ class Vcdeploy {
     if (!is_array($this->project)) {
       throw new Exception('set_scm error: scm mode project requires $this->project');
     }
-    print_r($this->project);
-    print_r($this->project['data_dir']);
     foreach ($this->project['data_dir'] AS $name => $dir) {
 
       $target_file = $this->conf['backup_dir']
                           . '/' . $this->project_name
                           . $name . '-' . $this->date_stamp . '.tar';
-print('dir: ' . $dir . ' name=' . $name);
       $this->create_data_dump($dir, $target_file);
     }
   }
@@ -1279,7 +1276,12 @@ print('dir: ' . $dir . ' name=' . $name);
    * Set permissions
    *
    * @param string $mode
-   * @param array $permission (name = directory, mod = value, rec = recursive
+   * @param array $permission
+   *                   name = directory (required)
+   *                   mod = permission value
+   *                   own = owner
+   *                   rec = recursive (default no)
+   *                   filter = name filter
    *
    * @return void
    */
@@ -1287,6 +1289,9 @@ print('dir: ' . $dir . ' name=' . $name);
 
     if (!isset($permission['name']) || empty($permission['name'])) {
       throw new Exception('name value (directory) is required for permissions.');
+    }
+    elseif (!isset($permission['rec'])) {
+      $permission['rec'] = 'no';
     }
 
     // use root directory as prefix to name
@@ -1315,23 +1320,35 @@ print('dir: ' . $dir . ' name=' . $name);
 
     $this->show_progress('Set permissions (' . $new_value . ') to ' . $permission['name'] . '...');
 
+    if (isset($permission['filter'])) {
+      $name_filter = ' -name "' . $permission['filter'] . '"';
+    }
+    else {
+      $name_filter = '';
+    }
+
+    $type_filter = '';
+    $maxdepth = '';
+
     switch ($permission['rec']) {
 
       case 'files':
-        $rc = $this->system('find ' . $permission['name'] . ' -type f -exec ' . $command . ' ' . $new_value . ' {} \;');
+        $type_filter = ' -type f';
         break;
 
       case 'dirs':
-        $rc = $this->system('find ' . $permission['name'] . ' -type d -exec ' . $command . ' ' . $new_value . ' {} \;');
+        $type_filter = ' -type d';
         break;
 
       case 'yes':
-        $rc = $this->system($command . ' -R ' . $new_value . ' ' . $permission['name']);
         break;
 
       default: // not recursive
-        $rc = $this->system($command . ' ' . $new_value . ' ' . $permission['name']);
+        $maxdepth = ' -maxdepth 1';
     }
+
+    $rc = $this->system('find ' . $permission['name'] . $type_filter . $name_filter . $maxdepth . ' -exec ' . $command . ' ' . $new_value . ' {} \;');
+
     return $rc['rc'];
   }
 
