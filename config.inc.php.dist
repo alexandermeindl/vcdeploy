@@ -65,9 +65,9 @@ $project['my-project']['reset-db']['post_commands'][] = $project['my-project']['
 $project['my-project']['permissions'][0]['name'] = '/sites/default/files';
 $project['my-project']['permissions'][0]['rec'] = 'yes';
 $project['my-project']['permissions'][0]['own'] = 'www-data:www-data';
-$project['my-project']['permissions'][0]['name'] = '/htdocs';
-$project['my-project']['permissions'][0]['rec'] = 'files';
-$project['my-project']['permissions'][0]['mod'] = '644';
+$project['my-project']['permissions'][1]['name'] = '/htdocs';
+$project['my-project']['permissions'][1]['rec'] = 'files';
+$project['my-project']['permissions'][1]['mod'] = '644';
 
 /**
  * Configuration for reset-db
