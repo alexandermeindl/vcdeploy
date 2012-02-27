@@ -191,6 +191,11 @@ class VcdeployPluginResetDir extends Vcdeploy implements IVcdeployPlugin {
         else {
           $this->msg('TAR file for reset could not be identify');
         }
+
+        if ($this->project['source_type'] == 'local') {
+          // cleanup tar file
+          unlink($tar_file);
+        }
       }
     }
     else {

@@ -141,6 +141,11 @@ class VcdeployPluginResetDb extends Vcdeploy implements IVcdeployPlugin {
           }
 
           $this->msg('Database ' . $db . ' has been successfully reseted.');
+
+          if ($this->project['source_type'] == 'local') {
+            // cleanup sql file
+            unlink($sql_file);
+          }
         }
         else {
           $this->msg('SQL file for import could not be identify');

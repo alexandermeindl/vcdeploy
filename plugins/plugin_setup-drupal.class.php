@@ -207,11 +207,7 @@ class VcdeployPluginSetupDrupal extends Vcdeploy implements IVcdeployPlugin {
     }
 
     // 2. Run install
-    $command  = '[drush] --yes si ' . $this->project['setup_drupal']['install_profile'] . ' ';
-    $command .= '--account-name=' . $this->project['setup_drupal']['account_name'] . ' ';
-    $command .= '--account-pass=' . $this->project['setup_drupal']['account_pass'] . ' ';
-    $command .= '--sites-subdir=' . $this->getSitesSubdir() . ' ';
-
+    $command  = '[drush] --yes si ' . $this->project['setup_drupal']['install_profile'] . ' ' . $this->getDrushParas();
     $this->hook_commands(array($command), 'install');
 
     // 3. Run post commands
@@ -232,6 +228,29 @@ class VcdeployPluginSetupDrupal extends Vcdeploy implements IVcdeployPlugin {
         }
       }
     }
+  }
+
+  /**
+   * Get drush parameters of definied settings
+   */
+  private function getDrushParas() {
+
+    $drush_para = '';
+    $paras = array('account-name', 'account-pass', 'sites-subdir', 'site-name', 'site-mail', 'clean-url');
+
+    foreach($paras AS $key) {
+        $vc_key = str_replace('-', '_', $key);
+        if (isset($this->project['setup_drupal'][$vc_key])) {
+          if ($key=='sites-subdir') {
+            $drush_para .= ' --' . $key .'=' . $this->getSitesSubdir();
+          }
+          else {
+            $drush_para .= ' --' . $key .'="' . $this->project['setup_drupal'][$vc_key] . '"';
+          }
+        }
+    }
+
+    return $drush_para;
   }
 
   /**
