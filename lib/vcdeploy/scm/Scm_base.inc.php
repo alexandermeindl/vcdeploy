@@ -129,4 +129,13 @@ class VcdeployScm {
   public function get_tags() {
     throw new Exception('\'get tags\' is not implement of the current SCM');
   }
+
+ /**
+  * Get push command
+  *
+  * @return string
+  */
+  public function push($with_tags=FALSE) {
+    throw new Exception('\'push\' is not implement of the current SCM');
+  }
 }

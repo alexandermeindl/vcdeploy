@@ -98,7 +98,7 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin {
    *
    * @var bool
    */
-  private $with_push = FALSE;
+  private $with_push = TRUE;
 
   /**
    * files to commit
@@ -266,13 +266,14 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin {
       print 'Message: ' . $e->getMessage();
     }
 
-    if ($with_commit && count($this->commit_files)) {
-
-      $this->system($this->scm->commit('Files for release ' . $this->tag . ' have been added.', $this->commit_files));
-
-      // only disabled for testing
+    if ($with_commit) {
+			// change to project path
+			chdir($this->project['path']);
+      if (isset($this->project['release']['with_commit']) && $this->project['release']['with_commit'] && count($this->commit_files)) {
+        $this->system($this->scm->commit('Files for release ' . $this->tag . ' have been added.', $this->commit_files));
+      }
       if ($this->with_push) {
-        $this->system($this->scm->push());
+        $this->system($this->scm->push(TRUE));
       }
     }
 
@@ -304,6 +305,9 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin {
    */
   private function _setTag() {
 
+		// change to project path
+    chdir($this->project['path']);
+
     $this->msg('Set tag "' . $this->tag . '"...');
     $rc = $this->system($this->scm->set_tag($this->tag));
 
@@ -322,6 +326,8 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin {
 
     $this->msg('Remove local tag "' . $this->tag . '"...');
 
+		// change to project path
+    chdir($this->project['path']);
     $rc = $this->system($this->scm->remove_tag($this->tag));
 
     if ($rc['rc']) {
@@ -370,7 +376,7 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin {
 
           $this->system('mv ' . $sql_file . ' ' . $target_file . '.gz');
           $this->_addCommitFiles(array(
-            $target_file . 'gz',
+            $target_file . '.gz',
             $this->md5_file($target_file . '.gz'),
           ));
         }
@@ -404,7 +410,7 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin {
         if (!empty($tar_file)) {
           $this->system('mv ' . $tar_file . ' ' . $target_file . '.gz');
           $this->_addCommitFiles(array(
-            $target_file . 'gz',
+            $target_file . '.gz',
             $this->md5_file($target_file . '.gz'),
           ));
         }

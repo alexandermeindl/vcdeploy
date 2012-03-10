@@ -131,4 +131,22 @@ class VcdeployScmGit extends VcdeployScm {
   public function get_tags() {
     return $this->conf['git_bin'] . ' tag -l';
   }
+
+ /**
+  * Get push command
+  *
+  * @param bool $with_tags
+  *
+  * @return string
+  */
+  public function push($with_tags=FALSE) {
+
+    $command = $this->conf['git_bin'] . ' push';
+
+    if ($with_tags) {
+      $command .= ' --tags';
+    }
+
+    return $command;
+  }
 }

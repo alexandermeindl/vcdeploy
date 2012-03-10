@@ -116,16 +116,8 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
       $this->prepare_backup_dir();
     }
 
-    $this->progressbar_init();
-
     if (isset($this->paras->command->options['tag']) && !empty($this->paras->command->options['tag'])) {
       $this->tag = $this->paras->command->options['tag'];
-    }
-    elseif (isset($this->project['rollout']['tag'])) {
-      $this->tag = $this->project['rollout']['tag'];
-    }
-    elseif ($this->_isTagRequired()) {
-      throw new Exception('No release TAG specified.');
     }
 
     if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
@@ -133,7 +125,16 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
       if (!array_key_exists($project_name, $this->projects)) {
         throw new Exception('Project "' . $project_name . '" is not configured!');
       }
+      $this->progressbar_init();
       $this->set_project($project_name, $this->projects[$project_name]);
+
+      if (isset($this->project['tag'])) {
+        $this->tag = $this->project['tag'];
+      }
+      elseif ($this->_isTagRequired()) {
+        throw new Exception('No release TAG specified.');
+      }
+
       $this->progressbar_step();
       $this->msg('Project: ' . $this->project_name);
 
@@ -147,9 +148,19 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
     }
     else { // all projects
 
+      $this->progressbar_init();
+
       foreach ($this->projects AS $project_name => $project) {
 
         $this->set_project($project_name, $project);
+
+        if (isset($this->project['tag'])) {
+          $this->tag = $this->project['tag'];
+        }
+        elseif ($this->_isTagRequired()) {
+          throw new Exception('No release TAG specified.');
+        }
+
         $this->progressbar_step();
 
         if (!isset($this->project['path'])) {
@@ -236,10 +247,10 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
       $this->_backup();
     }
 
-    if (isset($this->project['rollout']['with_project_archive'])
-      && $this->project['rollout']['with_project_archive']
-      && isset($this->project['rollout']['with_project_scm'])
-      && $this->project['rollout']['with_project_scm']
+    if (isset($this->project['with_project_archive'])
+      && $this->project['with_project_archive']
+      && isset($this->project['with_project_scm'])
+      && $this->project['with_project_scm']
     ) {
       throw new Exception('You cannot use with_project_archive and with_project_scm together!');
     }
@@ -249,21 +260,21 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
 
 
       // 1. run pre commands
-      if (isset($this->project['rollout']['pre_commands'])) {
-        $this->hook_commands($this->project['rollout']['pre_commands'], 'pre');
+      if (isset($this->project['pre_commands'])) {
+        $this->hook_commands($this->project['pre_commands'], 'pre');
       }
 
       // 2. project code
-      if (isset($this->project['rollout']['with_project_archive']) && $this->project['rollout']['with_project_archive']) {
+      if (isset($this->project['with_project_archive']) && $this->project['with_project_archive']) {
         $rc = $this->_codeRollout();
       }
-      elseif (!isset($this->project['rollout']['with_project_scm']) || $this->project['rollout']['with_project_scm']) {
+      elseif (!isset($this->project['with_project_scm']) || $this->project['with_project_scm']) {
         $rc = $this->_scmRollout();
       }
 
       // 3. databases rollout
       if ((isset($this->paras->command->options['with_db']) && ($this->paras->command->options['with_db']))
-        || (isset($this->project['rollout']['with_db']) && $this->project['rollout']['with_db'])
+        || (isset($this->project['with_db']) && $this->project['with_db'])
       ) {
         if (!isset($this->paras->command->options['without_db']) || (!$this->paras->command->options['without_db'])) {
           $rc = $this->_dbRollout();
@@ -272,7 +283,7 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
 
       // 4. data (files/directories)
       if ((isset($this->paras->command->options['with_data']) && ($this->paras->command->options['with_data']))
-        || (isset($this->project['rollout']['with_data']) && $this->project['rollout']['with_data'])
+        || (isset($this->project['with_data']) && $this->project['with_data'])
       ) {
         if (!isset($this->paras->command->options['without_data']) || (!$this->paras->command->options['without_data'])) {
           if ($this->current_user != 'root') {
@@ -283,8 +294,8 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
       }
 
       // 5. run post commands
-      if (isset($this->project['rollout']['post_commands'])) {
-        $this->hook_commands($this->project['rollout']['post_commands'], 'post');
+      if (isset($this->project['post_commands'])) {
+        $this->hook_commands($this->project['post_commands'], 'post');
       }
 
       // 6. Permissions (has to be after post commands to make sure all created files are affected)
@@ -364,7 +375,7 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
 
     foreach ($this->project['db'] AS $identifier => $db) {
 
-      $sql_file = $this->_getRestoreSqlFile($identifier);
+      $sql_file = $this->_getReleaseFileName($identifier, 'sql');
 
       // recreate database
       $this->db_recreate($db);
@@ -381,42 +392,41 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
   /**
    * Get database restore file
    *
-   * @param string $db
+   * @param string $identifier
+	 * @param string $mode sql or tar
    *
    * @return string
    * @throws Exception
    */
-  private function _getRestoreSqlFile($db) {
+  private function _getReleaseFileName($identifier, $mode) {
+		$file_name = $this->project['prefix'] . $identifier . '-' . $this->tag;
+		switch ($mode) {
+			case 'sql':
+				$file_name .= '.sql.gz';
+				break;
+			case 'tar':
+				$file_name .= '.tar.gz';
+				break;
+			default:
+				throw new Exception('Unknown mode');
+		}
 
-    $file = $this->project['rollout']['releases_dir']
-              . '/' . $this->project['rollout']['prefix']
-              . $db
-              . '-' . $this->tag . '.sql.gz';
-
-    if (!file_exists($file)) {
-      throw new Exception('Database release file \'' . $file . '\' does not exist.');
-    }
-
-    return $file;
-  }
-
-  /**
-   * Get data restore file
-   *
-   * @param string $name
-   *
-   * @return string
-   * @throws Exception
-   */
-  private function _getRestoreDataFile($name) {
-
-    $file = $this->project['rollout']['releases_dir']
-              . '/' . $this->project['rollout']['prefix']
-              . $name
-              . '-' . $this->tag . '.tar.gz';
+		if (isset($this->project['remote_source']) && $this->project['remote_source']) {
+			$file = $this->conf['tmp_dir'] . '/' . $file_name;
+			$remote_file = $this->project['releases_dir'] . '/' .  $file_name;
+			if (file_exists($file)) {
+				$this->msg('File ' . $file . ' already transfered. No tranfer required.');
+			}
+			else {
+				$this->ssh_get_file($remote_file, $file);
+			}
+		}
+		else {
+			$file = $this->project['releases_dir'] . '/' . $file_name;
+		}
 
     if (!file_exists($file)) {
-      throw new Exception('Data release file \'' . $file . '\' does not exist.');
+      throw new Exception('Release file \'' . $file . '\' does not exist.');
     }
 
     return $file;
@@ -435,7 +445,7 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
     // remove existing target directories
     foreach ($this->project['data_dir'] AS $identifier => $dir) {
 
-      $tar_file = $this->_getRestoreDataFile($identifier);
+      $tar_file = $this->_getReleaseFileName($identifier, 'tar');
 
       $this->msg('Removing data directory \'' . $identifier . '\'...');
       $this->remove_directory($dir);
@@ -451,36 +461,51 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
   }
 
   /**
-  * Check if TAG is required to run rollout
-  *
-  * Only SCM rollout without TAG is possible
-  *
-  * @return bool
-  */
+   * Check if TAG is required to run rollout
+   *
+   * Only SCM rollout without TAG is possible
+   *
+   * @return bool
+   */
   private function _isTagRequired() {
 
   // required for TAG files
-    if (isset($this->project['rollout']['with_project_archive'])
-          && $this->project['rollout']['with_project_archive']) {
+    if (isset($this->project['with_project_archive'])
+          && $this->project['with_project_archive']) {
         return TRUE;
   }
 
   // required for db data
     if ((isset($this->paras->command->options['with_db']) && ($this->paras->command->options['with_db']))
-    || (isset($this->project['rollout']['with_db']) && $this->project['rollout']['with_db'])
+    || (isset($this->project['with_db']) && $this->project['with_db'])
     ) {
     return TRUE;
       }
 
       // required for files data
     if ((isset($this->paras->command->options['with_data']) && ($this->paras->command->options['with_data']))
-    || (isset($this->project['rollout']['with_data']) && $this->project['rollout']['with_data'])
+    || (isset($this->project['with_data']) && $this->project['with_data'])
     ) {
     return TRUE;
       }
 
     return FALSE;
   }
+
+  /**
+   * Check if SCM tag switch is required
+   *
+   * @return bool
+   */
+	private function _isTagSwitchRequired() {
+
+		if ($this->tag) {
+
+			if (!isset($this->project['with_scm_tag_switch']) || $this->project['with_scm_tag_switch']) {
+				return TRUE;
+			}
+		}
+	}
 
   /**
    * Rollout project code
@@ -515,13 +540,22 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
         }
       }
 
+      // check if switch to tag is used
+      if ($this->_isTagSwitchRequired()) {
+        // switch back to master before git pull
+        $rc = $this->system($this->scm->activate_tag('master'));
+        if ($rc['rc']) {
+          throw new Exception('Error switching to master');
+        }
+      }
+
       // update scm project code
       $rc = $this->system($this->scm->update(), TRUE);
       if ($rc['rc']) {
         throw new Exception('SCM type static is not supported with rollout');
       }
-      // only if TAG is defined
-      if ($this->tag) {
+      // check if switch to tag is used
+      if ($this->_isTagSwitchRequired()) {
         $rc = $this->system($this->scm->activate_tag($this->tag));
         if ($rc['rc']) {
           throw new Exception('Error switching to tag \'' . $this->tag . '\'');

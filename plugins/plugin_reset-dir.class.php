@@ -147,7 +147,7 @@ class VcdeployPluginResetDir extends Vcdeploy implements IVcdeployPlugin {
 
           // 1. pre commands
           if (isset($this->project['reset_dir']['pre_commands'])) {
-            $this->hook_commands($this->project['reset_dir']['pre_commands'], 'post');
+            $this->hook_commands($this->project['reset_dir']['pre_commands'], 'pre');
           }
 
           // 2. create backup of existing data
@@ -190,6 +190,11 @@ class VcdeployPluginResetDir extends Vcdeploy implements IVcdeployPlugin {
         }
         else {
           $this->msg('TAR file for reset could not be identify');
+        }
+
+        if ($this->project['source_type'] == 'local') {
+          // cleanup tar file
+          unlink($tar_file);
         }
       }
     }

@@ -403,6 +403,7 @@ class Vcdeploy {
             }
 
             // set command configuration, if available
+            // if plugin name is used as array key, this entries are shift to $this->project root level!
             if (isset($projects[$project_name][$this->plugin_name])) {
               $projects[$project_name] = array_merge($projects[$project_name], $projects[$project_name][$this->plugin_name]);
               unset($projects[$project_name][$this->plugin_name]);
@@ -633,7 +634,7 @@ class Vcdeploy {
     $this->ssh_check();
     $remote_file = $this->_getSshHost() . ':' . $remote_file;
 
-    $this->msg('Transfer file...');
+    $this->msg('Transfer file from ' . $this->_getSshHost() . '...');
     $rc = $this->system($this->_getScpBin() . ' ' . $remote_file . ' ' . $local_file, TRUE);
     if ($rc['rc']) {
       throw new Exception('File could not be transfered. (' . $remote_file . ')');
@@ -654,7 +655,7 @@ class Vcdeploy {
     $this->ssh_check();
     $remote_file = $this->_getSshHost() . ':' . $remote_file;
 
-    $this->msg('Transfer file...');
+    $this->msg('Transfer file to ' . $this->_getSshHost() . '...');
     $rc = $this->system($this->_getScpBin() . ' ' . $local_file . ' ' . $remote_file, TRUE);
     if ($rc['rc']) {
       throw new Exception('File could not be transfered. (' . $local_file . ')');
@@ -762,18 +763,23 @@ class Vcdeploy {
    */
   public function remove_directory($dir) {
 
-    // remove existing target directory
-    if (!$this->is_root_dir($dir)) {
-      // set permission, to force delete command for all files
-      $this->system('chmod -R 700 ' . $dir);
-      // remove directories and files
-      $rc = $this->system('rm -r ' . $dir);
-      if ($rc['rc']) {
-        throw new Exception('Error with removing directory \'' . $dir . '\'');
+    if (file_exists($dir)) {
+      // remove existing target directory
+      if (!$this->is_root_dir($dir)) {
+        // set permission, to force delete command for all files
+        $this->system('chmod -R 700 ' . $dir);
+        // remove directories and files
+        $rc = $this->system('rm -r ' . $dir);
+        if ($rc['rc']) {
+          throw new Exception('Error with removing directory \'' . $dir . '\'');
+        }
+      }
+      else {
+        throw new Exception('Never ever use / as target directory!');
       }
     }
     else {
-      throw new Exception('Never ever use / as target directory!');
+      $this->msg('Directory ' . $dir . ' does not exists, removing is not required.');
     }
   }
 
@@ -842,13 +848,11 @@ class Vcdeploy {
     if (!is_array($this->project)) {
       throw new Exception('set_scm error: scm mode project requires $this->project');
     }
-
     foreach ($this->project['data_dir'] AS $name => $dir) {
 
       $target_file = $this->conf['backup_dir']
                           . '/' . $this->project_name
                           . $name . '-' . $this->date_stamp . '.tar';
-
       $this->create_data_dump($dir, $target_file);
     }
   }
@@ -1011,7 +1015,7 @@ class Vcdeploy {
 
         $remote_file = $this->project['remote_tmp_dir'] . '/' . $this->_getRemoteBasename('db_' . $identifier) . '.sql';
 
-        $this->msg('Create Dump on remote server...');
+        $this->msg('Create Dump on remote server...(' . $this->ssh['host'] . ')');
         $rc = $this->ssh_system($this->conf['mysqldump_bin'] . ' ' . $db . ' > ' . $remote_file, TRUE);
         if ($rc['rc']) {
           throw new Exception('Error creating remote dump.');
@@ -1272,7 +1276,12 @@ class Vcdeploy {
    * Set permissions
    *
    * @param string $mode
-   * @param array $permission (name = directory, mod = value, rec = recursive
+   * @param array $permission
+   *                   name = directory (required)
+   *                   mod = permission value
+   *                   own = owner
+   *                   rec = recursive (default no)
+   *                   filter = name filter
    *
    * @return void
    */
@@ -1280,6 +1289,9 @@ class Vcdeploy {
 
     if (!isset($permission['name']) || empty($permission['name'])) {
       throw new Exception('name value (directory) is required for permissions.');
+    }
+    elseif (!isset($permission['rec'])) {
+      $permission['rec'] = 'no';
     }
 
     // use root directory as prefix to name
@@ -1308,23 +1320,35 @@ class Vcdeploy {
 
     $this->show_progress('Set permissions (' . $new_value . ') to ' . $permission['name'] . '...');
 
+    if (isset($permission['filter'])) {
+      $name_filter = ' -name "' . $permission['filter'] . '"';
+    }
+    else {
+      $name_filter = '';
+    }
+
+    $type_filter = '';
+    $maxdepth = '';
+
     switch ($permission['rec']) {
 
       case 'files':
-        $rc = $this->system('find ' . $permission['name'] . ' -type f -exec ' . $command . ' ' . $new_value . ' {} \;');
+        $type_filter = ' -type f';
         break;
 
       case 'dirs':
-        $rc = $this->system('find ' . $permission['name'] . ' -type d -exec ' . $command . ' ' . $new_value . ' {} \;');
+        $type_filter = ' -type d';
         break;
 
       case 'yes':
-        $rc = $this->system($command . ' -R ' . $new_value . ' ' . $permission['name']);
         break;
 
       default: // not recursive
-        $rc = $this->system($command . ' ' . $new_value . ' ' . $permission['name']);
+        $maxdepth = ' -maxdepth 1';
     }
+
+    $rc = $this->system('find ' . $permission['name'] . $type_filter . $name_filter . $maxdepth . ' -exec ' . $command . ' ' . $new_value . ' {} \;');
+
     return $rc['rc'];
   }
 
