@@ -78,6 +78,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
 
     $this->_modsConfig();
     $this->_vhostsConfig();
+    $this->_nginxConfig();
     $this->_servicesConfig();
     $this->_service('reload');
     $this->_service('restart');
@@ -104,13 +105,16 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
     // 3. vhostsConfig
     $init += $this->_vhostsConfig(TRUE);
 
-    // 4. serviceConfig
+    // 4. nginxConfig
+    $init += $this->_nginxConfig(TRUE);
+
+    // 5. serviceConfig
     $init += $this->_servicesConfig(TRUE);
 
-    // 5. serviceReload
+    // 6. serviceReload
     $init += $this->_service('reload', TRUE);
 
-    // 6. serviceRestart
+    // 7. serviceRestart
     $init += $this->_service('restart', TRUE);
 
     return $init;
@@ -140,6 +144,33 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
       'vhost_disable',
       'Disable vhost',
       $try
+    );
+  }
+
+  /**
+   * Configure nginx sites: enable or disable vhosts
+   *
+   * @param bool $try if true, this is a test run without system calls
+   *
+   * @return int amount of system commands
+   */
+  private function _nginxConfig($try = FALSE) {
+
+    if (!isset($this->conf['nginx_sites'])) {
+      $this->conf['nginx_sites'] = '';
+    }
+    if (!isset($this->conf['nginx_sites_enable'])) {
+      $this->conf['nginx_sites_enable'] = '';
+    }
+
+    return $this->_activationRun(
+        $this->conf['nginx_sites'],
+        $this->conf['nginx_sites_enable'],
+        'nginx_enable',
+        'Enable nginx site',
+        'nginx_disable',
+        'Disable nginx site',
+        $try
     );
   }
 
@@ -332,6 +363,14 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
           $rc = $this->msg('vhost configuration not supported with ' . $this->conf['system_os'] . '.');
           $rc = 1;
         }
+        break;
+
+      case 'nginx_enable':
+        $rc = $this->system('nginx_ensite ' . $para);
+        break;
+
+      case 'nginx_disable':
+        $rc = $this->system('nginx_dissite ' . $para);
         break;
 
       case 'mod_enable':
