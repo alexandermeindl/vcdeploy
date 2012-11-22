@@ -91,7 +91,7 @@ class VcDeployLoader {
 
     $this->conf = $conf;
     $this->hostname = $this->get_hostname();
-    $this->base_dir = dirname($_SERVER['SCRIPT_NAME']);
+    $this->base_dir = dirname(dirname(__DIR__));
     $this->plugin_dir = $this->base_dir . '/plugins';
 
     include_once $this->plugin_dir . '/plugin_interface.class.php';
