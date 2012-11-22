@@ -530,17 +530,41 @@ class Vcdeploy {
 
     if (is_array($commands)) {
 
-      foreach ($commands AS $command) {
+      foreach ($commands AS $command_info) {
 
-        if (isset($this->project['drush'])) {
-          $command = str_replace('[drush]', $this->project['drush'], $command);
-        }
+		  if (is_array($command_info)) {
+			  if (!isset($command_info['command'])) {
+					throw new Exception($msg . ' command error: command key not specified');
+				}
+		  }
+			else { // no array is used
+				$command_info = array('command' => $command_info);
+			}
 
-        $this->msg('Running ' . $msg . ' command: ' . $command);
-        $rc = $this->system($command);
+			if (isset($this->project['drush'])) {
+				$command_info['command'] = str_replace('[drush]', $this->project['drush'], $command_info['command']);
+			}
+
+			// switch to project path
+			if (isset($command_info['path'])) {
+				// only change directoy, if path is not empty. Use this, if you don't want to change directory
+				if (!empty($command_info['path'])) {
+					if (!chdir($command_info['path'])) {
+						throw new Exception($msg . ' command error: command path for ' . $command_info['command'] . ' does not exist (' . $command_info['path'] . ')');
+					}
+				}
+			}
+			elseif (isset($this->project['path'])) { // Switch to project path by default
+				if (!chdir($this->project['path'])) {
+					throw new Exception($msg . ' command error: ' . $command_info['command'] . ' (changing to project path not possible)');
+				}
+			}
+
+			$this->msg('Running ' . $msg . ' command: ' . $command_info['command']);
+      $rc = $this->system($command_info['command']);
 
         if ($rc['rc'] != 0) {
-          throw new Exception($msg . ' command error: ' . $command . ' (rc=' . $rc['rc'] . ')');
+          throw new Exception($msg . ' command error: ' . $command_info['command'] . ' (rc=' . $rc['rc'] . ')');
         }
       }
     }
@@ -1004,9 +1028,21 @@ class Vcdeploy {
    */
   public function get_remote_db_file($identifier, $db) {
 
+    if (!isset($this->project['source_type'])) {
+      throw new Exception('Project source_type not specified.');
+    }
+
     switch ($this->project['source_type']) {
 
       case 'local':
+        // create local snapshot
+        $target_file = $this->conf['tmp_dir'] . '/' . uniqid(rand(), true) . '.sql';
+        $this->create_db_dump($db, $target_file);
+        $sql_file = $target_file . '.gz';
+        break;
+
+      case 'backup':
+        // use local backup file
         // TODO: support for different local database or dump file
         $sql_file = $this->project['sql_backup'] . '.gz';
         break;
@@ -1050,9 +1086,20 @@ class Vcdeploy {
    */
   public function get_source_data_file($identifier, $source_dir) {
 
+    if (!isset($this->project['source_type'])) {
+      throw new Exception('Project source_type not specified.');
+    }
+
     switch ($this->project['source_type']) {
 
       case 'local':
+        // create local snapshot
+        $target_file = $this->conf['tmp_dir'] . '/' . uniqid(rand(), true) . '.tar';
+        $this->create_data_dump($source_dir, $target_file);
+        $tar_file = $target_file . '.gz';
+        break;
+
+      case 'backup':
         // TODO: dir is a directory, this will not work!
         $tar_file = $source_dir . '.gz';
         break;
@@ -1261,11 +1308,19 @@ class Vcdeploy {
     if (isset($project['permissions']) && is_array($project['permissions'])) {
 
       foreach ($project['permissions'] AS $permission) {
-        if (isset($permission['mod']) && !empty($permission['mod'])) {
-          $count++;
+
+        if (!is_array($permission['name'])) {
+          $permission['name'] = array($permission['name']);
         }
-        if (isset($permission['own']) && !empty($permission['own'])) {
-          $count++;
+
+        // Run system call for each name entry
+        foreach($permission['name'] AS $name) {
+          if (isset($permission['mod']) && !empty($permission['mod'])) {
+            $count++;
+          }
+          if (isset($permission['own']) && !empty($permission['own'])) {
+            $count++;
+          }
         }
       }
     }
@@ -1283,6 +1338,7 @@ class Vcdeploy {
    *                   rec = recursive (default no)
    *                   filter = name filter
    *
+   * @throws Exception
    * @return void
    */
   public function set_permissions($mode, $permission, $root_dir = FALSE) {
@@ -1294,32 +1350,6 @@ class Vcdeploy {
       $permission['rec'] = 'no';
     }
 
-    // use root directory as prefix to name
-    if (isset($root_dir)) {
-      $permission['name'] = $root_dir . $permission['name'];
-    }
-
-    if ($this->is_root_dir($permission['name'])) {
-      throw new Exception('Permission should never ever set tor / (recursive)!');
-    }
-
-    if ($mode == 'own') {
-      if (!isset($permission['own']) || empty($permission['own'])) {
-        throw new Exception('own value is required for permissions (mode=own).');
-      }
-      $command = 'chown';
-      $new_value = $permission['own'];
-    }
-    else {
-      if (!isset($permission['mod']) || empty($permission['mod'])) {
-        throw new Exception('mod value is required for permissions (mode=mod).');
-      }
-      $command = 'chmod';
-      $new_value = $permission['mod'];
-    }
-
-    $this->show_progress('Set permissions (' . $new_value . ') to ' . $permission['name'] . '...');
-
     if (isset($permission['filter'])) {
       $name_filter = ' -name "' . $permission['filter'] . '"';
     }
@@ -1329,7 +1359,6 @@ class Vcdeploy {
 
     $type_filter = '';
     $maxdepth = '';
-
     switch ($permission['rec']) {
 
       case 'files':
@@ -1347,9 +1376,42 @@ class Vcdeploy {
         $maxdepth = ' -maxdepth 1';
     }
 
-    $rc = $this->system('find ' . $permission['name'] . $type_filter . $name_filter . $maxdepth . ' -exec ' . $command . ' ' . $new_value . ' {} \;');
+    if ($mode == 'own') {
+      if (!isset($permission['own']) || empty($permission['own'])) {
+        throw new Exception('own value is required for permissions (mode=own).');
+      }
+      $command = 'chown';
+      $new_value = $permission['own'];
+    }
+    else {
+      if (!isset($permission['mod']) || empty($permission['mod'])) {
+        throw new Exception('mod value is required for permissions (mode=mod).');
+      }
+      $command = 'chmod';
+      $new_value = $permission['mod'];
+    }
 
-    return $rc['rc'];
+    if (!is_array($permission['name'])) {
+      $permission['name'] = array($permission['name']);
+    }
+
+    // Run system call for each name entry
+    foreach($permission['name'] AS $name) {
+      // use root directory as prefix to name
+      if (isset($root_dir)) {
+        $name = $root_dir . $name;
+      }
+
+      if ($this->is_root_dir($name)) {
+        throw new Exception('Permission should never ever set tor / (recursive)!');
+      }
+
+      $this->show_progress('Set permissions (' . $new_value . ') to ' . $name . '...');
+      $rc = $this->system('find ' . $name . $type_filter . $name_filter . $maxdepth . ' -exec ' . $command . ' ' . $new_value . ' {} \;');
+      if ($rc['rc']) {
+        throw new Exception("Couldn't set permissions for $name.");
+      }
+    }
   }
 
   /**

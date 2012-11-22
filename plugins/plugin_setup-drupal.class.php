@@ -236,7 +236,7 @@ class VcdeployPluginSetupDrupal extends Vcdeploy implements IVcdeployPlugin {
   private function getDrushParas() {
 
     $drush_para = '';
-    $paras = array('account-name', 'account-pass', 'sites-subdir', 'site-name', 'site-mail', 'clean-url');
+    $paras = array('account-name', 'account-pass', 'account-mail', 'sites-subdir', 'site-name', 'site-mail', 'clean-url');
 
     foreach($paras AS $key) {
         $vc_key = str_replace('-', '_', $key);
