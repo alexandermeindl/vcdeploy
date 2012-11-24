@@ -16,7 +16,7 @@
  * @author    David JEAN LOUIS <izimobil@gmail.com>
  * @copyright 2007 David JEAN LOUIS
  * @license   http://opensource.org/licenses/mit-license.php MIT License 
- * @version   CVS: $Id: Default.php 282427 2009-06-19 10:22:48Z izi $
+ * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Console_CommandLine
  * @since     File available since release 0.1.0
  * @filesource
@@ -42,7 +42,7 @@ require_once 'Console/CommandLine/CustomMessageProvider.php';
  * @author    David JEAN LOUIS <izimobil@gmail.com>
  * @copyright 2007 David JEAN LOUIS
  * @license   http://opensource.org/licenses/mit-license.php MIT License 
- * @version   Release: 1.1.3
+ * @version   Release: 1.2.0
  * @link      http://pear.php.net/package/Console_CommandLine
  * @since     Class available since release 0.1.0
  */
@@ -61,6 +61,7 @@ class Console_CommandLine_MessageProvider_Default
         'OPTION_VALUE_REQUIRED'   => 'Option "{$name}" requires a value.',
         'OPTION_VALUE_UNEXPECTED' => 'Option "{$name}" does not expect a value (got "{$value}").',
         'OPTION_VALUE_NOT_VALID'  => 'Option "{$name}" must be one of the following: "{$choices}" (got "{$value}").',
+        'ARGUMENT_VALUE_NOT_VALID'=> 'Argument "{$name}" must be one of the following: "{$choices}" (got "{$value}").',
         'OPTION_VALUE_TYPE_ERROR' => 'Option "{$name}" requires a value of type {$type} (got "{$value}").',
         'OPTION_AMBIGUOUS'        => 'Ambiguous option "{$name}", can be one of the following: {$matches}.',
         'OPTION_UNKNOWN'          => 'Unknown option "{$name}".',
@@ -78,6 +79,7 @@ class Console_CommandLine_MessageProvider_Default
         'LIST_OPTION_MESSAGE'     => 'lists valid choices for option {$name}',
         'LIST_DISPLAYED_MESSAGE'  => 'Valid choices are: ',
         'INVALID_SUBCOMMAND'      => 'Command "{$command}" is not valid.',
+        'SUBCOMMAND_REQUIRED'     => 'Please enter one of the following command: {$commands}.',
     );
 
     // }}}

@@ -11,12 +11,12 @@
  * through the world-wide-web at the following URI:
  * http://opensource.org/licenses/mit-license.php
  *
- * @category  Console 
+ * @category  Console
  * @package   Console_CommandLine
  * @author    David JEAN LOUIS <izimobil@gmail.com>
  * @copyright 2007 David JEAN LOUIS
- * @license   http://opensource.org/licenses/mit-license.php MIT License 
- * @version   CVS: $Id: Argument.php 271998 2008-12-27 10:52:28Z izi $
+ * @license   http://opensource.org/licenses/mit-license.php MIT License
+ * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Console_CommandLine
  * @since     File available since release 0.1.0
  * @filesource
@@ -34,8 +34,8 @@ require_once 'Console/CommandLine/Element.php';
  * @package   Console_CommandLine
  * @author    David JEAN LOUIS <izimobil@gmail.com>
  * @copyright 2007 David JEAN LOUIS
- * @license   http://opensource.org/licenses/mit-license.php MIT License 
- * @version   Release: 1.1.3
+ * @license   http://opensource.org/licenses/mit-license.php MIT License
+ * @version   Release: 1.2.0
  * @link      http://pear.php.net/package/Console_CommandLine
  * @since     Class available since release 0.1.0
  */
@@ -44,7 +44,7 @@ class Console_CommandLine_Argument extends Console_CommandLine_Element
     // Public properties {{{
 
     /**
-     * Setting this to true will tell the parser that the argument expects more 
+     * Setting this to true will tell the parser that the argument expects more
      * than one argument and that argument values should be stored in an array.
      *
      * @var boolean $multiple Whether the argument expects multiple values
@@ -52,14 +52,21 @@ class Console_CommandLine_Argument extends Console_CommandLine_Element
     public $multiple = false;
 
     /**
-     * Setting this to true will tell the parser that the argument is optional 
+     * Setting this to true will tell the parser that the argument is optional
      * and can be ommited.
-     * Note that it is not a good practice to make arguments optional, it is 
+     * Note that it is not a good practice to make arguments optional, it is
      * the role of the options to be optional, by essence.
      *
      * @var boolean $optional Whether the argument is optional or not.
      */
     public $optional = false;
+
+    /**
+     * An array of possible values for the argument.
+     *
+     * @var array $choices Valid choices for the argument
+     */
+    public $choices = array();
 
     // }}}
     // validate() {{{
@@ -80,6 +87,12 @@ class Console_CommandLine_Argument extends Console_CommandLine_Element
                 'argument_bad_name',
                 E_USER_ERROR,
                 array('{$name}' => $this->name)
+            );
+        }
+        if (!$this->optional && $this->default !== null) {
+            Console_CommandLine::triggerError(
+                'argument_no_default',
+                E_USER_ERROR
             );
         }
         parent::validate();

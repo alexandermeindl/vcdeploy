@@ -16,7 +16,7 @@
  * @author    David JEAN LOUIS <izimobil@gmail.com>
  * @copyright 2007 David JEAN LOUIS
  * @license   http://opensource.org/licenses/mit-license.php MIT License 
- * @version   CVS: $Id: Default.php 282213 2009-06-16 08:15:06Z izi $
+ * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Console_CommandLine
  * @since     File available since release 0.1.0
  * @filesource
@@ -35,7 +35,7 @@ require_once 'Console/CommandLine/Renderer.php';
  * @author    David JEAN LOUIS <izimobil@gmail.com>
  * @copyright 2007 David JEAN LOUIS
  * @license   http://opensource.org/licenses/mit-license.php MIT License 
- * @version   Release: 1.1.3
+ * @version   Release: 1.2.0
  * @link      http://pear.php.net/package/Console_CommandLine
  * @since     Class available since release 0.1.0
  */
@@ -207,7 +207,14 @@ class Console_CommandLine_Renderer_Default implements Console_CommandLine_Render
         }
         if (count($this->parser->args) > 0) {
             foreach ($this->parser->args as $name=>$arg) {
-                $ret .= ' <' . $arg->help_name . ($arg->multiple?'...':'') . '>';
+                $arg_str = $arg->help_name;
+                if ($arg->multiple) {
+                    $arg_str .= '1 ' . $arg->help_name . '2 ...';
+                }
+                if ($arg->optional) {
+                    $arg_str = '[' . $arg_str . ']';
+                }
+                $ret .= ' ' . $arg_str;
             }
         }
         return $this->columnWrap($ret, 2);
