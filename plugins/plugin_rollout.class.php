@@ -177,9 +177,6 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
       }
     }
 
-    // Make sure vcdeploy is executable
-    chmod($this->base_dir . '/vcdeploy', 0775);
-
     return $rc;
   }
 
