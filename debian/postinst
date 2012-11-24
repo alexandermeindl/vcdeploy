@@ -1,0 +1,8 @@
+#! /bin/bash -e
+
+ln -fs /usr/share/vcdeploy/vcdeploy.php /usr/bin/vcdeploy
+
+if [ ! -f /etc/vcdeploy.inc.php ]
+then
+	cp /usr/share/doc/vcdeploy/config.inc.php.dist /etc/vcdeploy.inc.php
+fi

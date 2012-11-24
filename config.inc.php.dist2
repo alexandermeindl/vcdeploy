@@ -1,0 +1,166 @@
+<?php
+// default vcdeploy configuration file
+
+// email for notification
+$conf['email_to'] = 'your@email.de';
+
+// parent directory of projects
+$conf['www_path'] = '/www';
+
+// scm directory with system repository (git or svn)
+$conf['system_source'] = "/root/system_source";
+
+// Restart services with system deploy
+$conf['services_restart'] = 'apache2 mysql';
+
+// Reload services with system deploy
+$conf['services_reload'] = 'postfix';
+
+# Init a new system environment
+$conf['init-system']['dirs'][] = '/tmp/dir1';
+$conf['init-system']['dirs'][] = '/tmp/dir2';
+$conf['init-system']['dirs'][] = '/tmp/dir3';
+
+$conf['init-system']['packages'] = 'htop vim git-core wget curl';
+
+
+// settings for all projects
+$project['_common_']['owner']         = 'www-data:www-data';
+// change files/directories to permissions
+$project['_common_']['permissions']   = 664;
+
+// activate project (only active projects are proceed with commands)
+$project['my-project']['active']         = FALSE;
+// path to project
+$project['my-project']['path'] = '/path/to/my/project';
+// drush command for drupal
+$project['my-project']['drush']          = '/www/drush/drush -r /www/htdocs';
+// [source_data_dir] is local or remote?
+$project['my-project']['source_type'] = 'remote';
+// database name of local AND remote database
+$project['my-project']['db']             = 'my_db';
+// source database for release or reset-db (see [source_type] for host)
+$project['my-project']['source_db'] = 'sl';
+// Local file with SQL dump for restore
+$project['my-project']['sql_backup']     = '/mnt/hgfs/my_dump.sql';
+// Remote temp dir
+$project['my-project']['remote_tmp_dir'] = '/tmp';
+// data directory (used by reset-dir and releases)
+$project['my-project']['data_dir']        = '/www/htdocs/sites/default/files';
+// SSH user for remote connection
+$project['my-project']['ssh']['user']       = 'user_name_with_ssh_access';
+// SSH server for remote connection
+$project['my-project']['ssh']['server']     = 'my-remote-server.com';
+
+$project['my-project']['reset-db']['post_commands'][] = $project['my-project']['drush'] .' cache-clear all';
+$project['my-project']['reset-db']['post_commands'][] = $project['my-project']['drush'] .' cron';
+
+/**
+ * project permissions
+ *  name = filename or directory name (required)
+ *  filter = filter of name, e.g. *.sh
+ *  rec  = recursive: yes, files (files only) dirs (directories only) or no [default]
+ *  mod  = permissions
+ *  own  = owner
+ */
+$project['my-project']['permissions'][0]['name'] = '/sites/default/files';
+$project['my-project']['permissions'][0]['rec'] = 'yes';
+$project['my-project']['permissions'][0]['own'] = 'www-data:www-data';
+$project['my-project']['permissions'][1]['name'] = '/htdocs';
+$project['my-project']['permissions'][1]['rec'] = 'files';
+$project['my-project']['permissions'][1]['mod'] = '644';
+
+/**
+ * Configuration for reset-db
+ *
+ */
+// should the datatabase dump sanitize
+$project['my-project']['reset_db']['with_db_sanitize'] = TRUE;
+// post commands for reset-db
+$project['my-project']['reset_db']['post_commands'] = array();
+
+
+
+/**
+ * Configuration for reset-dir
+ *
+ */
+// post commands for reset-dir
+$project['my-project']['reset_dir']['post_commands'] = array();
+
+/**
+ * Configuration for release rollout
+ *
+ */
+// directory with release files to rollout
+$project['my-project']['rollout']['releases_dir'] = '/opt/releases';
+// replace current database with release database
+$project['my-project']['rollout']['with_db'] = TRUE;
+// replace current files with release files (see ['your_project']['data_dir'])
+$project['my-project']['rollout']['with_data'] = TRUE;
+// use project archive instead of SCM
+// (you cannot use both, with_project_archive and with_project_scm)
+$project['my-project']['rollout']['with_project_archive'] = FALSE;
+// use SCM insteat of project archive
+// (you cannot use both, with_project_archive and with_project_scm)
+$project['my-project']['rollout']['with_project_scm'] = FALSE;
+// if no tag is used as parameter, this tag is used
+$project['my-project']['rollout']['tag'] = '0.11';
+// Prefix of release files (has to be the same as ['release']['prefix']
+$project['my-project']['rollout']['prefix'] = 'myrelease_';
+// post commands for reset-db
+$project['my-project']['rollout']['post_commands'] = array();
+
+/**
+ * Configuration for creating a new release
+ *
+ */
+// use this prefix for all files
+$project['my-project']['release']['prefix'] = 'myrelease_';
+// directory, where all files will be created
+$project['my-project']['release']['release_dir'] = '/opt/releases';
+// create database dump of current database and add it to the release
+$project['my-project']['release']['with_db'] = TRUE;
+// should the datatabase dump sanitize
+$project['my-project']['release']['with_db_sanitize'] = TRUE;
+// create archive file of directoy/directories
+// and add it to the release  (see ['your_project']['data_dir'])
+$project['my-project']['release']['with_data'] = TRUE;
+// create an archive file of the code base (without 'files' directories)
+$project['my-project']['release']['with_project_archive'] = FALSE;
+// exclude these files and directories in project archive (without starting /)
+$project['my-project']['release']['remove_files'] = array(
+                                               'htdocs/sites/all/modules/contrib/devel',
+                                               'htdocs/sites/all/modules/contrib/coder',
+                                               'htdocs/sites/all/modules/contrib/schema',
+                                             );
+// base directory of project archive.
+// Only subdirectories of the project directory are valid (without starting /)
+// If you want to deliver all content, lease empty
+$project['my-project']['release']['project_archive_dir'] = 'htdocs';
+// if the ['release']['release_dir'] directory is part
+// of the repository, you probably want to commit the new files
+$project['my-project']['release']['with_commit'] = FALSE;
+
+/*
+ * Remote release data/database support
+ * If you want to use a database of a remote system,
+ * use this configuration
+ */
+// Use remove database, with project ssh settings
+$project['my-project']['release']['remote_db'] = FALSE;
+// Use remove data (files/directories), with project ssh settings
+$project['my-project']['release']['remote_data'] = FALSE;
+
+/**
+ * Database sanitize
+ *
+ * (temporary database is required)
+ */
+// trancate all listet database tables (reset-db,release-create)
+$project['my-project']['sanitize']['truncates'] = 'drupal_node_counter drupal_sessions';
+// drop all listet database tables (reset-db,release-create)
+$project['my-project']['sanitize']['drop'] = '';
+// Sanitize emails and passwords
+$project['my-project']['sanitize']['sql'] = array("UPDATE drupal_users SET mail=CONCAT('user',uid,'@localhost'), pass=MD5('idontknow') WHERE uid > 1");
+
