@@ -4,6 +4,7 @@ var searchData=
   ['validate_5fprojects',['validate_projects',['../class_vcdeploy.html#a279f8f924b7fd3d7db68b0a7a2d0aba1',1,'Vcdeploy']]],
   ['vcdeploy',['Vcdeploy',['../class_vcdeploy.html',1,'Vcdeploy'],['../namespacevcdeploy.html',1,'vcdeploy']]],
   ['vcdeploy_2eclass_2ephp',['vcdeploy.class.php',['../vcdeploy_8class_8php.html',1,'']]],
+  ['vcdeploy_2ephp',['vcdeploy.php',['../vcdeploy_8php.html',1,'']]],
   ['vcdeployloader',['VcDeployLoader',['../class_vc_deploy_loader.html',1,'']]],
   ['vcdeploypluginbackupclear',['VcdeployPluginBackupClear',['../class_vcdeploy_plugin_backup_clear.html',1,'']]],
   ['vcdeploypluginbackupdb',['VcdeployPluginBackupDb',['../class_vcdeploy_plugin_backup_db.html',1,'']]],

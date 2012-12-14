@@ -8,6 +8,7 @@ var searchData=
   ['set_5fprojects',['set_projects',['../class_vcdeploy.html#a6783d304144e744f827f42db88ae6b20',1,'Vcdeploy']]],
   ['set_5fscm',['set_scm',['../class_vcdeploy.html#a82e49f81c7b6d1433872270f0065e339',1,'Vcdeploy']]],
   ['set_5ftag',['set_tag',['../class_vcdeploy_scm_bzr.html#adb075df402c69bc1ca52b0b4d10bd729',1,'VcdeployScmBzr\set_tag()'],['../class_vcdeploy_scm_git.html#adb075df402c69bc1ca52b0b4d10bd729',1,'VcdeployScmGit\set_tag()'],['../class_vcdeploy_scm.html#adb075df402c69bc1ca52b0b4d10bd729',1,'VcdeployScm\set_tag()'],['../class_vcdeploy_scm_static.html#adb075df402c69bc1ca52b0b4d10bd729',1,'VcdeployScmStatic\set_tag()']]],
+  ['setbacktracedepth',['setBacktraceDepth',['../class_log.html#a98249f696cbc46aef370aeb0eb1bf882',1,'Log']]],
   ['setdefaults',['setDefaults',['../class_console___command_line___option.html#ac900283b8780520c328c6457e34177f4',1,'Console_CommandLine_Option']]],
   ['setident',['setIdent',['../class_log__composite.html#a9d8352d257344340d7a5b9c081d2a0d9',1,'Log_composite\setIdent()'],['../class_log__mdb2.html#a9d8352d257344340d7a5b9c081d2a0d9',1,'Log_mdb2\setIdent()'],['../class_log__sql.html#a9d8352d257344340d7a5b9c081d2a0d9',1,'Log_sql\setIdent()'],['../class_log.html#a9d8352d257344340d7a5b9c081d2a0d9',1,'Log\setIdent()']]],
   ['setmask',['setMask',['../class_log.html#acba3747f8f23e282e0618554a62eb212',1,'Log']]],
