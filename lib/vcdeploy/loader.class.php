@@ -249,6 +249,9 @@ class VcDeployLoader {
    */
   private function _buildSubCommands(&$parser) {
 
+    // sort plugins for command output help
+    ksort($this->plugin_infos);
+
     foreach ($this->plugin_infos AS $name => $plugin) {
 
       unset($bar);

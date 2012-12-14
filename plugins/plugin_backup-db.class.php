@@ -53,6 +53,11 @@ class VcdeployPluginBackupDb extends Vcdeploy implements IVcdeployPlugin {
   private $_databases;
 
   /**
+    * Excluded databases for all backup tables
+    */
+	private $_excluded_tables;
+
+  /**
    * This function is run with the command
    *
    * @return int
@@ -71,7 +76,6 @@ class VcdeployPluginBackupDb extends Vcdeploy implements IVcdeployPlugin {
     else if (isset($this->paras->command->options['project']) && isset($this->paras->command->options['all_databases'])) {
       throw new Exception('You cannot use --project and --all-database together');
     }
-
 
     // check backup directory if exists and is writable
     $this->prepare_backup_dir();
@@ -121,15 +125,26 @@ class VcdeployPluginBackupDb extends Vcdeploy implements IVcdeployPlugin {
   }
 
   /**
+   * Set excluded tables
+   */
+  private function _setExcludedTables() {
+    $this->_excluded_tables = array('performance_schema', 'information_schema');
+  }
+
+  /**
    * Create backups for all calculated databases
    *
    * @throws Exception
    */
   private function _createDbBackups() {
 
+    $this->_setExcludedTables();
+
     foreach ($this->_databases AS $db_name) {
-      if ($this->db_exists($db_name)) {
-        $this->create_db_dump($db_name);
+      if ($this->db_exists($db_name))  {
+        if (!in_array($db_name, $this->_excluded_tables)) {
+          $this->create_db_dump($db_name);
+        }
       }
       else {
         throw new Exception('Database ' . $db_name . ' does not exist');

@@ -7,7 +7,12 @@ $conf['email_to'] = 'your@email.de';
 // parent directory of projects
 $conf['www_path'] = '/www';
 
-// scm directory with system repository (git or svn)
+// scm type: git, svn or static
+$conf['source_scm'] = 'static';
+
+// scm directory with system repository (git, svn or static)
+// (if you want to use more then one, use an array - last element will be deployed last).
+// This is usefull if you want to store senible data in an extra repository)
 $conf['system_source'] = "/root/system_source";
 
 // Restart services with system deploy

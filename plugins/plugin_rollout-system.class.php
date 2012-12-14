@@ -43,37 +43,48 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
     if (empty($this->conf['system_source'])) {
       throw new Exception('system_source not specified.');
     }
-    elseif (!file_exists($this->conf['system_source'])) {
-      throw new Exception($this->conf['system_source'] . ' does not exist');
-    }
-    elseif (!is_dir($this->conf['system_source'])) {
-      throw new Exception($this->conf['system_source'] . ' is not a directory');
-    }
-
-    chdir($this->conf['system_source']);
-
-    if ($this->conf['source_scm'] == 'static') {
-      // do nothing
-      $this->progressbar_init(0);
-    }
     else {
-      // update source
-      $this->progressbar_init(1);
 
-      $this->show_progress('Get repository updates...');
-      // initialize scm
-      $this->set_scm('system');
-      $this->system($this->scm->update(), TRUE);
-    }
+      // convert strings to array
+      if (!is_array($this->conf['system_source'])) {
+        $this->conf['system_source'] = array('main' => $this->conf['system_source']);
+      }
 
-    // update system
-    $this->show_progress('Update system files...');
+      foreach($this->conf['system_source'] AS $system_name => $system_source) {
 
-    if (isset($this->paras->command->options['force']) && $this->paras->command->options['force']) {
-      $this->system($this->conf['cp_bin'] . ' -r . /', TRUE);
-    }
-    else {
-      $this->system($this->conf['cp_bin'] . ' -ru . /', TRUE);
+        if (!file_exists($system_source)) {
+          throw new Exception($system_source . ' does not exist');
+        }
+        elseif (!is_dir($system_source)) {
+          throw new Exception($system_source . ' is not a directory');
+        }
+
+        chdir($system_source);
+
+        if ($this->conf['source_scm'] == 'static') {
+          // do nothing
+          $this->progressbar_init(0);
+        }
+        else {
+          // update source
+          $this->progressbar_init(1);
+
+          $this->show_progress('Get repository updates...');
+          // initialize scm
+          $this->set_scm('system');
+          $this->system($this->scm->update(), TRUE);
+        }
+
+        // update system
+        $this->show_progress('Update system files...');
+
+        if (isset($this->paras->command->options['force']) && $this->paras->command->options['force']) {
+          $this->system($this->conf['cp_bin'] . ' -r . /', TRUE);
+        }
+        else {
+          $this->system($this->conf['cp_bin'] . ' -ru . /', TRUE);
+        }
+      }
     }
 
     $this->_modsConfig();
@@ -97,7 +108,12 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
   public function get_steps($init = 0) {
 
     // 1.  system file update
-    $init++;
+    if (is_array($this->conf['system_source'])) {
+      $init += count($this->conf['system_source']);
+    }
+    else {
+      $init++;
+    }
 
     // 2. modsConfig
     $init += $this->_modsConfig(TRUE);

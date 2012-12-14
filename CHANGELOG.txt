@@ -1,5 +1,13 @@
 // CHANGELOG.txt
 
+vcdeploy 0.54, 2012-12-14
+- ordered command help
+- skip information and performance schema with backup -A
+- libraries have been updated
+- plugin path have been fixed
+- debian package support
+- multi sources support for system_source (use array!)
+
 vcdeploy 0.51, 2011-11-10
 - add permission support to setup-drupal
 - add project support to permission (syntax changed)

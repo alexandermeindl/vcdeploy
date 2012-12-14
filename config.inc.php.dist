@@ -10,7 +10,9 @@ $conf['www_path'] = '/var/www';
 // scm type: git, svn or static
 $conf['source_scm'] = 'static';
 
-// system configuration directory
+// scm directory with system repository (git, svn or static)
+// (if you want to use more then one, use an array - last element will be deployed last).
+// This is usefull if you want to store senible data in an extra repository)
 $conf['system_source'] = '/mnt/hgfs/myrepo/sysconfig/local';
 
 // list of all services, which are supported

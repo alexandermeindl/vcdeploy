@@ -39,7 +39,7 @@ class VcdeployPluginStatus extends Vcdeploy implements IVcdeployPlugin {
     $this->msg("SCM:\t\t\t" . $this->conf['source_scm']);
     $this->msg("System OS:\t\t" . $this->conf['system_os']);
     $this->msg("Config file:\t\t" . $this->conf['config_file']);
-    $this->msg("System source:\t\t" . $this->conf['system_source']);
+    $this->msg("System source:\t\t" . $this->_getSystemSourcesList());
     $this->msg("Backup dir:\t\t" . $this->conf['backup_dir'] . $this->_checkDir($this->conf['backup_dir']));
     $this->msg("Project (active):\t" . count($this->get_projects()));
     $this->msg("Project (all):\t\t" . count($this->get_all_projects()));
@@ -57,6 +57,20 @@ class VcdeployPluginStatus extends Vcdeploy implements IVcdeployPlugin {
    */
   public function get_steps($init = 0) {
     return $init++;
+  }
+
+  /**
+   * Get system_source list string
+   *
+   * @return string
+   */
+  private function _getSystemSourcesList() {
+    if (is_array($this->conf['system_source'])) {
+      return implode(', ', $this->conf['system_source']);
+    }
+    else {
+      return $this->conf['system_source'];
+    }
   }
 
   /**
