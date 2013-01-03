@@ -396,6 +396,7 @@ class VcDeployLoader {
         // show projects
         $vcdeploy = new Vcdeploy($this->conf, NULL, $result, $this->version);
         $projects = $vcdeploy->get_projects();
+        ksort($projects);
         foreach ($projects AS $project_name => $project_settings) {
           print($project_name . "\n");
         }
@@ -404,6 +405,7 @@ class VcDeployLoader {
         // show all projects
         $vcdeploy = new Vcdeploy($this->conf, NULL, $result, $this->version);
         $projects = $vcdeploy->get_all_projects();
+        asort($projects);
         foreach ($projects AS $project_name) {
           print($project_name . "\n");
         }
