@@ -23,7 +23,7 @@
  */
 
 $plugin['info'] = 'Reset database. If no project is specified, all active project databases will be reseted';
-$plugin['root_only'] = TRUE;
+$plugin['root_only'] = FALSE;
 
 $plugin['options']['project'] = array(
                               'short_name'  => '-p',
@@ -106,7 +106,23 @@ class VcdeployPluginResetDb extends Vcdeploy implements IVcdeployPlugin {
 
     if (isset($this->project['db'])) {
 
-      // run post commands
+      // set permissions (requires database admin permission)
+      if (isset($this->project['reset_db']['permissions'])) {
+        $perm = $this->project['reset_db']['permissions'];
+        if (!is_array($perm)) {
+          $this->msg('Missing permissions array for databases.');
+        }
+        
+        $this->system($this->conf['mysql_bin'] . ' mysql -e "DELETE FROM user WHERE User=\'' . $perm['user'] .'\'"', TRUE);
+        $this->system($this->conf['mysql_bin'] . ' mysql -e "INSERT INTO user (Host,User,Password) VALUES(\'' . $perm['host'] .'\',\'' . $perm['user'] .'\',PASSWORD(\'' . $perm['password'] .'\'))"', TRUE);
+        foreach ($this->project['db'] AS $identifier => $db) {
+          $this->system($this->conf['mysql_bin'] . " mysql -e \"DELETE FROM db WHERE User='". $perm['user'] ."'\"", TRUE);
+          $this->system($this->conf['mysql_bin'] . " mysql -e \"INSERT INTO db (Host, Db, User, Select_priv, Insert_priv, Update_priv, Delete_priv, Create_priv, Drop_priv, Grant_priv, References_priv, Index_priv, Alter_priv, Create_tmp_table_priv, Lock_tables_priv, Create_view_priv, Show_view_priv, Create_routine_priv, Alter_routine_priv, Execute_priv, Event_priv, Trigger_priv) VALUES('%', '" . $db ."', '" . $perm['user'] ."', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y')\"", TRUE);
+        }
+        $this->system($this->conf['mysql_bin'] . ' -e "FLUSH PRIVILEGES"', TRUE);
+      }
+
+      // run pre commands
       if (isset($this->project['reset_db']['pre_commands'])) {
         $this->hook_commands($this->project['reset_db']['pre_commands'], 'pre');
       }

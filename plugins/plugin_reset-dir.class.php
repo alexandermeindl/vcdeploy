@@ -23,7 +23,7 @@
  */
 
 $plugin['info'] = 'Reset directory. If no project is specified, all active projects files/directories will be reseted.';
-$plugin['root_only'] = TRUE;
+$plugin['root_only'] = FALSE;
 
 $plugin['options']['project'] = array(
                               'short_name'  => '-p',
@@ -139,18 +139,18 @@ class VcdeployPluginResetDir extends Vcdeploy implements IVcdeployPlugin {
 
     if (isset($this->project['data_dir'])) {
 
+      // Pre commands
+      if (isset($this->project['reset_dir']['pre_commands'])) {
+        $this->hook_commands($this->project['reset_dir']['pre_commands'], 'pre');
+      }
+
       foreach ($this->project['data_dir'] AS $identifier => $dir) {
 
         $tar_file = $this->get_source_data_file($identifier, $this->get_source_data($identifier));
 
         if (!empty($tar_file)) {
 
-          // 1. pre commands
-          if (isset($this->project['reset_dir']['pre_commands'])) {
-            $this->hook_commands($this->project['reset_dir']['pre_commands'], 'pre');
-          }
-
-          // 2. create backup of existing data
+          // 1. create backup of existing data
           if ($this->is_backup_required()) {
             $this->create_project_data_backup();
           }
@@ -158,24 +158,20 @@ class VcdeployPluginResetDir extends Vcdeploy implements IVcdeployPlugin {
             $this->msg('Backup deactivated.');
           }
 
-          // 3. remove existing target directory
+          // 2. remove existing target directory
           if (file_exists($dir)) {
             $this->remove_directory($dir);
           }
 
-          // 4. Restore Tar file
+          // 3. Restore Tar file
           chdir(dirname($dir)); // go to parent directory
           $this->system($this->conf['tar_bin'] . ' -xz --no-same-owner -f ' . $tar_file);
 
-          // 5. post commands
-          if (isset($this->project['reset_dir']['post_commands'])) {
-            $this->hook_commands($this->project['reset_dir']['post_commands'], 'post');
-          }
-
-          // 6. Set file permissions (has to be after post commands to make sure all created files are affected)
+          // 4. Set file permissions (has to be after post commands to make sure all created files are affected)
           if ($this->is_permission_required()) {
-            if (isset($this->project['permissions']) && is_array($this->project['permissions'])) {
-              foreach ($this->project['permissions'] AS $permission) {
+            
+            if (isset($this->project['reset_dir']['permissions']) && is_array($this->project['reset_dir']['permissions'])) {
+              foreach ($this->project['reset_dir']['permissions'] AS $permission) {
                 if (isset($permission['mod']) && !empty($permission['mod'])) {
                   $this->set_permissions('mod', $permission, $this->project['path']);
                 }
@@ -185,11 +181,19 @@ class VcdeployPluginResetDir extends Vcdeploy implements IVcdeployPlugin {
               }
             }
           }
+          else {
+            $this->msg('Directory ' . $identifier . ' has been successfully restored.');
+          }
 
           $this->msg('Directory ' . $identifier . ' has been successfully restored.');
         }
         else {
           $this->msg('TAR file for reset could not be identify');
+        }
+
+        // Post commands
+        if (isset($this->project['reset_dir']['post_commands'])) {
+          $this->hook_commands($this->project['reset_dir']['post_commands'], 'post');
         }
 
         if ($this->project['source_type'] == 'local') {

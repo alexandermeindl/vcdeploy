@@ -1,6 +1,7 @@
 // CHANGELOG.txt
 
 vcdeploy 0.54, 2012-12-14
+- Fix permission command for reset-dir
 - ordered command help
 - skip information and performance schema with backup -A
 - libraries have been updated
