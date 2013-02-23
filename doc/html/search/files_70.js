@@ -7,7 +7,6 @@ var searchData=
   ['plugin_5fbackup_2drsync_2eclass_2ephp',['plugin_backup-rsync.class.php',['../plugin__backup-rsync_8class_8php.html',1,'']]],
   ['plugin_5fcommand_2dls_2eclass_2ephp',['plugin_command-ls.class.php',['../plugin__command-ls_8class_8php.html',1,'']]],
   ['plugin_5fcommand_2eclass_2ephp',['plugin_command.class.php',['../plugin__command_8class_8php.html',1,'']]],
-  ['plugin_5finit_2dsystem_2eclass_2ephp',['plugin_init-system.class.php',['../plugin__init-system_8class_8php.html',1,'']]],
   ['plugin_5finterface_2eclass_2ephp',['plugin_interface.class.php',['../plugin__interface_8class_8php.html',1,'']]],
   ['plugin_5fpermission_2eclass_2ephp',['plugin_permission.class.php',['../plugin__permission_8class_8php.html',1,'']]],
   ['plugin_5frelease_2dcreate_2eclass_2ephp',['plugin_release-create.class.php',['../plugin__release-create_8class_8php.html',1,'']]],

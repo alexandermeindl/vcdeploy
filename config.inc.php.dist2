@@ -26,8 +26,14 @@ $conf['init-system']['dirs'][] = '/tmp/dir1';
 $conf['init-system']['dirs'][] = '/tmp/dir2';
 $conf['init-system']['dirs'][] = '/tmp/dir3';
 
-$conf['init-system']['packages'] = 'htop vim git-core wget curl';
+// System packages, which are required. (runs with rollout-system)
+// - packages sources will be updated
+// - missing packages will be installed
+$conf['packages_depends'] = 'git-core atop curl php5-cli zip';
 
+// System packages, which are conflict to projects. (runs with rollout-system)
+	// - packages will be removed from the system
+$conf['packages_conflicts'] = 'aptitude nano mc';
 
 // settings for all projects
 $project['_common_']['owner']         = 'www-data:www-data';
