@@ -1,5 +1,9 @@
 // CHANGELOG.txt
 
+vcdeploy 0.55, 2013-02-23
+- Remove init-system
+- added packages_depends and packages_conflicts with rollout-system
+
 vcdeploy 0.54, 2012-12-14
 - Fix permission command for reset-dir
 - ordered command help

@@ -22,6 +22,13 @@
 $plugin['info'] = 'rollout system files/configuration';
 $plugin['root_only'] = TRUE;
 
+$plugin['options']['without_packages'] = array(
+                              'short_name'  => '-W',
+                              'long_name'   => '--without_packages',
+                              'action'      => 'StoreTrue',
+                              'description' => 'Don\'t run package commands: depends and conflicts',
+                            );
+
 $plugin['options']['force'] = array(
                                         'short_name'  => '-f',
                                         'long_name'   => '--force',
@@ -87,6 +94,12 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
       }
     }
 
+    // System package support
+    //$this->_createDirectories();
+    if (!isset($this->paras->command->options['without_packages']) || !$this->paras->command->options['without_packages']) {
+      $this->_packageDepends();
+      $this->_packageConflicts();
+    }
     $this->_modsConfig();
     $this->_vhostsConfig();
     $this->_nginxConfig();
@@ -115,22 +128,33 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
       $init++;
     }
 
-    // 2. modsConfig
+    // 1. Create missing directories
+    //$init += 1;
+
+    if (!isset($this->paras->command->options['without_packages']) || !$this->paras->command->options['without_packages']) {
+      // 2. Update package sources and add required system packages
+      $init += 2;
+
+      // 3. Remove unwanted system packages
+      $init += 1;
+    }
+
+    // 4. modsConfig
     $init += $this->_modsConfig(TRUE);
 
-    // 3. vhostsConfig
+    // 5. vhostsConfig
     $init += $this->_vhostsConfig(TRUE);
 
-    // 4. nginxConfig
+    // 6. nginxConfig
     $init += $this->_nginxConfig(TRUE);
 
-    // 5. serviceConfig
+    // 7. serviceConfig
     $init += $this->_servicesConfig(TRUE);
 
-    // 6. serviceReload
+    // 8. serviceReload
     $init += $this->_service('reload', TRUE);
 
-    // 7. serviceRestart
+    // 9. serviceRestart
     $init += $this->_service('restart', TRUE);
 
     return $init;
@@ -445,5 +469,119 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
     }
 
     return $rc;
+  }
+
+  /**
+   * Update package sources and install system packages
+   *
+   * @return int
+   * @throws Exception
+   */
+  private function _packageDepends() {
+
+    if (!empty($this->conf['packages_depends'])) {
+      $this->show_progress('First update to latest packages...');
+      switch ($this->conf['system_os']) {
+        case 'suse':
+          #$rc = $this->system('zypper --non-interactive update', TRUE);
+          $this->show_progress('Check for SuSE packages to install...');
+          $rc = $this->system('zypper --non-interactive install ' . $this->conf['packages_depends'], TRUE);
+          break;
+        case 'centos':
+          #$rc = $this->system('yum -y update', TRUE);
+          $this->show_progress('Check for Redhat packages to install...');
+          $rc = $this->system('yum install -y ' . $this->conf['packages_depends'], TRUE);
+          break;
+        case 'ubuntu':
+          $rc = $this->system('aptitude update', TRUE);
+          #$rc = $this->system('aptitude full-upgrade', TRUE);
+          $this->show_progress('Check for Ubuntu packages to install...');
+          $rc = $this->system('aptitude install -y ' . $this->conf['packages_depends'], TRUE);
+          break;
+        case 'debian':
+          $rc = $this->system('apt-get -qq update', TRUE);
+          #$rc = $this->system('apt-get upgrade', TRUE);
+          $this->show_progress('Check for Debian packages to install...');
+          $rc = $this->system('apt-get install -yqq ' . $this->conf['packages_depends'], TRUE);
+          break;
+        default:
+          throw new Exception('Package depends system not support on this platform');
+      }
+
+      if ($rc['rc']) {
+        if (!empty($rc['output'])) {
+          $this->msg('An error occured while installing packages:');
+          foreach ($rc['output'] AS $line) {
+            $this->msg($line);
+          }
+        }
+        else {
+          $this->msg('An error occured while installing packages (rc=' . $rc['rc'] . ')');
+        }
+        return $rc['rc'];
+      }
+    }
+  }
+
+  /**
+   * Update package sources and install system packages
+   *
+   * @return int
+   * @throws Exception
+   */
+  private function _packageConflicts() {
+
+    if (!empty($this->conf['packages_conflicts'])) {
+      $this->show_progress('Check for linux packages to remove...');
+
+      switch ($this->conf['system_os']) {
+        case 'suse':
+          $rc = $this->system('zypper --non-interactive remove ' . $this->conf['packages_conflicts'], TRUE);
+          break;
+        case 'centos':
+          $rc = $this->system('yum uninstall -y ' . $this->conf['packages_conflicts'], TRUE);
+          break;
+        case 'ubuntu':
+          $rc = $this->system('aptitude remove -y ' . $this->conf['packages_conflicts'], TRUE);
+          break;
+        case 'debian':
+          $rc = $this->system('apt-get --purge remove -yqq ' . $this->conf['packages_conflicts'], TRUE);
+          break;
+        default:
+          throw new Exception('Package depends system not support on this platform');
+          break;
+      }
+
+      if ($rc['rc']) {
+        if (!empty($rc['output'])) {
+          $this->msg('An error occured while installing packages:');
+          foreach ($rc['output'] AS $line) {
+            $this->msg($line);
+          }
+        }
+        else {
+          $this->msg('An error occured while installing packages (rc=' . $rc['rc'] . ')');
+        }
+        return $rc['rc'];
+      }
+    }
+  }
+
+  private function _createDirectories() {
+
+    if (is_array($this->conf['init-system']['dirs'])
+      && count($this->conf['init-system']['dirs'])
+    ) {
+
+      foreach ($this->conf['init-system']['dirs'] AS $dir) {
+        if (file_exists($dir)) {
+          $this->msg('Directory ' . $dir . ' already exists.');
+        }
+        else {
+          $this->msg('Creating directory ' . $dir);
+          mkdir($dir, 0775, TRUE);
+        }
+      }
+    }
   }
 }
