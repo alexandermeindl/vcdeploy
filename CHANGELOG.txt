@@ -1,5 +1,8 @@
 // CHANGELOG.txt
 
+vcdeploy 0.56, 2013-04-09
+- verbose support for post_commands
+
 vcdeploy 0.55, 2013-02-23
 - Remove init-system
 - added packages_depends and packages_conflicts with rollout-system

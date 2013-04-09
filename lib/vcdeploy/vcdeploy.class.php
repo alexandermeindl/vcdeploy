@@ -561,7 +561,13 @@ class Vcdeploy {
 			}
 
 			$this->msg('Running ' . $msg . ' command: ' . $command_info['command']);
-      $rc = $this->system($command_info['command']);
+      // show verbose message
+      if ((isset($this->paras->options['verbose']) && $this->paras->options['verbose'])) {
+        $rc = $this->system($command_info['command'], TRUE);
+      }
+      else {
+        $rc = $this->system($command_info['command']);
+      }
 
         if ($rc['rc'] != 0) {
           throw new Exception($msg . ' command error: ' . $command_info['command'] . ' (rc=' . $rc['rc'] . ')');
