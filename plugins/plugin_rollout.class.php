@@ -298,7 +298,6 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
       // 6. Permissions (has to be after post commands to make sure all created files are affected)
       if ($this->is_permission_required()) {
         if (isset($this->project['permissions']) && is_array($this->project['permissions'])) {
-
           if ($this->current_user != 'root') {
             throw new Exception('permission commands requires to run script with root privileges for project ' . $this->project_name);
           }

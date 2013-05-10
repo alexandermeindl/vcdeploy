@@ -169,9 +169,11 @@ class VcdeployPluginResetDir extends Vcdeploy implements IVcdeployPlugin {
 
           // 4. Set file permissions (has to be after post commands to make sure all created files are affected)
           if ($this->is_permission_required()) {
-            
-            if (isset($this->project['reset_dir']['permissions']) && is_array($this->project['reset_dir']['permissions'])) {
-              foreach ($this->project['reset_dir']['permissions'] AS $permission) {
+            if (isset($this->project['permissions']) && is_array($this->project['permissions'])) {
+              if ($this->current_user != 'root') {
+                throw new Exception('permission commands requires to run script with root privileges for project ' . $this->project_name);
+              }
+              foreach ($this->project['permissions'] AS $permission) {
                 if (isset($permission['mod']) && !empty($permission['mod'])) {
                   $this->set_permissions('mod', $permission, $this->project['path']);
                 }
