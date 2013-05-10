@@ -1,5 +1,8 @@
 // CHANGELOG.txt
 
+vcdeploy 0.57, 2013-05-10
+- permissions settings used for rollout and reset-dir
+
 vcdeploy 0.56, 2013-04-09
 - verbose support for post_commands
 
