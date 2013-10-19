@@ -114,7 +114,7 @@ class VcdeployPluginResetDb extends Vcdeploy implements IVcdeployPlugin {
         }
         
         $this->system($this->conf['mysql_bin'] . ' mysql -e "DELETE FROM user WHERE User=\'' . $perm['user'] .'\'"', TRUE);
-        $this->system($this->conf['mysql_bin'] . ' mysql -e "INSERT INTO user (Host,User,Password) VALUES(\'' . $perm['host'] .'\',\'' . $perm['user'] .'\',PASSWORD(\'' . $perm['password'] .'\'))"', TRUE);
+        $this->system($this->conf['mysql_bin'] . ' mysql -e "INSERT INTO user (Host,User,Password,ssl_cipher,x509_issuer,x509_subject) VALUES(\'' . $perm['host'] .'\',\'' . $perm['user'] .'\',PASSWORD(\'' . $perm['password'] .'\'), \'\', \'\', \'\')"', TRUE);
         foreach ($this->project['db'] AS $identifier => $db) {
           $this->system($this->conf['mysql_bin'] . " mysql -e \"DELETE FROM db WHERE User='". $perm['user'] ."'\"", TRUE);
           $this->system($this->conf['mysql_bin'] . " mysql -e \"INSERT INTO db (Host, Db, User, Select_priv, Insert_priv, Update_priv, Delete_priv, Create_priv, Drop_priv, Grant_priv, References_priv, Index_priv, Alter_priv, Create_tmp_table_priv, Lock_tables_priv, Create_view_priv, Show_view_priv, Create_routine_priv, Alter_routine_priv, Execute_priv, Event_priv, Trigger_priv) VALUES('%', '" . $db ."', '" . $perm['user'] ."', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y')\"", TRUE);
