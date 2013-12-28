@@ -39,6 +39,8 @@ $conf['tar_bin'] = '/bin/tar';
 $conf['mysqldump_bin'] = '/usr/bin/mysqldump';
 $conf['mysql_bin'] = '/usr/bin/mysql';
 $conf['mysqladmin_bin'] = '/usr/bin/mysqladmin';
+$conf['psql_bin'] = '/usr/bin/psql';
+$conf['pg_dump_bin'] = '/usr/bin/pg_dump';
 $conf['scp_bin'] = '/usr/bin/scp';
 $conf['ssh_bin'] = '/usr/bin/ssh';
 
@@ -53,6 +55,9 @@ $conf['log_source'] = '/root/log_source';
 
 // git, svn or cvs
 $conf['source_scm'] = 'git';
+
+// mysql or postgresql
+$conf['dbtype'] = 'mysql';
 
 // backup directory (used by reset-db)
 $conf['backup_dir'] = '/srv/backups';

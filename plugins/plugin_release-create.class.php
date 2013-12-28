@@ -202,6 +202,9 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin {
 
     $rc = 0;
 
+    // initialize db
+    $this->set_db();
+
     if (!is_array($this->project)) {
 
       // check for existing projects

@@ -128,6 +128,9 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
       $this->progressbar_init();
       $this->set_project($project_name, $this->projects[$project_name]);
 
+      // initialize db
+      $this->set_db();
+
       if (isset($this->project['tag'])) {
         $this->tag = $this->project['tag'];
       }
@@ -369,17 +372,17 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
    */
   private function _dbRollout() {
 
-    foreach ($this->project['db'] AS $identifier => $db) {
+    foreach ($this->project['db'] AS $identifier => $db_name) {
 
       $sql_file = $this->_getReleaseFileName($identifier, 'sql');
 
       // recreate database
-      $this->db_recreate($db);
+      $this->db_recreate($db_name);
 
       $this->msg('Rolling out database...');
-      $this->system($this->conf['gunzip_bin'] . ' < ' . $sql_file . ' | ' . $this->conf['mysql_bin'] . ' ' . $db);
+      $this->system($this->db->get_restore($db_name, $sql_file, TRUE));
 
-      $this->msg('Database ' . $db . ' has been successfully reseted.');
+      $this->msg('Database ' . $db_name . ' has been successfully reseted.');
     }
 
     return 0;

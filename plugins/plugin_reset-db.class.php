@@ -104,6 +104,9 @@ class VcdeployPluginResetDb extends Vcdeploy implements IVcdeployPlugin {
    */
   private function _resetDb() {
 
+    // initialize db
+    $this->set_db();
+
     if (isset($this->project['db'])) {
 
       // set permissions (requires database admin permission)
@@ -112,14 +115,11 @@ class VcdeployPluginResetDb extends Vcdeploy implements IVcdeployPlugin {
         if (!is_array($perm)) {
           $this->msg('Missing permissions array for databases.');
         }
-        
-        $this->system($this->conf['mysql_bin'] . ' mysql -e "DELETE FROM user WHERE User=\'' . $perm['user'] .'\'"', TRUE);
-        $this->system($this->conf['mysql_bin'] . ' mysql -e "INSERT INTO user (Host,User,Password,ssl_cipher,x509_issuer,x509_subject) VALUES(\'' . $perm['host'] .'\',\'' . $perm['user'] .'\',PASSWORD(\'' . $perm['password'] .'\'), \'\', \'\', \'\')"', TRUE);
+
         foreach ($this->project['db'] AS $identifier => $db) {
-          $this->system($this->conf['mysql_bin'] . " mysql -e \"DELETE FROM db WHERE User='". $perm['user'] ."'\"", TRUE);
-          $this->system($this->conf['mysql_bin'] . " mysql -e \"INSERT INTO db (Host, Db, User, Select_priv, Insert_priv, Update_priv, Delete_priv, Create_priv, Drop_priv, Grant_priv, References_priv, Index_priv, Alter_priv, Create_tmp_table_priv, Lock_tables_priv, Create_view_priv, Show_view_priv, Create_routine_priv, Alter_routine_priv, Execute_priv, Event_priv, Trigger_priv) VALUES('%', '" . $db ."', '" . $perm['user'] ."', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y')\"", TRUE);
+          $this->system($this->db->get_user_drop($perm['host'], $db, $perm['user']), TRUE);
+          $this->system($this->db->get_user_create($perm['host'], $db, $perm['user'], $perm['password']), TRUE);
         }
-        $this->system($this->conf['mysql_bin'] . ' -e "FLUSH PRIVILEGES"', TRUE);
       }
 
       // run pre commands
@@ -150,7 +150,7 @@ class VcdeployPluginResetDb extends Vcdeploy implements IVcdeployPlugin {
           $this->db_recreate($db);
 
           $this->msg('Import data...');
-          $this->system($this->conf['gunzip_bin'] . ' < ' . $sql_file . ' | ' . $this->conf['mysql_bin'] . ' ' . $db);
+          $this->system($this->db->get_restore($db, $sql_file, TRUE));
 
           if (isset($this->project['reset_db']['with_db_sanitize']) && $this->project['reset_db']['with_db_sanitize']) {
             $this->sanitize_database_sanitize($db);

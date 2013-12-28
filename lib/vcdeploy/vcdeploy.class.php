@@ -126,9 +126,18 @@ class Vcdeploy {
   public $logger;
 
   /**
+   * Database class
+   *
+   * Set with $this->set_db()
+   *
+   * @var object
+   */
+  protected $db;
+
+  /**
    * SCM class
    *
-   * Set with set_scm()
+   * Set with $this->set_scm()
    *
    * @var object
    */
@@ -267,6 +276,31 @@ class Vcdeploy {
     // initialize progress bar for non-verbose
     if (!isset($this->paras->options['verbose']) || !$this->paras->options['verbose']) {
       $this->progressbar = new Console_ProgressBar(' %fraction% [%bar%] %percent%  ', '=', ' ', 50, $this->get_steps($init));
+    }
+  }
+
+  /**
+   * Set $this->db object for database operations
+   *
+   * @return void
+   * @throws Exception
+   */
+  protected function set_db() {
+
+    if (!empty($this->project) && isset($this->project['dbtype'])) {
+      $db_type = $this->project['dbtype'];
+    }
+    else {
+      $db_type = $this->conf['dbtype'];
+    }
+
+    include_once 'vcdeploy/db/' . $db_type . '.inc.php';
+    $class = 'VcdeployDb' . ucwords($db_type);
+    if (!empty($this->project)) {
+      $this->db = new $class($this->conf, $this->project);
+    }
+    else {
+      $this->db = new $class($this->conf);
     }
   }
 
@@ -992,7 +1026,7 @@ class Vcdeploy {
     $this->show_progress('Creating database dump of ' . $db_name . '...');
 
     $this->set_nice('high');
-    $rc = $this->system($this->conf['mysqldump_bin'] . ' ' . $this->conf['mysqldump_options'] . ' ' . $db_name . '>' . $target_file);
+    $rc = $this->system($this->db->get_dump($db_name, $target_file));
 
     // if no error, compress sql dump
     if (!$rc['rc']) {
@@ -1058,7 +1092,7 @@ class Vcdeploy {
         $remote_file = $this->project['remote_tmp_dir'] . '/' . $this->_getRemoteBasename('db_' . $identifier) . '.sql';
 
         $this->msg('Create Dump on remote server...(' . $this->ssh['host'] . ')');
-        $rc = $this->ssh_system($this->conf['mysqldump_bin'] . ' ' . $db . ' > ' . $remote_file, TRUE);
+        $rc = $this->ssh_system($this->db->get_dump($db, $remote_file), TRUE);
         if ($rc['rc']) {
           throw new Exception('Error creating remote dump.');
         }
@@ -1140,11 +1174,11 @@ class Vcdeploy {
    *
    * Use by $this->sanitize_database() and reset_db
    *
-   * @param string $database
+   * @param string $db_name
    *
    * @return void
    */
-  public function sanitize_database_sanitize($database) {
+  public function sanitize_database_sanitize($db_name) {
 
     // 1. truncates
     if (isset($this->project['sanitize']['truncates'])) {
@@ -1152,7 +1186,7 @@ class Vcdeploy {
       foreach ($tables AS $table) {
         if (!empty($table)) {
           $this->msg('Truncate table ' . $table);
-          $this->system($this->conf['mysql_bin'] . ' ' . $database . ' -e "TRUNCATE TABLE ' . $table . '"', TRUE);
+          $this->system($this->db->get_table_truncate($db_name, $table), TRUE);
         }
       }
     }
@@ -1163,7 +1197,7 @@ class Vcdeploy {
       foreach ($tables AS $table) {
         if (!empty($table)) {
           $this->msg('Drop table ' . $table);
-          $this->system($this->conf['mysql_bin'] . ' ' . $database . ' -e "DROP TABLE IF EXISTS ' . $table . '"', TRUE);
+          $this->system($this->db->get_table_drop($db_name, $table), TRUE);
         }
       }
     }
@@ -1173,7 +1207,7 @@ class Vcdeploy {
       foreach ($this->project['sanitize']['sql'] AS $sql) {
         if (!empty($sql)) {
           $this->msg('Run sanitize SQL query...');
-          $this->system($this->conf['mysql_bin'] . ' ' . $database . ' -e "' . $sql . '"', TRUE);
+          $this->system($this->db->get_query($db_name, $sql), TRUE);
         }
       }
     }
@@ -1194,16 +1228,16 @@ class Vcdeploy {
 
     // 1. clear database
     $this->msg('Clear temporary database ' . $this->conf['tmp_db'] . '...');
-    $this->system($this->conf['mysqladmin_bin'] . ' -f drop ' . $this->conf['tmp_db'], TRUE);
-    $this->system($this->conf['mysqladmin_bin'] . ' create ' . $this->conf['tmp_db'], TRUE);
+    $this->system($this->db->get_db_drop($this->conf['tmp_db']), TRUE);
+    $this->system($this->db->get_db_create($this->conf['tmp_db']), TRUE);
 
     // 2. clone database to tmp
     if (isset($source_db)) {
       $this->msg('Create SQL file ' . $source_db . '...');
-      $this->system($this->conf['mysqldump_bin'] . ' ' . $this->conf['mysqldump_options'] . ' ' . $source_db . ' > ' . $sql_file, TRUE);
+      $this->system($this->db->get_dump($source_db, $sql_file), TRUE);
     }
     $this->msg('Import SQL file...');
-    $this->system($this->conf['mysql_bin'] . ' ' . $this->conf['tmp_db'] . ' < ' . $sql_file, TRUE);
+    $this->system($this->db->get_restore($this->conf['tmp_db'], $sql_file), TRUE);
 
     // 3. Sanitize tmp database
     if ($sanitize) {
@@ -1212,7 +1246,7 @@ class Vcdeploy {
 
     // 4. Create dump
     $this->msg('Creating scm dump for ' . $this->project_name . '...');
-    $this->system($this->conf['mysqldump_bin'] . ' ' . $this->conf['mysqldump_options'] . ' ' . $this->conf['tmp_db'] . ' > ' . $sql_file, TRUE);
+    $this->system($this->db->get_dump($this->conf['tmp_db'], $sql_file), TRUE);
   }
 
   /**
@@ -1251,23 +1285,23 @@ class Vcdeploy {
   /**
    * Check if database exists
    *
-   * @param string $db
+   * @param string $db_name
    */
-  public function db_exists($db) {
-    $rc = $this->system($this->conf['mysql_bin'] . " -Be \"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '" . $db . "'\"");
+  public function db_exists($db_name) {
+    $rc = $this->system($this->db->get_db_exists($db_name));
     return count($rc['output']);
   }
 
   /**
    * Drop database
    *
-   * @param string $db
+   * @param string $db_name
    * @throws Exception
    */
-  public function db_drop($db) {
-    $rc = $this->system($this->conf['mysql_bin'] . ' -Be "DROP DATABASE IF EXISTS ' . $db . '"');
+  public function db_drop($db_name) {
+    $rc = $this->system($this->db->get_db_drop($db_name));
     if ($rc['rc']) {
-      throw new Exception('Error dropping database \'' . $db . '\'!');
+      throw new Exception('Error dropping database \'' . $db_name . '\'!');
     }
   }
 
@@ -1277,10 +1311,10 @@ class Vcdeploy {
   * @param string $db
   * @throws Exception
   */
-  public function db_create($db) {
-    $rc = $this->system($this->conf['mysql_bin'] . ' -Be "CREATE DATABASE ' . $db . '"');
+  public function db_create($db_name) {
+    $rc = $this->system($this->db->get_db_create($db_name));
     if ($rc['rc']) {
-      throw new Exception('Error creating database \'' . $db . '\'!');
+      throw new Exception('Error creating database \'' . $db_name . '\'!');
     }
   }
 

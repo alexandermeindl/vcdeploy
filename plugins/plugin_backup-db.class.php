@@ -80,6 +80,9 @@ class VcdeployPluginBackupDb extends Vcdeploy implements IVcdeployPlugin {
     // check backup directory if exists and is writable
     $this->prepare_backup_dir();
 
+    // initialize db
+    $this->set_db();
+
     if (isset($this->paras->command->options['database']) && !empty($this->paras->command->options['database'])) {
       $this->_setDatabaseNames('db', $this->paras->command->options['database']);
     }
@@ -189,7 +192,7 @@ class VcdeployPluginBackupDb extends Vcdeploy implements IVcdeployPlugin {
         $this->_databases = array($name);
         break;
       case 'dbs':
-        $rc = $this->system($this->conf['mysql_bin'] . " -Bse 'show databases'");
+        $rc = $this->system($this->db->get_db_list());
         if (!$rc['rc']) {
           $this->_databases = $rc['output'];
         }
