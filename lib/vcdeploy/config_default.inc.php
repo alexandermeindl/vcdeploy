@@ -41,6 +41,7 @@ $conf['mysql_bin'] = '/usr/bin/mysql';
 $conf['mysqladmin_bin'] = '/usr/bin/mysqladmin';
 $conf['psql_bin'] = '/usr/bin/psql';
 $conf['pg_dump_bin'] = '/usr/bin/pg_dump';
+$conf['dropdb_bin'] = '/usr/bin/dropdb';
 $conf['scp_bin'] = '/usr/bin/scp';
 $conf['ssh_bin'] = '/usr/bin/ssh';
 
@@ -80,6 +81,9 @@ $conf['backup_monthly'] = array();
 
 // additional options to use for a mysql dump
 $conf['mysqldump_options'] = '--single-transaction --extended-insert=false';
+
+// additional options to use for a postgresql dump
+$conf['postgresqldump_options'] = '';
 
 // Create hash files for all backup files
 $conf['create_hashfiles'] = FALSE;

@@ -105,10 +105,11 @@ class VcdeployDb {
    * Get database create command
    *
    * @param string $db_name
+   * @param string $owner
    *
    * @return string
    */
-  public function get_db_create($db_name) {
+  public function get_db_create($db_name, $owner='') {
     throw new Exception('get_db_create is not implement of the current DB type');
   }
 
@@ -176,12 +177,12 @@ class VcdeployDb {
   /**
    * Get user drop command
    *
-   * @param string $db_name
+   * @param string $db_host
    * @param string $user
    *
    * @return string
    */
-  public function get_user_drop($db_host, $db_name, $user) {
+  public function get_user_drop($db_host, $user) {
     throw new Exception('get_user_drop is not implement of the current DB type');
   }
 }

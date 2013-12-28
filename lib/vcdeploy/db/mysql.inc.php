@@ -95,10 +95,11 @@ class VcdeployDbMysql extends VcdeployDb {
    * Get database create command
    *
    * @param string $db_name
+   * @param string $owner
    *
    * @return string
    */
-  public function get_db_create($db_name) {
+  public function get_db_create($db_name, $owner='') {
     return $this->conf['mysql_bin'] . ' -Be "CREATE DATABASE ' . $db_name . '"';
   }
 
@@ -112,7 +113,6 @@ class VcdeployDbMysql extends VcdeployDb {
   public function get_db_drop($db_name) {
     return $this->conf['mysql_bin'] . ' -Be "DROP DATABASE IF EXISTS ' . $db_name . '"';
   }
-
 
   /**
    * Get table drop command
@@ -168,12 +168,11 @@ class VcdeployDbMysql extends VcdeployDb {
    * Get user drop command
    *
    * @param string $db_host
-   * @param string $db_name
    * @param string $user
    *
    * @return string
    */
-  public function get_user_drop($db_host, $db_name, $user) {
-    return $this->conf['mysql_bin'] . ' mysql -e "DROP USER \'' . $user .'\'@\'' . $db_host .'\'"';
+  public function get_user_drop($db_host, $user) {
+    return $this->conf['mysql_bin'] . ' -e "DROP USER \'' . $user .'\'@\'' . $db_host .'\'"';
   }
 }

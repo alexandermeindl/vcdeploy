@@ -117,7 +117,7 @@ class VcdeployPluginResetDb extends Vcdeploy implements IVcdeployPlugin {
         }
 
         foreach ($this->project['db'] AS $identifier => $db) {
-          $this->system($this->db->get_user_drop($perm['host'], $db, $perm['user']), TRUE);
+          $this->system($this->db->get_user_drop($perm['host'], $perm['user']), TRUE);
           $this->system($this->db->get_user_create($perm['host'], $db, $perm['user'], $perm['password']), TRUE);
         }
       }
