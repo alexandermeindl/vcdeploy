@@ -173,11 +173,15 @@ class VcdeployPluginBackupDb extends Vcdeploy implements IVcdeployPlugin {
           throw new Exception('Project "' . $name . '" is not configured!');
         }
         $this->set_project($name, $this->projects[$name]);
+        // reinitialize db
+        $this->set_db();
         $this->_databases = $this->project['db'];
         break;
       case 'projects':
         foreach ($this->projects AS $project_name => $project) {
           $this->set_project($project_name, $project);
+          // reinitialize db
+          $this->set_db();
           if (isset($this->project['db'])) {
             foreach($this->project['db'] AS $db_name) {
               $this->_databases[] = $db_name;

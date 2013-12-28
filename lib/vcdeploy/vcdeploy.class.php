@@ -293,7 +293,6 @@ class Vcdeploy {
     else {
       $db_type = $this->conf['dbtype'];
     }
-
     include_once 'vcdeploy/db/' . $db_type . '.inc.php';
     $class = 'VcdeployDb' . ucwords($db_type);
     if (!empty($this->project)) {

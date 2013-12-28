@@ -1,6 +1,6 @@
 Source: http://www.github.com/alexandermeindl/vcdeploy
 Package: vcdeploy
-Version: 0.57-0
+Version: 0.58-0
 Section: php
 Priority: Optional
 Architecture: all
