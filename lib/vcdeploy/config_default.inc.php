@@ -79,6 +79,9 @@ $conf['backup_daily'] = array();
 $conf['backup_weekly'] = array();
 $conf['backup_monthly'] = array();
 
+// install parameters for gem packages
+$conf['gem_options'] = '--conservative';
+
 // additional options to use for a mysql dump
 $conf['mysqldump_options'] = '--single-transaction --extended-insert=false';
 

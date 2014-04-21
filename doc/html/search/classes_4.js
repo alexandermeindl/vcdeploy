@@ -12,7 +12,6 @@ var searchData=
   ['vcdeploypluginbackuprsync',['VcdeployPluginBackupRsync',['../class_vcdeploy_plugin_backup_rsync.html',1,'']]],
   ['vcdeployplugincommand',['VcdeployPluginCommand',['../class_vcdeploy_plugin_command.html',1,'']]],
   ['vcdeployplugincommandls',['VcdeployPluginCommandLs',['../class_vcdeploy_plugin_command_ls.html',1,'']]],
-  ['vcdeploypluginpermission',['VcdeployPluginPermission',['../class_vcdeploy_plugin_permission.html',1,'']]],
   ['vcdeploypluginreleasecreate',['VcdeployPluginReleaseCreate',['../class_vcdeploy_plugin_release_create.html',1,'']]],
   ['vcdeploypluginreleasels',['VcdeployPluginReleaseLs',['../class_vcdeploy_plugin_release_ls.html',1,'']]],
   ['vcdeploypluginresetdb',['VcdeployPluginResetDb',['../class_vcdeploy_plugin_reset_db.html',1,'']]],

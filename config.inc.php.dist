@@ -58,9 +58,14 @@ $conf['log_host'] = 'yourdomain.de';
 // create hash files
 $conf['create_hashfiles'] = TRUE;
 
-// Init a new system environment
-$conf['init-system']['dirs'][] = '/srv/backups';
-$conf['init-system']['dirs'][] = '/srv/software';
+// Create directories
+$conf['dirs'][] = '/srv/backups';
+$conf['dirs'][] = '/srv/software';
 
-// debian packages for ubuntu
-$conf['init-system']['packages'] = 'git-core htop curl';
+// Create symbolic links
+// key = target of symlink
+// value = source file or directory 
+$conf['symlinks']['/usr/lib/perl5/Apache/Redmine.pm'] = '/srv/redmine-dev/extra/svn/Redmine.pm';
+
+// System packages, which are required. (runs with rollout-system)
+$conf['packages_depends'] = 'git-core htop curl';

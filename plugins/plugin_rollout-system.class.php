@@ -29,12 +29,19 @@ $plugin['options']['without_packages'] = array(
                               'description' => 'Don\'t run package commands: depends and conflicts',
                             );
 
+$plugin['options']['without_permissions'] = array(
+                      'short_name'  => '-P',
+                      'long_name'   => '--without_permissions',
+                      'action'      => 'StoreTrue',
+                      'description' => 'Don\'t set permissions',
+                    );
+
 $plugin['options']['force'] = array(
-                                        'short_name'  => '-f',
-                                        'long_name'   => '--force',
-                                        'action'      => 'StoreTrue',
-                                        'description' => 'Overwrite files, even if existing files are newer than source files',
-                                      );
+                          'short_name'  => '-f',
+                          'long_name'   => '--force',
+                          'action'      => 'StoreTrue',
+                          'description' => 'Overwrite files, even if existing files are newer than source files',
+                        );
 
 class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
 
@@ -95,10 +102,13 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
     }
 
     // System package support
-    //$this->_createDirectories();
+    $this->_createDirectories();
+    $this->_createSymlinks();
+    
     if (!isset($this->paras->command->options['without_packages']) || !$this->paras->command->options['without_packages']) {
       $this->_packageDepends();
       $this->_packageConflicts();
+      $this->_packageGemDepends();
     }
     $this->_modsConfig();
     $this->_vhostsConfig();
@@ -106,6 +116,12 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
     $this->_servicesConfig();
     $this->_service('reload');
     $this->_service('restart');
+    
+    if (!isset($this->paras->command->options['without_permissions']) || !$this->paras->command->options['without_permissions']) {
+      $this->_setSystemPermissions();
+    }
+        
+    $this->_postCommands();
 
     return 0;
   }
@@ -131,11 +147,17 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
     // 1. Create missing directories
     //$init += 1;
 
+    $init += $this->_createDirectories(TRUE);
+    $init += $this->_createSymlinks(TRUE);
+
     if (!isset($this->paras->command->options['without_packages']) || !$this->paras->command->options['without_packages']) {
       // 2. Update package sources and add required system packages
       $init += 2;
 
       // 3. Remove unwanted system packages
+      $init += 1;
+      
+      // gem package
       $init += 1;
     }
 
@@ -156,6 +178,20 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
 
     // 9. serviceRestart
     $init += $this->_service('restart', TRUE);
+
+    if (!isset($this->paras->command->options['without_permissions']) || !$this->paras->command->options['without_permissions']) {
+      foreach ($this->conf['permissions'] AS $permission) {
+        if (isset($permission['mod']) && !empty($permission['mod'])) {
+          $init++;
+        }
+        if (isset($permission['own']) && !empty($permission['own'])) {
+          $init++;
+        }
+      }
+    }
+
+    // 10. postCommands
+    $init += 1;
 
     return $init;
   }
@@ -567,19 +603,143 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
     }
   }
 
-  private function _createDirectories() {
+  /**
+   * Install gem packages
+   *
+   * @throws Exception
+   * @return int amount of system commands
+   */
+  private function _packageGemDepends() {
 
-    if (is_array($this->conf['init-system']['dirs'])
-      && count($this->conf['init-system']['dirs'])
-    ) {
+    if (!empty($this->conf['gem_packages_depends'])) {
+      
+      $this->show_progress('Install ruby gem packages...');
+      $rc = $this->system('gem install ' . $this->conf['gem_options'] . ' ' . $this->conf['gem_packages_depends'], TRUE);
 
-      foreach ($this->conf['init-system']['dirs'] AS $dir) {
-        if (file_exists($dir)) {
-          $this->msg('Directory ' . $dir . ' already exists.');
+      if ($rc['rc']) {
+        if (!empty($rc['output'])) {
+          $this->msg('An error occured while installing gem packages:');
+          foreach ($rc['output'] AS $line) {
+            $this->msg($line);
+          }
         }
         else {
-          $this->msg('Creating directory ' . $dir);
-          mkdir($dir, 0775, TRUE);
+          $this->msg('An error occured while installing gem packages (rc=' . $rc['rc'] . ')');
+        }
+        return $rc['rc'];
+      }
+    }
+  }
+
+  /**
+   * Create directories
+   *
+   * @param bool $try if TRUE, this is a test run without system calls
+   * @throws Exception
+   * @return int amount of system commands
+   */
+  private function _createDirectories($try = FALSE) {
+
+    $rc = 0;
+    
+    if (isset($this->conf['dirs']) &&
+      is_array($this->conf['dirs']) &&
+      count($this->conf['dirs'])
+    ) {
+
+      foreach ($this->conf['dirs'] AS $dir) {
+        $rc++;
+        if (!$try) {
+          if (file_exists($dir)) {
+            $this->show_progress('Directory ' . $dir . ' already exists.');
+          }
+          else {
+            $this->show_progress('Creating directory ' . $dir);
+            mkdir($dir, 0775, TRUE);
+          }
+        }
+      }
+    }
+    
+    return $rc;
+  }
+
+  /**
+   * Create symbolic links
+   *
+   * @param bool $try if TRUE, this is a test run without system calls
+   * @throws Exception
+   * @return int amount of system commands
+   */
+  private function _createSymlinks($try = FALSE) {
+
+    $rc = 0;
+
+    if (isset($this->conf['symlinks']) &&
+      is_array($this->conf['symlinks']) &&
+      count($this->conf['symlinks'])
+    ) {
+
+      foreach ($this->conf['symlinks'] AS $target => $source) {
+        $rc++;
+        if (!$try) {
+          if (file_exists($target)) {
+            $this->show_progress('Symlink target ' . $target . ' already exists.');
+          }
+          else {
+            $parent_dir= dirname($target);
+            $basename= basename($target);
+            if (file_exists($parent_dir)) {
+              // change to parent directory
+              $current_dir = getcwd();
+
+              try {
+                chdir($parent_dir);
+              } catch (Exception $e) {
+                echo $e->getMessage();
+              }
+              
+              $this->show_progress('Creating symlink ' . $source . ' => ' . $target);
+              $rc = $this->system('ln -s ' . $source . ' ' . $basename);
+              chdir($current_dir);
+              if ($rc['rc']) {
+                throw new Exception('Error creating symlink "' . $target . '"');
+              }
+            }
+            else {
+              $this->msg('Cannot create symlink ' . $target. ', because parent directory does not exist.');
+            }
+          }
+        }
+      }
+    }
+    return $rc;
+  }
+  
+  /**
+   * Run post commands
+   *
+   * @throws Exception
+   */
+  private function _postCommands() {
+    if (isset($this->conf['post_commands'])) {
+      $this->hook_commands($this->conf['post_commands'], 'post');
+    }
+  }
+  
+  /**
+   * Set system permissions for files and directories
+   *
+   * @throws Exception
+   */
+  private function _setSystemPermissions() {
+    if (is_array($this->conf['permissions']) && count($this->conf['permissions'])) {
+      foreach ($this->conf['permissions'] AS $permission) {
+        if (isset($permission['mod']) && !empty($permission['mod'])) {
+          $this->set_permissions('mod', $permission);
+        }
+        if (isset($permission['own']) && !empty($permission['own'])) {
+          $this->set_permissions('own', $permission);
         }
       }
     }

@@ -77,7 +77,7 @@ class VcdeployPluginStatus extends Vcdeploy implements IVcdeployPlugin {
    * Check directory
    * - if it exist
    * - if it is a directory
-   * - if sldeloy has write permission
+   * - if vcdeloy has write permission
    *
    * @param string $dir
    * @return string if a problem exist, message is returned

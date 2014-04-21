@@ -1,6 +1,13 @@
 // CHANGELOG.txt
 
-vcdeploy 0.58, 2013-12-
+vcdeploy 0.59, 2014-04-21
+- add symlink creation support
+- change dir creation configuration with init-system
+- add set permissions with rollout-system
+- add gem package support
+- remove permissions as independent command
+
+vcdeploy 0.58, 2013-12-28
 - postgresql support
 
 vcdeploy 0.57, 2013-05-10

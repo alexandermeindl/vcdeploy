@@ -19,10 +19,10 @@
  * @link    https://github.com/alexandermeindl/vcdeploy
  */
 
-$plugin['info'] = 'Run rollout, rollout-system and permission plugins';
+$plugin['info'] = 'Run rollout and rollout-system plugins';
 $plugin['root_only'] = TRUE;
 
-$plugin['batch_before'] = array('rollout', 'rollout-system', 'permission');
+$plugin['batch_before'] = array('rollout', 'rollout-system');
 $plugin['batch_after'] = array();
 
 class VcdeployPluginRolloutAll extends Vcdeploy implements IVcdeployPlugin {

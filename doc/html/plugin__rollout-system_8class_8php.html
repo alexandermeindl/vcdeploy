@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">vcdeploy
-   &#160;<span id="projectnumber">0.58</span>
+   &#160;<span id="projectnumber">0.59</span>
    </div>
   </td>
  </tr>
@@ -116,6 +116,8 @@ Variables</h2></td></tr>
 <tr class="separator:a1d302084fa15e3efe6c843cbb5096985"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab588587812f7eb543462d4836d1544d5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><b>$plugin</b> ['options']['without_packages']</td></tr>
 <tr class="separator:ab588587812f7eb543462d4836d1544d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41ecdc10acd66fc1ef00e60a399ee3c9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><b>$plugin</b> ['options']['without_permissions']</td></tr>
+<tr class="separator:a41ecdc10acd66fc1ef00e60a399ee3c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7ef5c8ddc2b9c4552e5b8b2095bec757"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><b>$plugin</b> ['options']['force']</td></tr>
 <tr class="separator:a7ef5c8ddc2b9c4552e5b8b2095bec757"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -142,6 +144,24 @@ Variables</h2></td></tr>
 </div><!-- fragment -->
 </div>
 </div>
+<a class="anchor" id="a41ecdc10acd66fc1ef00e60a399ee3c9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">$plugin['options']['without_permissions']</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= array(</div>
+<div class="line">                      <span class="stringliteral">&#39;short_name&#39;</span>  =&gt; <span class="stringliteral">&#39;-P&#39;</span>,</div>
+<div class="line">                      <span class="stringliteral">&#39;long_name&#39;</span>   =&gt; <span class="stringliteral">&#39;--without_permissions&#39;</span>,</div>
+<div class="line">                      <span class="stringliteral">&#39;action&#39;</span>      =&gt; <span class="stringliteral">&#39;StoreTrue&#39;</span>,</div>
+<div class="line">                      <span class="stringliteral">&#39;description&#39;</span> =&gt; <span class="stringliteral">&#39;Don\&#39;t set permissions&#39;</span>,</div>
+<div class="line">                    )</div>
+</div><!-- fragment -->
+</div>
+</div>
 <a class="anchor" id="a7ef5c8ddc2b9c4552e5b8b2095bec757"></a>
 <div class="memitem">
 <div class="memproto">
@@ -152,11 +172,11 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">= array(</div>
-<div class="line">                                        <span class="stringliteral">&#39;short_name&#39;</span>  =&gt; <span class="stringliteral">&#39;-f&#39;</span>,</div>
-<div class="line">                                        <span class="stringliteral">&#39;long_name&#39;</span>   =&gt; <span class="stringliteral">&#39;--force&#39;</span>,</div>
-<div class="line">                                        <span class="stringliteral">&#39;action&#39;</span>      =&gt; <span class="stringliteral">&#39;StoreTrue&#39;</span>,</div>
-<div class="line">                                        <span class="stringliteral">&#39;description&#39;</span> =&gt; <span class="stringliteral">&#39;Overwrite files, even if existing files are newer than source files&#39;</span>,</div>
-<div class="line">                                      )</div>
+<div class="line">                          <span class="stringliteral">&#39;short_name&#39;</span>  =&gt; <span class="stringliteral">&#39;-f&#39;</span>,</div>
+<div class="line">                          <span class="stringliteral">&#39;long_name&#39;</span>   =&gt; <span class="stringliteral">&#39;--force&#39;</span>,</div>
+<div class="line">                          <span class="stringliteral">&#39;action&#39;</span>      =&gt; <span class="stringliteral">&#39;StoreTrue&#39;</span>,</div>
+<div class="line">                          <span class="stringliteral">&#39;description&#39;</span> =&gt; <span class="stringliteral">&#39;Overwrite files, even if existing files are newer than source files&#39;</span>,</div>
+<div class="line">                        )</div>
 </div><!-- fragment -->
 </div>
 </div>

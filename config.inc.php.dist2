@@ -21,11 +21,6 @@ $conf['services_restart'] = 'apache2 mysql';
 // Reload services with system deploy
 $conf['services_reload'] = 'postfix';
 
-# Init a new system environment
-$conf['init-system']['dirs'][] = '/tmp/dir1';
-$conf['init-system']['dirs'][] = '/tmp/dir2';
-$conf['init-system']['dirs'][] = '/tmp/dir3';
-
 // System packages, which are required. (runs with rollout-system)
 // - packages sources will be updated
 // - missing packages will be installed
