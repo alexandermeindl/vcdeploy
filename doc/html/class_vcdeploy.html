@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">vcdeploy
-   &#160;<span id="projectnumber">0.59</span>
+   &#160;<span id="projectnumber">0.60</span>
    </div>
   </td>
  </tr>
@@ -149,8 +149,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a7a29394a5c49356fe0e53a9150813186"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab125a718f83e7a41c5ab09d0fa9146a5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_vcdeploy.html#ab125a718f83e7a41c5ab09d0fa9146a5">msg</a> ($msg, $error_code=0)</td></tr>
 <tr class="separator:ab125a718f83e7a41c5ab09d0fa9146a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d4b4e63a10105ddddd40a85d70497a9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_vcdeploy.html#a5d4b4e63a10105ddddd40a85d70497a9">hook_commands</a> ($commands, $<a class="el" href="class_vcdeploy.html#ab125a718f83e7a41c5ab09d0fa9146a5">msg</a>)</td></tr>
-<tr class="separator:a5d4b4e63a10105ddddd40a85d70497a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad364bc47f8171b127b209005165f1f37"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_vcdeploy.html#ad364bc47f8171b127b209005165f1f37">hook_commands</a> ($commands, $<a class="el" href="class_vcdeploy.html#ab125a718f83e7a41c5ab09d0fa9146a5">msg</a>, $try=FALSE)</td></tr>
+<tr class="separator:ad364bc47f8171b127b209005165f1f37"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab86d69acf6b7804b417c085e6b815f6f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_vcdeploy.html#ab86d69acf6b7804b417c085e6b815f6f">ssh_check</a> ()</td></tr>
 <tr class="separator:ab86d69acf6b7804b417c085e6b815f6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61701a328aa2b1deab91d83dc6ddb196"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_vcdeploy.html#a61701a328aa2b1deab91d83dc6ddb196">ssh_get_file</a> ($remote_file, $local_file)</td></tr>
@@ -827,7 +827,7 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a5d4b4e63a10105ddddd40a85d70497a9"></a>
+<a class="anchor" id="ad364bc47f8171b127b209005165f1f37"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -841,7 +841,13 @@ Protected Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>$msg</em>&#160;</td>
+          <td class="paramname"><em>$msg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$try</em> = <code>FALSE</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -855,10 +861,11 @@ Protected Attributes</h2></td></tr>
   <table class="params">
     <tr><td class="paramtype">array</td><td class="paramname">$post_commands</td><td>commands for system calls </td></tr>
     <tr><td class="paramtype">string</td><td class="paramname">$msg</td><td></td></tr>
+    <tr><td class="paramtype">bool</td><td class="paramname">$try</td><td>do not run commands (just count)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">Exception</td><td></td></tr>

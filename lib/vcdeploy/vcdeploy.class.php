@@ -555,57 +555,64 @@ class Vcdeploy {
    *
    * @param array $post_commands commands for system calls
    * @param string $msg
+   * @param bool $try do not run commands (just count)
    *
-   * @return void
+   * @return int
    * @throws Exception
    */
-  public function hook_commands($commands, $msg) {
+  public function hook_commands($commands, $msg, $try = FALSE) {
+
+		$numCommands = 0;
 
     if (is_array($commands)) {
 
-      foreach ($commands AS $command_info) {
+			$numCommands = count($commands);
 
-		  if (is_array($command_info)) {
-			  if (!isset($command_info['command'])) {
-					throw new Exception($msg . ' command error: command key not specified');
-				}
-		  }
-			else { // no array is used
-				$command_info = array('command' => $command_info);
-			}
+			if (!$try) {
+	      foreach ($commands AS $command_info) {
 
-			if (isset($this->project['drush'])) {
-				$command_info['command'] = str_replace('[drush]', $this->project['drush'], $command_info['command']);
-			}
-
-			// switch to project path
-			if (isset($command_info['path'])) {
-				// only change directoy, if path is not empty. Use this, if you don't want to change directory
-				if (!empty($command_info['path'])) {
-					if (!chdir($command_info['path'])) {
-						throw new Exception($msg . ' command error: command path for ' . $command_info['command'] . ' does not exist (' . $command_info['path'] . ')');
+				  if (is_array($command_info)) {
+					  if (!isset($command_info['command'])) {
+							throw new Exception($msg . ' command error: command key not specified');
+						}
+				  }
+					else { // no array is used
+						$command_info = array('command' => $command_info);
 					}
-				}
-			}
-			elseif (isset($this->project['path'])) { // Switch to project path by default
-				if (!chdir($this->project['path'])) {
-					throw new Exception($msg . ' command error: ' . $command_info['command'] . ' (changing to project path not possible)');
-				}
-			}
 
-			$this->msg('Running ' . $msg . ' command: ' . $command_info['command']);
-      // show verbose message
-      if ((isset($this->paras->options['verbose']) && $this->paras->options['verbose'])) {
-        $rc = $this->system($command_info['command'], TRUE);
-      }
-      else {
-        $rc = $this->system($command_info['command']);
-      }
+					if (isset($this->project['drush'])) {
+						$command_info['command'] = str_replace('[drush]', $this->project['drush'], $command_info['command']);
+					}
 
-        if ($rc['rc'] != 0) {
-          throw new Exception($msg . ' command error: ' . $command_info['command'] . ' (rc=' . $rc['rc'] . ')');
-        }
-      }
+					// switch to project path
+					if (isset($command_info['path'])) {
+						// only change directoy, if path is not empty. Use this, if you don't want to change directory
+						if (!empty($command_info['path'])) {
+							if (!chdir($command_info['path'])) {
+								throw new Exception($msg . ' command error: command path for ' . $command_info['command'] . ' does not exist (' . $command_info['path'] . ')');
+							}
+						}
+					}
+					elseif (isset($this->project['path'])) { // Switch to project path by default
+						if (!chdir($this->project['path'])) {
+							throw new Exception($msg . ' command error: ' . $command_info['command'] . ' (changing to project path not possible)');
+						}
+					}
+
+					$this->msg('Running ' . $msg . ' command: ' . $command_info['command']);
+		      // show verbose message
+		      if ((isset($this->paras->options['verbose']) && $this->paras->options['verbose'])) {
+		        $rc = $this->system($command_info['command'], TRUE);
+		      }
+		      else {
+		        $rc = $this->system($command_info['command']);
+		      }
+
+	        if ($rc['rc'] != 0) {
+	          throw new Exception($msg . ' command error: ' . $command_info['command'] . ' (rc=' . $rc['rc'] . ')');
+	        }
+	      }
+			}
     }
   }
 

@@ -114,13 +114,16 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
     $this->_vhostsConfig();
     $this->_nginxConfig();
     $this->_servicesConfig();
-    $this->_service('reload');
-    $this->_service('restart');
-    
+
     if (!isset($this->paras->command->options['without_permissions']) || !$this->paras->command->options['without_permissions']) {
       $this->_setSystemPermissions();
     }
-        
+		
+    $this->_preCommands();
+		
+    $this->_service('reload');
+    $this->_service('restart');
+    
     $this->_postCommands();
 
     return 0;
@@ -173,10 +176,13 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
     // 7. serviceConfig
     $init += $this->_servicesConfig(TRUE);
 
-    // 8. serviceReload
+    // 8. preCommands
+    $init += $this->_preCommands(TRUE);
+
+    // 9. serviceReload
     $init += $this->_service('reload', TRUE);
 
-    // 9. serviceRestart
+    // 10. serviceRestart
     $init += $this->_service('restart', TRUE);
 
     if (!isset($this->paras->command->options['without_permissions']) || !$this->paras->command->options['without_permissions']) {
@@ -190,8 +196,8 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
       }
     }
 
-    // 10. postCommands
-    $init += 1;
+    // 11. postCommands
+    $init += $this->_postCommands(TRUE);
 
     return $init;
   }
@@ -715,18 +721,37 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
     }
     return $rc;
   }
-  
+
+  /**
+   * Run pre commands
+   *
+   * @param bool $try if TRUE, this is a test run without system calls
+   * @throws Exception
+   * @return int amount of system commands
+   */
+  private function _preCommands($try = FALSE) {
+		$rc = 0;
+    if (isset($this->conf['pre_commands'])) {
+      $rc = $this->hook_commands($this->conf['pre_commands'], 'pre', $try);
+    }		
+		return $rc;
+  }
+    
   /**
    * Run post commands
    *
+   * @param bool $try if TRUE, this is a test run without system calls
    * @throws Exception
+   * @return int amount of system commands
    */
-  private function _postCommands() {
+  private function _postCommands($try = FALSE) {
+		$rc = 0;
     if (isset($this->conf['post_commands'])) {
-      $this->hook_commands($this->conf['post_commands'], 'post');
+      $rc = $this->hook_commands($this->conf['post_commands'], 'post', $try);
     }
+		return $rc;
   }
-  
+
   /**
    * Set system permissions for files and directories
    *

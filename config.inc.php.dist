@@ -25,6 +25,9 @@ $conf['services_enable'] = 'apache2 mysql';
 // Restart services with system deploy
 $conf['services_restart'] = 'nginx';
 
+$conf['pre_commands'][] = 'echo "command runs before services_restart"';
+$conf['post_commands'][] = 'echo "command runs after services_restart"';
+
 // nginx sites (config files), which are supported
 #$conf['nginx_sites'] = 'vhost1.conf vhost2.conf';
 
