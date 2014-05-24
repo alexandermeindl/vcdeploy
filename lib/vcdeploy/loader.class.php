@@ -31,7 +31,7 @@ class VcDeployLoader {
    *
    * @var string
    */
-  protected $version = '0.60';
+  protected $version = '0.61';
 
   /**
    * Configuration

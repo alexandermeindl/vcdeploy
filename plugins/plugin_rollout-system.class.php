@@ -29,6 +29,13 @@ $plugin['options']['without_packages'] = array(
                               'description' => 'Don\'t run package commands: depends and conflicts',
                             );
 
+$plugin['options']['without_commands'] = array(
+                              'short_name'  => '-C',
+                              'long_name'   => '--without_commands',
+                              'action'      => 'StoreTrue',
+                              'description' => 'Don\'t run pre_commands and post_commands',
+                            );
+
 $plugin['options']['without_permissions'] = array(
                       'short_name'  => '-P',
                       'long_name'   => '--without_permissions',
@@ -104,7 +111,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
     // System package support
     $this->_createDirectories();
     $this->_createSymlinks();
-    
+
     if (!isset($this->paras->command->options['without_packages']) || !$this->paras->command->options['without_packages']) {
       $this->_packageDepends();
       $this->_packageConflicts();
@@ -118,13 +125,17 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
     if (!isset($this->paras->command->options['without_permissions']) || !$this->paras->command->options['without_permissions']) {
       $this->_setSystemPermissions();
     }
-		
-    $this->_preCommands();
-		
+
+    if (!isset($this->paras->command->options['without_commands']) || !$this->paras->command->options['without_commands']) {
+      $this->_preCommands();
+    }
+
     $this->_service('reload');
     $this->_service('restart');
-    
-    $this->_postCommands();
+
+    if (!isset($this->paras->command->options['without_commands']) || !$this->paras->command->options['without_commands']) {
+      $this->_postCommands();
+    }
 
     return 0;
   }
@@ -159,7 +170,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
 
       // 3. Remove unwanted system packages
       $init += 1;
-      
+
       // gem package
       $init += 1;
     }
@@ -176,8 +187,10 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
     // 7. serviceConfig
     $init += $this->_servicesConfig(TRUE);
 
-    // 8. preCommands
-    $init += $this->_preCommands(TRUE);
+    if (!isset($this->paras->command->options['without_commands']) || !$this->paras->command->options['without_commands']) {
+      // 8. preCommands
+      $init += $this->_preCommands(TRUE);
+    }
 
     // 9. serviceReload
     $init += $this->_service('reload', TRUE);
@@ -196,8 +209,10 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
       }
     }
 
-    // 11. postCommands
-    $init += $this->_postCommands(TRUE);
+    if (!isset($this->paras->command->options['without_commands']) || !$this->paras->command->options['without_commands']) {
+      // 11. postCommands
+      $init += $this->_postCommands(TRUE);
+    }
 
     return $init;
   }
@@ -618,7 +633,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
   private function _packageGemDepends() {
 
     if (!empty($this->conf['gem_packages_depends'])) {
-      
+
       $this->show_progress('Install ruby gem packages...');
       $rc = $this->system('gem install ' . $this->conf['gem_options'] . ' ' . $this->conf['gem_packages_depends'], TRUE);
 
@@ -647,7 +662,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
   private function _createDirectories($try = FALSE) {
 
     $rc = 0;
-    
+
     if (isset($this->conf['dirs']) &&
       is_array($this->conf['dirs']) &&
       count($this->conf['dirs'])
@@ -666,7 +681,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
         }
       }
     }
-    
+
     return $rc;
   }
 
@@ -704,7 +719,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
               } catch (Exception $e) {
                 echo $e->getMessage();
               }
-              
+
               $this->show_progress('Creating symlink ' . $source . ' => ' . $target);
               $rc = $this->system('ln -s ' . $source . ' ' . $basename);
               chdir($current_dir);
@@ -733,10 +748,10 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
 		$rc = 0;
     if (isset($this->conf['pre_commands'])) {
       $rc = $this->hook_commands($this->conf['pre_commands'], 'pre', $try);
-    }		
+    }
 		return $rc;
   }
-    
+
   /**
    * Run post commands
    *

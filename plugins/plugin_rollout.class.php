@@ -41,6 +41,13 @@ $plugin['options']['tag'] = array(
                               'description' => 'Use this tag for rollout. If no tag is set with this option, default is used [rollout][tag]',
                             );
 
+$plugin['options']['without_commands'] = array(
+                              'short_name'  => '-C',
+                              'long_name'   => '--without_commands',
+                              'action'      => 'StoreTrue',
+                              'description' => 'Don\'t run pre_commands and post_commands',
+                            );
+
 $plugin['options']['with_db'] = array(
                                         'short_name'  => '-d',
                                         'long_name'   => '--with_db',
@@ -261,7 +268,9 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
 
       // 1. run pre commands
       if (isset($this->project['pre_commands'])) {
-        $this->hook_commands($this->project['pre_commands'], 'pre');
+        if (!isset($this->paras->command->options['without_commands']) || !$this->paras->command->options['without_commands']) {
+          $this->hook_commands($this->project['pre_commands'], 'pre');
+        }
       }
 
       // 2. project code
@@ -295,7 +304,9 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
 
       // 5. run post commands
       if (isset($this->project['post_commands'])) {
-        $this->hook_commands($this->project['post_commands'], 'post');
+        if (!isset($this->paras->command->options['without_commands']) || !$this->paras->command->options['without_commands']) {
+          $this->hook_commands($this->project['post_commands'], 'post');
+        }
       }
 
       // 6. Permissions (has to be after post commands to make sure all created files are affected)

@@ -1,5 +1,9 @@
 // CHANGELOG.txt
 
+vcdeploy 0.61, 2014-05-24
+- add pre_commands and post_commands to rollout-system
+- new parameter -C for rollout and rollout-system to skip commands
+
 vcdeploy 0.59, 2014-04-21
 - add symlink creation support
 - change dir creation configuration with init-system
