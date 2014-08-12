@@ -1,5 +1,8 @@
 // CHANGELOG.txt
 
+vcdeploy 0.62, 2014-08-12
+- SVN rollout-system supports
+
 vcdeploy 0.61, 2014-05-24
 - add pre_commands and post_commands to rollout-system
 - new parameter -C for rollout and rollout-system to skip commands

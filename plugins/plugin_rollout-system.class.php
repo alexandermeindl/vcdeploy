@@ -98,13 +98,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
 
         // update system
         $this->show_progress('Update system files...');
-
-        if (isset($this->paras->command->options['force']) && $this->paras->command->options['force']) {
-          $this->system($this->conf['cp_bin'] . ' -r . /', TRUE);
-        }
-        else {
-          $this->system($this->conf['cp_bin'] . ' -ru . /', TRUE);
-        }
+        $this->_copyFiles($system_source);
       }
     }
 
@@ -215,6 +209,58 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
     }
 
     return $init;
+  }
+
+  /**
+   * Copy system files
+   *
+   */
+  private function _copyFiles($system_source) {
+
+    $tmp_dir = '';
+
+    if ($this->conf['source_scm'] == 'svn') {
+
+      // temporary directory for SVN copy
+      $tmp_dir = $this->conf['tmp_dir'] . '/'. uniqid('vcdeploy_svn_cp_');
+      if ($tmp_dir!='/' && file_exists($tmp_dir)) {
+        $this->system('rm -rf ' . $tmp_dir, TRUE);
+      }
+
+      // Copy files to temporary location
+      $this->system($this->conf['cp_bin'] . ' -r . ' . $tmp_dir, TRUE);
+
+      // Remove SVN directories
+      $this->system('find "' . $tmp_dir . '/" -name ".svn" -type d -exec rm -rf {} 2>/dev/null \;', TRUE);
+
+      // Cleanup Mac OS X files
+      $this->system('find "' . $tmp_dir . '/" -name ".DS_Store" -type f -exec rm -f {} \;', TRUE);
+
+      // Switch to temporary directory
+      chdir($tmp_dir);
+    }
+    else if (getcwd() != $system_source) {
+      // Cleanup Mac OS X files
+      $this->system('find "' . $system_source . '/" -name ".DS_Store" -type f -exec rm -f {} \;', TRUE);
+      // Switch to source directory
+      chdir($system_source);
+    }
+
+    // Copy files
+    if (isset($this->paras->command->options['force']) && $this->paras->command->options['force']) {
+      $this->system($this->conf['cp_bin'] . ' -r . /', TRUE);
+    }
+    else {
+      $this->system($this->conf['cp_bin'] . ' -ru . /', TRUE);
+    }
+
+    // Clean up
+    if (!empty($tmp_dir) && $tmp_dir!='/' && file_exists($tmp_dir)) {
+      $this->system('rm -rf ' . $tmp_dir, TRUE);
+    }
+    if (getcwd() != $system_source) {
+        chdir($system_source);
+    }
   }
 
   /**
