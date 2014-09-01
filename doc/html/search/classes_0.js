@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['classloader',['ClassLoader',['../class_composer_1_1_autoload_1_1_class_loader.html',1,'Composer::Autoload']]],
-  ['composerautoloaderinit15e63b04b479208385364b0774c32557',['ComposerAutoloaderInit15e63b04b479208385364b0774c32557',['../class_composer_autoloader_init15e63b04b479208385364b0774c32557.html',1,'']]],
   ['console_5fcommandline',['Console_CommandLine',['../class_console___command_line.html',1,'']]],
   ['console_5fcommandline_5faction',['Console_CommandLine_Action',['../class_console___command_line___action.html',1,'']]],
   ['console_5fcommandline_5faction_5fcallback',['Console_CommandLine_Action_Callback',['../class_console___command_line___action___callback.html',1,'']]],
