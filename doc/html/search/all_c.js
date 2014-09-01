@@ -1,9 +1,27 @@
 var searchData=
 [
+  ['makefriendlyname',['makeFriendlyName',['../class_p_h_p___code_sniffer___reports___source.html#ad701c4f2d3403cff84d2dacd1f83b582',1,'PHP_CodeSniffer_Reports_Source']]],
   ['mask',['MASK',['../class_log.html#a7dd897bd34e344d8e54284cac8c7c09c',1,'Log']]],
   ['max',['MAX',['../class_log.html#a1f96b8369a5f05a579c6f3a0697e4c69',1,'Log']]],
   ['md5_5ffile',['md5_file',['../class_vcdeploy.html#a9ac401887df6b6d3f118fa1af8c987b5',1,'Vcdeploy']]],
   ['min',['MIN',['../class_log.html#a7094dfd7cdabd103e201d99ec039c993',1,'Log']]],
   ['msg',['msg',['../class_vcdeploy.html#ab125a718f83e7a41c5ab09d0fa9146a5',1,'Vcdeploy']]],
+  ['mysource_5fsniffs_5fchannels_5fchannelexceptionsniff',['MySource_Sniffs_Channels_ChannelExceptionSniff',['../class_my_source___sniffs___channels___channel_exception_sniff.html',1,'']]],
+  ['mysource_5fsniffs_5fchannels_5fdisallowselfactionssniff',['MySource_Sniffs_Channels_DisallowSelfActionsSniff',['../class_my_source___sniffs___channels___disallow_self_actions_sniff.html',1,'']]],
+  ['mysource_5fsniffs_5fchannels_5fincludeownsystemsniff',['MySource_Sniffs_Channels_IncludeOwnSystemSniff',['../class_my_source___sniffs___channels___include_own_system_sniff.html',1,'']]],
+  ['mysource_5fsniffs_5fchannels_5fincludesystemsniff',['MySource_Sniffs_Channels_IncludeSystemSniff',['../class_my_source___sniffs___channels___include_system_sniff.html',1,'']]],
+  ['mysource_5fsniffs_5fchannels_5funusedsystemsniff',['MySource_Sniffs_Channels_UnusedSystemSniff',['../class_my_source___sniffs___channels___unused_system_sniff.html',1,'']]],
+  ['mysource_5fsniffs_5fcommenting_5ffunctioncommentsniff',['MySource_Sniffs_Commenting_FunctionCommentSniff',['../class_my_source___sniffs___commenting___function_comment_sniff.html',1,'']]],
+  ['mysource_5fsniffs_5fcss_5fbrowserspecificstylessniff',['MySource_Sniffs_CSS_BrowserSpecificStylesSniff',['../class_my_source___sniffs___c_s_s___browser_specific_styles_sniff.html',1,'']]],
+  ['mysource_5fsniffs_5fdebug_5fdebugcodesniff',['MySource_Sniffs_Debug_DebugCodeSniff',['../class_my_source___sniffs___debug___debug_code_sniff.html',1,'']]],
+  ['mysource_5fsniffs_5fdebug_5ffirebugconsolesniff',['MySource_Sniffs_Debug_FirebugConsoleSniff',['../class_my_source___sniffs___debug___firebug_console_sniff.html',1,'']]],
+  ['mysource_5fsniffs_5fobjects_5fassignthissniff',['MySource_Sniffs_Objects_AssignThisSniff',['../class_my_source___sniffs___objects___assign_this_sniff.html',1,'']]],
+  ['mysource_5fsniffs_5fobjects_5fcreatewidgettypecallbacksniff',['MySource_Sniffs_Objects_CreateWidgetTypeCallbackSniff',['../class_my_source___sniffs___objects___create_widget_type_callback_sniff.html',1,'']]],
+  ['mysource_5fsniffs_5fobjects_5fdisallownewwidgetsniff',['MySource_Sniffs_Objects_DisallowNewWidgetSniff',['../class_my_source___sniffs___objects___disallow_new_widget_sniff.html',1,'']]],
+  ['mysource_5fsniffs_5fphp_5fajaxnullcomparisonsniff',['MySource_Sniffs_PHP_AjaxNullComparisonSniff',['../class_my_source___sniffs___p_h_p___ajax_null_comparison_sniff.html',1,'']]],
+  ['mysource_5fsniffs_5fphp_5fevalobjectfactorysniff',['MySource_Sniffs_PHP_EvalObjectFactorySniff',['../class_my_source___sniffs___p_h_p___eval_object_factory_sniff.html',1,'']]],
+  ['mysource_5fsniffs_5fphp_5fgetrequestdatasniff',['MySource_Sniffs_PHP_GetRequestDataSniff',['../class_my_source___sniffs___p_h_p___get_request_data_sniff.html',1,'']]],
+  ['mysource_5fsniffs_5fphp_5freturnfunctionvaluesniff',['MySource_Sniffs_PHP_ReturnFunctionValueSniff',['../class_my_source___sniffs___p_h_p___return_function_value_sniff.html',1,'']]],
+  ['mysource_5fsniffs_5fstrings_5fjoinstringssniff',['MySource_Sniffs_Strings_JoinStringsSniff',['../class_my_source___sniffs___strings___join_strings_sniff.html',1,'']]],
   ['mysql_2einc_2ephp',['mysql.inc.php',['../mysql_8inc_8php.html',1,'']]]
 ];

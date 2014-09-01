@@ -9,6 +9,7 @@ var searchData=
   ['deprecated_20list',['Deprecated List',['../deprecated.html',1,'']]],
   ['description',['description',['../class_console___command_line___renderer___default.html#a5c46fb6f231cf347080b6019437bb5e6',1,'Console_CommandLine_Renderer_Default']]],
   ['detach',['detach',['../class_log.html#a298cab757ccb9aa7ae1bdc44c8132d92',1,'Log']]],
+  ['detectlineendings',['detectLineEndings',['../class_p_h_p___code_sniffer___file.html#aefdba69f6bb94b02d6cab96d9c3dbe2c',1,'PHP_CodeSniffer_File']]],
   ['dispatchaction',['dispatchAction',['../class_console___command_line___option.html#a0ecfad7330b11211d958ca9cb985b33f',1,'Console_CommandLine_Option']]],
   ['display',['display',['../class_console___progress_bar.html#adaa0477e6435f035779e3ef01c996888',1,'Console_ProgressBar']]],
   ['displayerror',['displayError',['../class_console___command_line.html#ad9e5386ec285042822c328183f0a0e53',1,'Console_CommandLine']]],

@@ -9,6 +9,7 @@ var searchData=
   ['_24_5fstart_5ftime',['$_start_time',['../class_console___progress_bar.html#a0951c7412928a0e59f4e1281233d40a1',1,'Console_ProgressBar']]],
   ['_24_5ftarget_5fnum',['$_target_num',['../class_console___progress_bar.html#ae1a56ac9f3bb48e8457e2a31144104e0',1,'Console_ProgressBar']]],
   ['_24_5ftlen',['$_tlen',['../class_console___progress_bar.html#aca842c2cc93576f62e80a7f939e345b5',1,'Console_ProgressBar']]],
+  ['_24forbiddenfunctions',['$forbiddenFunctions',['../class_squiz___sniffs___p_h_p___disallow_size_functions_in_loops_sniff.html#a39aaa09f3d4e668f1f933108205795bd',1,'Squiz_Sniffs_PHP_DisallowSizeFunctionsInLoopsSniff']]],
   ['_24messages',['$messages',['../class_console___command_line___message_provider___default.html#aaf8d38bd4e7d07a3d97cc2f497f6d13f',1,'Console_CommandLine_MessageProvider_Default']]],
   ['_24version',['$version',['../class_console___command_line.html#a1b7c1b5313d6b73d29848c3eb464529f',1,'Console_CommandLine']]]
 ];

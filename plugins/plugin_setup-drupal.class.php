@@ -37,6 +37,13 @@ $plugin['options']['without_permission'] = array(
                                           'description' => 'Do not apply specified permissions',
 );
 
+$plugin['options']['without_commands'] = array(
+    'short_name'  => '-C',
+    'long_name'   => '--without_commands',
+    'action'      => 'StoreTrue',
+    'description' => 'Don\'t run pre_commands and post_commands',
+);
+
 class VcdeployPluginSetupDrupal extends Vcdeploy implements IVcdeployPlugin {
 
   /**
@@ -88,6 +95,25 @@ class VcdeployPluginSetupDrupal extends Vcdeploy implements IVcdeployPlugin {
 
     return 0;
   }
+
+    /**
+     * Get max steps of this plugin for progress view
+     *
+     * @param int $init initial value of counter
+     *
+     * @return int amount of working steps of this plugin
+     * @see Vcdeploy#progressbar_init()
+     */
+    public function get_steps($init = 0) {
+
+        // pre commands
+        $init += $this->runHooks('pre', true);
+
+        // post commands
+        $init += $this->runHooks('post', true);
+
+        return ++$init;
+    }
 
   /**
    * Reset drupal files directories
@@ -201,19 +227,15 @@ class VcdeployPluginSetupDrupal extends Vcdeploy implements IVcdeployPlugin {
 
     $this->msg('Run drupal installation of ' . $this->project_name . '...');
 
-    // 1. Run pre commands
-    if (isset($this->project['setup_drupal']['pre_commands'])) {
-      $this->hook_commands($this->project['setup_drupal']['pre_commands'], 'pre');
-    }
+      // 1. Run pre commands
+      $this->runHooks('pre');
 
     // 2. Run install
     $command  = '[drush] --yes si ' . $this->project['setup_drupal']['install_profile'] . ' ' . $this->getDrushParas();
-    $this->hook_commands(array($command), 'install');
+    $this->installCommands(array($command));
 
     // 3. Run post commands
-    if (isset($this->project['setup_drupal']['post_commands'])) {
-      $this->hook_commands($this->project['setup_drupal']['post_commands'], 'post');
-    }
+    $this->runHooks('post');
 
     // 4. Set file permissions (has to be after post commands to make sure all created files are affected)
     if ($this->is_permission_required()) {
@@ -262,7 +284,7 @@ class VcdeployPluginSetupDrupal extends Vcdeploy implements IVcdeployPlugin {
    *
    * @see $this->runResetSettings, $this->runResetFiles, $this->runInstall
    */
-  private function runReinstall() {
+  public function runReinstall() {
     $this->runResetSettings();
     $this->runResetFiles();
     // $this->runResetDb(); // not required, because database dropped with drush
@@ -278,22 +300,10 @@ class VcdeployPluginSetupDrupal extends Vcdeploy implements IVcdeployPlugin {
    *
    * @see $this->runResetSettings, $this->runResetFiles, $this->runResetDb
    */
-  private function runReset() {
+  public function runReset() {
     $this->runResetSettings();
     $this->runResetFiles();
     $this->runResetDb();
-  }
-
-  /**
-   * Get max steps of this plugin for progress view
-   *
-   * @param int $init initial value of counter
-   *
-   * @return int amount of working steps of this plugin
-   * @see Vcdeploy#progressbar_init()
-   */
-  public function get_steps($init = 0) {
-    return $init++;
   }
 
   private function getSitesSubdir() {

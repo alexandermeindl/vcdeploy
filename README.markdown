@@ -2,7 +2,7 @@
 
 ## Requirements
 
-* PHP 5.2.x
+* PHP 5.3.x
 * SCM (git, svn or cvs)
 
 ## Optional

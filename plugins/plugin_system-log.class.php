@@ -94,7 +94,7 @@ class VcdeployPluginSystemLog extends Vcdeploy implements IVcdeployPlugin {
    * @see Vcdeploy#progressbar_init()
    */
   public function get_steps($init = 0) {
-    return $init++;
+    return ++$init;
   }
 
   /**
@@ -231,7 +231,7 @@ class VcdeployPluginSystemLog extends Vcdeploy implements IVcdeployPlugin {
   private function _packageList() {
 
     $this->msg('Create system package list...');
-    $cmd_create = '';
+
     switch ($this->conf['package_manager']) {
       case 'apt':
         $cmd_create = "dpkg-query -W -f '\${Status}\t\${Package} \${Version}\n' | egrep '(ok installed|ok config-files)' | cut -f2,3";

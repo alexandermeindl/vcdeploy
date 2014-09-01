@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['makefriendlyname',['makeFriendlyName',['../class_p_h_p___code_sniffer___reports___source.html#ad701c4f2d3403cff84d2dacd1f83b582',1,'PHP_CodeSniffer_Reports_Source']]],
   ['mask',['MASK',['../class_log.html#a7dd897bd34e344d8e54284cac8c7c09c',1,'Log']]],
   ['max',['MAX',['../class_log.html#a1f96b8369a5f05a579c6f3a0697e4c69',1,'Log']]],
   ['md5_5ffile',['md5_file',['../class_vcdeploy.html#a9ac401887df6b6d3f118fa1af8c987b5',1,'Vcdeploy']]],

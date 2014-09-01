@@ -31,7 +31,7 @@ class VcDeployLoader {
    *
    * @var string
    */
-  protected $version = '0.62';
+  protected $version = '0.63';
 
   /**
    * Configuration
@@ -81,9 +81,6 @@ class VcDeployLoader {
    * Constructor
    *
    * @param array $conf
-   * @param bool $write_to_log
-   *
-   * @return void
    */
   public function __construct($conf) {
 
@@ -109,7 +106,7 @@ class VcDeployLoader {
   /**
     * Get all available modules
     *
-    * @return void
+    * @throws Exception
     */
   private function _setPlugins() {
 
@@ -141,7 +138,7 @@ class VcDeployLoader {
   /**
    * Set plugin info to $this->plugins
    *
-   * @params string $dir
+   * @param string $dir
    * @see $this->_setPlugins()
    */
   private function _setPluginFromDir($dir) {
@@ -288,7 +285,7 @@ class VcDeployLoader {
           if (substr_count($process, 'vcdeploy ' . $this->plugin_name) > 0) {
             $cnt++;
             if ($cnt > 1) {
-              return TRUE;
+              return true;
             }
           }
         }
@@ -297,12 +294,14 @@ class VcDeployLoader {
     }
 
     touch($lock_file);
+
+      return false;
   }
 
   /**
    * Get class name from plugin name
    *
-   * @param string $class_name
+   * @param string $plugin_name
    *
    * @return string
    */

@@ -46,6 +46,13 @@ $plugin['options']['without_backup'] = array(
                                           'description' => 'Do not create a backup before the sync (default with setting without_backup=TRUE)',
                                         );
 
+$plugin['options']['without_commands'] = array(
+    'short_name'  => '-C',
+    'long_name'   => '--without_commands',
+    'action'      => 'StoreTrue',
+    'description' => 'Don\'t run pre_commands and post_commands',
+);
+
 $plugin['options']['without_permission'] = array(
                                           'short_name'  => '-P',
                                           'long_name'   => '--without_permission',
@@ -102,6 +109,7 @@ class VcdeployPluginResetDir extends Vcdeploy implements IVcdeployPlugin {
    * @see Vcdeploy#progressbar_init()
    */
   public function get_steps($init = 0) {
+
     if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
       $rc = 1;
     }
@@ -113,6 +121,9 @@ class VcdeployPluginResetDir extends Vcdeploy implements IVcdeployPlugin {
     if ($this->is_backup_required()) {
       $rc *= 2;
     }
+
+      // pre commands
+      $init += $this->runHooks('pre', true);
 
     // with permissions
     if ($this->is_permission_required()) {
@@ -127,7 +138,10 @@ class VcdeployPluginResetDir extends Vcdeploy implements IVcdeployPlugin {
       }
     }
 
-    return $init + $rc;
+      // post commands
+      $init += $this->runHooks('post', true);
+
+      return $init + $rc;
   }
 
   /**
@@ -140,9 +154,7 @@ class VcdeployPluginResetDir extends Vcdeploy implements IVcdeployPlugin {
     if (isset($this->project['data_dir'])) {
 
       // Pre commands
-      if (isset($this->project['reset_dir']['pre_commands'])) {
-        $this->hook_commands($this->project['reset_dir']['pre_commands'], 'pre');
-      }
+      $this->runHooks('pre');
 
       foreach ($this->project['data_dir'] AS $identifier => $dir) {
 
@@ -194,9 +206,7 @@ class VcdeployPluginResetDir extends Vcdeploy implements IVcdeployPlugin {
         }
 
         // Post commands
-        if (isset($this->project['reset_dir']['post_commands'])) {
-          $this->hook_commands($this->project['reset_dir']['post_commands'], 'post');
-        }
+        $this->runHooks('post');
 
         if ($this->project['source_type'] == 'local') {
           // cleanup tar file

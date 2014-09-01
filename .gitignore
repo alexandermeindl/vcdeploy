@@ -1,6 +1,9 @@
 .DS_Store
 .buildpath
 .project
+.idea/
 .settings/
 /config.inc.php
 /doc/latex
+composer.lock
+vendor/

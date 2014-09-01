@@ -2,13 +2,23 @@ var searchData=
 [
   ['accept',['accept',['../class_console___command_line.html#acbe2cdb774d2e2eed0c02eda2b7dcc85',1,'Console_CommandLine']]],
   ['activate_5ftag',['activate_tag',['../class_vcdeploy_scm_bzr.html#a74406b87cf7b4973e66bea0193ec558f',1,'VcdeployScmBzr\activate_tag()'],['../class_vcdeploy_scm_git.html#a74406b87cf7b4973e66bea0193ec558f',1,'VcdeployScmGit\activate_tag()'],['../class_vcdeploy_scm.html#a74406b87cf7b4973e66bea0193ec558f',1,'VcdeployScm\activate_tag()'],['../class_vcdeploy_scm_static.html#a74406b87cf7b4973e66bea0193ec558f',1,'VcdeployScmStatic\activate_tag()']]],
+  ['add',['add',['../class_composer_1_1_autoload_1_1_class_loader.html#a5c0f76dc6dde6d1209d78b2fa27db0af',1,'Composer::Autoload::ClassLoader']]],
   ['addargument',['addArgument',['../class_console___command_line.html#a7111cf9f2fcff74b790f20a95b4b2bbe',1,'Console_CommandLine']]],
   ['addbuiltinoptions',['addBuiltinOptions',['../class_console___command_line.html#ad32057b96795668953b8e8c3397d6a90',1,'Console_CommandLine']]],
   ['addchild',['addChild',['../class_log__composite.html#a69f884b1a42cb59ba09070fa0229d733',1,'Log_composite']]],
+  ['addclassmap',['addClassMap',['../class_composer_1_1_autoload_1_1_class_loader.html#a164966b8bcb9bf5470152bb5707a28af',1,'Composer::Autoload::ClassLoader']]],
   ['addcommand',['addCommand',['../class_console___command_line.html#a754d690981c63bcecf9e32d96596cfed',1,'Console_CommandLine']]],
+  ['adderror',['addError',['../class_p_h_p___code_sniffer___file.html#a9e98cce006e0e538a09851939535ae3c',1,'PHP_CodeSniffer_File\addError()'],['../class_generic___sniffs___p_h_p___deprecated_functions_sniff.html#a61eafaac4ce20dfe7a27e6273a7a69c4',1,'Generic_Sniffs_PHP_DeprecatedFunctionsSniff\addError()'],['../class_generic___sniffs___p_h_p___forbidden_functions_sniff.html#a61eafaac4ce20dfe7a27e6273a7a69c4',1,'Generic_Sniffs_PHP_ForbiddenFunctionsSniff\addError()'],['../class_squiz___sniffs___c_s_s___forbidden_styles_sniff.html#a5f87f4e0de7f9bd05f29be418b53462b',1,'Squiz_Sniffs_CSS_ForbiddenStylesSniff\addError()']]],
   ['addobserver',['addObserver',['../class_p_e_a_r___exception.html#af85daa39ef3df0244a5f17a7fb2d044f',1,'PEAR_Exception']]],
   ['addoption',['addOption',['../class_console___command_line.html#a03cc4ebc43ebb304d79fc731c73c7d5d',1,'Console_CommandLine']]],
+  ['addpsr4',['addPsr4',['../class_composer_1_1_autoload_1_1_class_loader.html#a264d8845526646ebc3725f219949baca',1,'Composer::Autoload::ClassLoader']]],
+  ['addtokenlistener',['addTokenListener',['../class_p_h_p___code_sniffer___file.html#a3d2bb99f28f74c7a42b3dc5d07c7559e',1,'PHP_CodeSniffer_File']]],
+  ['addwarning',['addWarning',['../class_p_h_p___code_sniffer___file.html#aaec2f289abb915fad975167253002763',1,'PHP_CodeSniffer_File']]],
   ['alert',['alert',['../class_log.html#af13c49745ed34d011f658cfdc228d918',1,'Log']]],
+  ['alignscommentwith',['alignsCommentWith',['../class_p_h_p___code_sniffer___comment_parser___parameter_element.html#a598052961ec783a2227c6094ae69befe',1,'PHP_CodeSniffer_CommentParser_ParameterElement']]],
+  ['alignsvariablewith',['alignsVariableWith',['../class_p_h_p___code_sniffer___comment_parser___parameter_element.html#abc4b8f0ead3dd056b2dbc335da71cd07',1,'PHP_CodeSniffer_CommentParser_ParameterElement']]],
+  ['alignswith',['alignsWith',['../class_p_h_p___code_sniffer___comment_parser___parameter_element.html#abbde7442a4b3723cf5e4b73e38ff6bb7',1,'PHP_CodeSniffer_CommentParser_ParameterElement']]],
   ['argumentlist',['argumentList',['../class_console___command_line___renderer___default.html#a58b9d2391d8fcd40fa2cc1d008557a5c',1,'Console_CommandLine_Renderer_Default']]],
-  ['attach',['attach',['../class_log.html#acb7594127105728a60bf0c4a3bf25f77',1,'Log']]]
+  ['attach',['attach',['../class_log.html#acb7594127105728a60bf0c4a3bf25f77',1,'Log']]],
+  ['autoload',['autoload',['../class_p_h_p___code_sniffer.html#a323589d452a9e76c216bcfd9ccd0aef3',1,'PHP_CodeSniffer']]]
 ];

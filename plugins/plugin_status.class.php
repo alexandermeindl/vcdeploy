@@ -56,7 +56,7 @@ class VcdeployPluginStatus extends Vcdeploy implements IVcdeployPlugin {
    * @see Vcdeploy#progressbar_init()
    */
   public function get_steps($init = 0) {
-    return $init++;
+    return ++$init;
   }
 
   /**

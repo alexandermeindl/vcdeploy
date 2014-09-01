@@ -46,6 +46,13 @@ $plugin['options']['without_backup'] = array(
                                           'description' => 'Do not create a backup before the sync (default with setting without_backup=TRUE)',
                                         );
 
+$plugin['options']['without_commands'] = array(
+    'short_name'  => '-C',
+    'long_name'   => '--without_commands',
+    'action'      => 'StoreTrue',
+    'description' => 'Don\'t run pre_commands and post_commands',
+);
+
 class VcdeployPluginResetDb extends Vcdeploy implements IVcdeployPlugin {
 
   /**
@@ -94,7 +101,25 @@ class VcdeployPluginResetDb extends Vcdeploy implements IVcdeployPlugin {
    * @see Vcdeploy#progressbar_init()
    */
   public function get_steps($init = 0) {
-    return $init++;
+
+      if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
+          $init = 1;
+      }
+      else {
+          $init = count($this->projects);
+      }
+
+      // pre commands
+      $init += $this->runHooks('pre', true);
+
+      if (isset($this->project['db'])) {
+          $init += count($this->project['db']);
+      }
+
+      // post commands
+      $init += $this->runHooks('post', true);
+
+    return $init;
   }
 
   /**
@@ -123,9 +148,7 @@ class VcdeployPluginResetDb extends Vcdeploy implements IVcdeployPlugin {
       }
 
       // run pre commands
-      if (isset($this->project['reset_db']['pre_commands'])) {
-        $this->hook_commands($this->project['reset_db']['pre_commands'], 'pre');
-      }
+      $this->runHooks('pre');
 
       foreach ($this->project['db'] AS $identifier => $db) {
 
@@ -169,9 +192,7 @@ class VcdeployPluginResetDb extends Vcdeploy implements IVcdeployPlugin {
       }
 
       // run post commands
-      if (isset($this->project['reset_db']['post_commands'])) {
-        $this->hook_commands($this->project['reset_db']['post_commands'], 'post');
-      }
+      $this->runHooks('post');
     }
     else {
       $this->msg('Project ' . $this->project_name . ': no database has been specified.');

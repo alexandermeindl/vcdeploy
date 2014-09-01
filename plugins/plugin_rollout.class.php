@@ -115,6 +115,8 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
    */
   public function run() {
 
+      $rc = 0;
+
     // check for existing projects
     $this->validate_projects();
 
@@ -213,6 +215,9 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
       $rc *= 2;
     }
 
+      // pre commands
+      $rc += $this->runHooks('pre', true);
+
     // with permissions
     if ($this->is_permission_required()) {
       if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
@@ -225,6 +230,9 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
         }
       }
     }
+
+      // post commands
+      $rc += $this->runHooks('post', true);
 
     return $init + $rc;
   }
@@ -254,6 +262,8 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
       $this->_backup();
     }
 
+      $rc = 0;
+
     if (isset($this->project['with_project_archive'])
       && $this->project['with_project_archive']
       && isset($this->project['with_project_scm'])
@@ -267,11 +277,7 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
 
 
       // 1. run pre commands
-      if (isset($this->project['pre_commands'])) {
-        if (!isset($this->paras->command->options['without_commands']) || !$this->paras->command->options['without_commands']) {
-          $this->hook_commands($this->project['pre_commands'], 'pre');
-        }
-      }
+        $this->runHooks('pre');
 
       // 2. project code
       if (isset($this->project['with_project_archive']) && $this->project['with_project_archive']) {
@@ -303,11 +309,7 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
       }
 
       // 5. run post commands
-      if (isset($this->project['post_commands'])) {
-        if (!isset($this->paras->command->options['without_commands']) || !$this->paras->command->options['without_commands']) {
-          $this->hook_commands($this->project['post_commands'], 'post');
-        }
-      }
+        $this->runHooks('post');
 
       // 6. Permissions (has to be after post commands to make sure all created files are affected)
       if ($this->is_permission_required()) {
@@ -515,6 +517,8 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
 				return TRUE;
 			}
 		}
+
+        return FALSE;
 	}
 
   /**
@@ -523,13 +527,12 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
    * The existing project code will be replaced
    * with the archive of the release tag
    *
+   * TODO: not implemented
+   *
    * @return bool
    */
   private function _codeRollout() {
-
-    throw new Exception('Not implemented.');
-
-    return TRUE;
+      return false;
   }
 
   /**
@@ -571,7 +574,7 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
           throw new Exception('Error switching to tag \'' . $this->tag . '\'');
         }
       }
-      $rc = $rc['rc'];
+      return $rc['rc'];
     }
     else {
       throw new Exception('Error rollout from scm: static is not supported!');

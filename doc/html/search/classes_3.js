@@ -1,4 +1,20 @@
 var searchData=
 [
-  ['pear_5fexception',['PEAR_Exception',['../class_p_e_a_r___exception.html',1,'']]]
+  ['log',['Log',['../class_log.html',1,'']]],
+  ['log_5fcomposite',['Log_composite',['../class_log__composite.html',1,'']]],
+  ['log_5fconsole',['Log_console',['../class_log__console.html',1,'']]],
+  ['log_5fdaemon',['Log_daemon',['../class_log__daemon.html',1,'']]],
+  ['log_5fdisplay',['Log_display',['../class_log__display.html',1,'']]],
+  ['log_5ferror_5flog',['Log_error_log',['../class_log__error__log.html',1,'']]],
+  ['log_5ffile',['Log_file',['../class_log__file.html',1,'']]],
+  ['log_5ffirebug',['Log_firebug',['../class_log__firebug.html',1,'']]],
+  ['log_5fmail',['Log_mail',['../class_log__mail.html',1,'']]],
+  ['log_5fmcal',['Log_mcal',['../class_log__mcal.html',1,'']]],
+  ['log_5fmdb2',['Log_mdb2',['../class_log__mdb2.html',1,'']]],
+  ['log_5fnull',['Log_null',['../class_log__null.html',1,'']]],
+  ['log_5fobserver',['Log_observer',['../class_log__observer.html',1,'']]],
+  ['log_5fsql',['Log_sql',['../class_log__sql.html',1,'']]],
+  ['log_5fsqlite',['Log_sqlite',['../class_log__sqlite.html',1,'']]],
+  ['log_5fsyslog',['Log_syslog',['../class_log__syslog.html',1,'']]],
+  ['log_5fwin',['Log_win',['../class_log__win.html',1,'']]]
 ];

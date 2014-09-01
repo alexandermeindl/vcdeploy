@@ -37,7 +37,7 @@ require 'vcdeploy/exception_handler.inc.php';
 require 'vcdeploy/config_default.inc.php';
 
 if (file_exists('config.inc.php')) {
-  $conf['config_file'] = chdir() . '/config.inc.php';
+  $conf['config_file'] = getcwd() . '/config.inc.php';
 }
 elseif (file_exists($_SERVER['HOME'] . '/.vcdeploy.inc.php')) {
   $conf['config_file'] = $_SERVER['HOME'] . '/.vcdeploy.inc.php';

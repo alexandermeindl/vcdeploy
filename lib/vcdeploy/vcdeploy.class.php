@@ -180,7 +180,6 @@ class Vcdeploy {
    * @param object $paras command line parameters
    * @param string $version vcdeploy application version
    *
-   * @return void
    */
   public function __construct($conf, $plugin_name, $paras, $version) {
 
@@ -209,6 +208,7 @@ class Vcdeploy {
    * Show progress bar in non-verbose mode, otherwise show $msg
    *
    * @param string $msg
+   * @param bool $with_step
    *
    * @return void
    */
@@ -226,7 +226,7 @@ class Vcdeploy {
   /**
    * Update progressbar
    *
-   * @param  int  $current_pos
+   * @param  bool  $with_step
    *
    * @return void
    */
@@ -550,70 +550,125 @@ class Vcdeploy {
     }
   }
 
+    /**
+     * Run post commands
+     *
+     * @param array $commands install calls
+     * @param bool $try if TRUE, this is a test run without system calls
+     * @throws Exception
+     * @return int amount of system commands
+     */
+    public function installCommands($commands, $try = false) {
+        return $this->_hook_commands($commands, 'install', $try);
+    }
+
+    /**
+     * Run Hooks
+     *
+     * @param string $type pre, post or install hook
+     * @param bool $try if TRUE, this is a test run without system calls
+     * @throws Exception
+     * @return int amount of system commands
+     */
+  public function runHooks($name, $try = FALSE) {
+
+    if (!in_array($name, array('pre', 'post'))) {
+        throw new Exception('Unsupported hook ' . $name . ' type for ' . $this->plugin_name);
+    }
+
+    $rc = 0;
+    $command_name = $name . '_commands';
+
+    if (!isset($this->paras->command->options['without_commands']) || !$this->paras->command->options['without_commands']) {
+
+        $commands = array();
+        if ($this->plugin_name=='rollout-system') {
+            if (isset($this->conf[$command_name])) {
+                $commands = $this->conf[$command_name];
+            }
+        }
+        else {
+            $key_name = str_replace('-', '_', $this->plugin_name);
+            if (isset($this->project[$key_name][$command_name])) {
+                $commands = $this->project[$key_name][$command_name];
+            }
+        }
+
+        if (count($commands)) {
+            $rc = $this->_hook_commands($commands, $name, $try);
+        }
+    }
+
+    return $rc;
+  }
+
   /**
    * Run this pre or post commands after plugin action (if supported by plugin)
    *
-   * @param array $post_commands commands for system calls
+   * @param array $commands commands for system calls
    * @param string $msg
    * @param bool $try do not run commands (just count)
    *
    * @return int
+   *    amount of commands
    * @throws Exception
    */
-  public function hook_commands($commands, $msg, $try = FALSE) {
+  private function _hook_commands($commands, $msg, $try = FALSE) {
 
-		$numCommands = 0;
+    $numCommands = 0;
 
     if (is_array($commands)) {
 
-			$numCommands = count($commands);
+        $numCommands = count($commands);
 
-			if (!$try) {
-	      foreach ($commands AS $command_info) {
+        if (!$try) {
+          foreach ($commands AS $command_info) {
 
-				  if (is_array($command_info)) {
-					  if (!isset($command_info['command'])) {
-							throw new Exception($msg . ' command error: command key not specified');
-						}
-				  }
-					else { // no array is used
-						$command_info = array('command' => $command_info);
-					}
+                  if (is_array($command_info)) {
+                      if (!isset($command_info['command'])) {
+                            throw new Exception($msg . ' command error: command key not specified');
+                        }
+                  }
+                    else { // no array is used
+                        $command_info = array('command' => $command_info);
+                    }
 
-					if (isset($this->project['drush'])) {
-						$command_info['command'] = str_replace('[drush]', $this->project['drush'], $command_info['command']);
-					}
+                    if (isset($this->project['drush'])) {
+                        $command_info['command'] = str_replace('[drush]', $this->project['drush'], $command_info['command']);
+                    }
 
-					// switch to project path
-					if (isset($command_info['path'])) {
-						// only change directoy, if path is not empty. Use this, if you don't want to change directory
-						if (!empty($command_info['path'])) {
-							if (!chdir($command_info['path'])) {
-								throw new Exception($msg . ' command error: command path for ' . $command_info['command'] . ' does not exist (' . $command_info['path'] . ')');
-							}
-						}
-					}
-					elseif (isset($this->project['path'])) { // Switch to project path by default
-						if (!chdir($this->project['path'])) {
-							throw new Exception($msg . ' command error: ' . $command_info['command'] . ' (changing to project path not possible)');
-						}
-					}
+                    // switch to project path
+                    if (isset($command_info['path'])) {
+                        // only change directoy, if path is not empty. Use this, if you don't want to change directory
+                        if (!empty($command_info['path'])) {
+                            if (!chdir($command_info['path'])) {
+                                throw new Exception($msg . ' command error: command path for ' . $command_info['command'] . ' does not exist (' . $command_info['path'] . ')');
+                            }
+                        }
+                    }
+                    elseif (isset($this->project['path'])) { // Switch to project path by default
+                        if (!chdir($this->project['path'])) {
+                            throw new Exception($msg . ' command error: ' . $command_info['command'] . ' (changing to project path not possible)');
+                        }
+                    }
 
-					$this->msg('Running ' . $msg . ' command: ' . $command_info['command']);
-		      // show verbose message
-		      if ((isset($this->paras->options['verbose']) && $this->paras->options['verbose'])) {
-		        $rc = $this->system($command_info['command'], TRUE);
-		      }
-		      else {
-		        $rc = $this->system($command_info['command']);
-		      }
+              // show verbose message
+              if ((isset($this->paras->options['verbose']) && $this->paras->options['verbose'])) {
+                $this->msg('Running ' . $msg . ' command: ' . $command_info['command']);
+                $rc = $this->system($command_info['command'], TRUE);
+              }
+              else {
+                $rc = $this->system($command_info['command']);
+              }
 
-	        if ($rc['rc'] != 0) {
-	          throw new Exception($msg . ' command error: ' . $command_info['command'] . ' (rc=' . $rc['rc'] . ')');
-	        }
-	      }
-			}
+            if ($rc['rc'] != 0) {
+              throw new Exception($msg . ' command error: ' . $command_info['command'] . ' (rc=' . $rc['rc'] . ')');
+            }
+          }
+        }
     }
+
+      return $numCommands;
   }
 
   /**
@@ -739,6 +794,7 @@ class Vcdeploy {
    * @require $this->ssh_server
    *
    * @param   string  $command system command to execute over ssh
+   * @param   bool  $passthru
    * @return  string command output
    */
   public function ssh_system($command, $passthru = FALSE) {
@@ -771,7 +827,7 @@ class Vcdeploy {
       $this->show_progress('compressing file: ' . $filename);
       $rc = $this->system($command, TRUE);
       if ($rc['rc']) {
-        throw new Exception('Error while compress file ' . $file);
+        throw new Exception('Error while compress file ' . $filename);
       }
       elseif ($this->conf['create_hashfiles']) {
         $files[] = $this->md5_file($gz_filename);
@@ -821,6 +877,7 @@ class Vcdeploy {
         return TRUE;
       }
     }
+    return false;
   }
 
   /**
@@ -1125,7 +1182,7 @@ class Vcdeploy {
    * Get tar file
    *
    * @param string $identifier
-   * @param string $dir
+   * @param string $source_dir
    *
    * @return string
    * @throws Exception
@@ -1222,7 +1279,7 @@ class Vcdeploy {
   /**
    * Sanitize database
    *
-   * @param string $source
+   * @param string $sql_file
    * @param string $source_db if specified, this database is used as source,
    *                          otherwise sql_file is also used as target
    *                          and source
@@ -1292,6 +1349,7 @@ class Vcdeploy {
    * Check if database exists
    *
    * @param string $db_name
+   * @return int
    */
   public function db_exists($db_name) {
     $rc = $this->system($this->db->get_db_exists($db_name));
@@ -1314,7 +1372,7 @@ class Vcdeploy {
   /**
   * Create database
   *
-  * @param string $db
+  * @param string $db_name
   * @throws Exception
   */
   public function db_create($db_name) {
@@ -1383,6 +1441,7 @@ class Vcdeploy {
    *                   own = owner
    *                   rec = recursive (default no)
    *                   filter = name filter
+   * @param bool $root_dir
    *
    * @throws Exception
    * @return void
@@ -1474,9 +1533,11 @@ class Vcdeploy {
     || (!isset($this->conf['without_backup']) || !$this->conf['without_backup'])
     ) {
       if (!isset($this->paras->command->options['without_backup']) || !$this->paras->command->options['without_backup']) {
-        return TRUE;
+        return true;
       }
     }
+
+      return false;
   }
 
   /**
@@ -1487,7 +1548,9 @@ class Vcdeploy {
    */
   public function is_permission_required() {
     if (!isset($this->paras->command->options['without_permission']) || !$this->paras->command->options['without_permission']) {
-      return TRUE;
+      return true;
     }
+
+      return false;
   }
 }

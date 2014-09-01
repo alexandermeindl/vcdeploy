@@ -120,16 +120,12 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
       $this->_setSystemPermissions();
     }
 
-    if (!isset($this->paras->command->options['without_commands']) || !$this->paras->command->options['without_commands']) {
-      $this->_preCommands();
-    }
+    $this->runHooks('pre');
 
     $this->_service('reload');
     $this->_service('restart');
 
-    if (!isset($this->paras->command->options['without_commands']) || !$this->paras->command->options['without_commands']) {
-      $this->_postCommands();
-    }
+    $this->runHooks('post');
 
     return 0;
   }
@@ -151,9 +147,6 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
     else {
       $init++;
     }
-
-    // 1. Create missing directories
-    //$init += 1;
 
     $init += $this->_createDirectories(TRUE);
     $init += $this->_createSymlinks(TRUE);
@@ -181,10 +174,8 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
     // 7. serviceConfig
     $init += $this->_servicesConfig(TRUE);
 
-    if (!isset($this->paras->command->options['without_commands']) || !$this->paras->command->options['without_commands']) {
       // 8. preCommands
-      $init += $this->_preCommands(TRUE);
-    }
+      $init += $this->runHooks('pre', TRUE);
 
     // 9. serviceReload
     $init += $this->_service('reload', TRUE);
@@ -203,10 +194,8 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
       }
     }
 
-    if (!isset($this->paras->command->options['without_commands']) || !$this->paras->command->options['without_commands']) {
       // 11. postCommands
-      $init += $this->_postCommands(TRUE);
-    }
+        $init += $this->runHooks('post', TRUE);
 
     return $init;
   }
@@ -214,6 +203,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
   /**
    * Copy system files
    *
+   * @param string $system_source
    */
   private function _copyFiles($system_source) {
 
@@ -375,11 +365,17 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
   /**
    * Configure internal subroutine
    *
+   * @param string $all_string
+   * @param string $active_string
+   * @param string $enable_command
+   * @param string $enable_message
+   * @param string $disable_command
+   * @param string $disable_message
    * @param bool $try if true, this is test run without system calls
    *
    * @return int amount of system commands
    */
-  private function _activationRun($all_string, $active_string, $enable_command, $enable_message, $disable_command, $disable_message, $try = FALSE) {
+  private function _activationRun($all_string, $active_string, $enable_command, $enable_message, $disable_command, $disable_message, $try = false) {
 
     $count = 0;
 
@@ -458,6 +454,8 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
    */
   private function _systemCommand($command, $para = NULL) {
 
+    $rc = 0;
+
     switch ($command) {
 
       case 'service_enable':
@@ -503,7 +501,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
           $rc = $this->system('a2dissite -q  ' . $para);
         }
         else {
-          $rc = $this->msg('vhost configuration not supported with ' . $this->conf['system_os'] . '.');
+          $this->msg('vhost configuration not supported with ' . $this->conf['system_os'] . '.');
           $rc = 1;
         }
         break;
@@ -531,7 +529,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
           $rc = $this->system('a2dismod -q  ' . $para);
         }
         else {
-          $rc = $this->msg('apache modules configuration not supported with ' . $this->conf['system_os'] . '.');
+          $this->msg('apache modules configuration not supported with ' . $this->conf['system_os'] . '.');
           $rc = 1;
         }
         break;
@@ -586,26 +584,26 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
       $this->show_progress('First update to latest packages...');
       switch ($this->conf['system_os']) {
         case 'suse':
-          #$rc = $this->system('zypper --non-interactive update', TRUE);
           $this->show_progress('Check for SuSE packages to install...');
           $rc = $this->system('zypper --non-interactive install ' . $this->conf['packages_depends'], TRUE);
           break;
         case 'centos':
-          #$rc = $this->system('yum -y update', TRUE);
           $this->show_progress('Check for Redhat packages to install...');
           $rc = $this->system('yum install -y ' . $this->conf['packages_depends'], TRUE);
           break;
         case 'ubuntu':
           $rc = $this->system('aptitude update', TRUE);
-          #$rc = $this->system('aptitude full-upgrade', TRUE);
-          $this->show_progress('Check for Ubuntu packages to install...');
-          $rc = $this->system('aptitude install -y ' . $this->conf['packages_depends'], TRUE);
+            if (!$rc['rc']) {
+                $this->show_progress ('Check for Ubuntu packages to install...');
+                $rc = $this->system ('aptitude install -y ' . $this->conf['packages_depends'], true);
+            }
           break;
         case 'debian':
           $rc = $this->system('apt-get -qq update', TRUE);
-          #$rc = $this->system('apt-get upgrade', TRUE);
-          $this->show_progress('Check for Debian packages to install...');
-          $rc = $this->system('apt-get install -yqq ' . $this->conf['packages_depends'], TRUE);
+           if (!$rc['rc']) {
+            $this->show_progress('Check for Debian packages to install...');
+            $rc = $this->system('apt-get install -yqq ' . $this->conf['packages_depends'], TRUE);
+           }
           break;
         default:
           throw new Exception('Package depends system not support on this platform');
@@ -624,6 +622,8 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
         return $rc['rc'];
       }
     }
+
+      return 0;
   }
 
   /**
@@ -668,6 +668,8 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
         return $rc['rc'];
       }
     }
+
+      return 0;
   }
 
   /**
@@ -696,6 +698,8 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
         return $rc['rc'];
       }
     }
+
+      return 0;
   }
 
   /**
@@ -781,36 +785,6 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin {
       }
     }
     return $rc;
-  }
-
-  /**
-   * Run pre commands
-   *
-   * @param bool $try if TRUE, this is a test run without system calls
-   * @throws Exception
-   * @return int amount of system commands
-   */
-  private function _preCommands($try = FALSE) {
-		$rc = 0;
-    if (isset($this->conf['pre_commands'])) {
-      $rc = $this->hook_commands($this->conf['pre_commands'], 'pre', $try);
-    }
-		return $rc;
-  }
-
-  /**
-   * Run post commands
-   *
-   * @param bool $try if TRUE, this is a test run without system calls
-   * @throws Exception
-   * @return int amount of system commands
-   */
-  private function _postCommands($try = FALSE) {
-		$rc = 0;
-    if (isset($this->conf['post_commands'])) {
-      $rc = $this->hook_commands($this->conf['post_commands'], 'post', $try);
-    }
-		return $rc;
   }
 
   /**

@@ -1,9 +1,15 @@
 <?php
 /**
- * @file
- *   Backup rsync
+ * Backup rsync
  *
+ * PHP Version 5
  *
+ * @category Plugins
+ * @package  Vcdeploy
+ * @author   Alexander Meindl <a.meindl@alphanodes.com>
+ * @version  Git
+ * @link     https://github.com/alexandermeindl/vcdeploy
+ * @license
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -14,9 +20,6 @@
  * License for the specific language governing rights and limitations
  * under the License.
  *
- * @package  vcdeploy
- * @author  Alexander Meindl
- * @link    https://github.com/alexandermeindl/vcdeploy
  */
 
 $plugin['info'] = 'Rsync backup files with remote system';
@@ -59,6 +62,6 @@ class VcdeployPluginBackupRsync extends Vcdeploy implements IVcdeployPlugin {
    * @see Vcdeploy#progressbar_init()
    */
   public function get_steps($init = 0) {
-    return $init++;
+    return ++$init;
   }
 }

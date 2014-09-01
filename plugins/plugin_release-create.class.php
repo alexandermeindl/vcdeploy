@@ -108,16 +108,6 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin {
   private $commit_files = array();
 
   /**
-   *
-   * Archive type for release
-   *
-   * At the moment 'tar' is the only valid value
-   *
-   * @var string
-   */
-  private $archive_type = 'tar';
-
-  /**
    * Release TAG
    *
    * @var string
@@ -132,9 +122,6 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin {
    * @see vcdeploy#run()
    */
   public function run() {
-
-    // default return value
-    $rc = TRUE;
 
     if (isset($this->paras->command->args['tag']) && !empty($this->paras->command->args['tag'])) {
       $this->tag = $this->paras->command->args['tag'];
@@ -162,7 +149,7 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin {
    * @see Vcdeploy#progressbar_init()
    */
   public function get_steps($init = 0) {
-    return $init++;
+    return ++$init;
   }
 
   /**
@@ -222,9 +209,6 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin {
 
     $this->_prepareEnvironment();
 
-    // files to commit
-    $commit_files = array();
-
     $with_commit = FALSE;
 
     // set tag
@@ -270,8 +254,8 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin {
     }
 
     if ($with_commit) {
-			// change to project path
-			chdir($this->project['path']);
+        // change to project path
+        chdir($this->project['path']);
       if (isset($this->project['release']['with_commit']) && $this->project['release']['with_commit'] && count($this->commit_files)) {
         $this->system($this->scm->commit('Files for release ' . $this->tag . ' have been added.', $this->commit_files));
       }
