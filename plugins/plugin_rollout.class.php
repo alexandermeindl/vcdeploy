@@ -309,7 +309,7 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
       }
 
       // 5. run post commands
-        $this->runHooks('post');
+      $this->runHooks('post');
 
       // 6. Permissions (has to be after post commands to make sure all created files are affected)
       if ($this->is_permission_required()) {

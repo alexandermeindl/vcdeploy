@@ -589,7 +589,12 @@ class Vcdeploy {
         }
         else {
             $key_name = str_replace('-', '_', $this->plugin_name);
-            if (isset($this->project[$key_name][$command_name])) {
+            if ($key_name==$this->plugin_name) {
+                if (isset($this->project[$command_name])) {
+                    $commands = $this->project[$command_name];
+                }
+            }
+            else if (isset($this->project[$key_name][$command_name])) {
                 $commands = $this->project[$key_name][$command_name];
             }
         }
