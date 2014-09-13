@@ -36,20 +36,8 @@ require 'vcdeploy/loader.class.php';
 require 'vcdeploy/exception_handler.inc.php';
 require 'vcdeploy/config_default.inc.php';
 
-if (file_exists('config.inc.php')) {
-  $conf['config_file'] = getcwd() . '/config.inc.php';
-}
-elseif (file_exists($_SERVER['HOME'] . '/.vcdeploy.inc.php')) {
-  $conf['config_file'] = $_SERVER['HOME'] . '/.vcdeploy.inc.php';
-}
-elseif (file_exists('/etc/vcdeploy.inc.php')) {
-  $conf['config_file'] = '/etc/vcdeploy.inc.php';
-}
-else {
-  die("Configuration file config.inc.php missing!\n");
-}
-
-require $conf['config_file'];
+// load configuation files
+require 'vcdeploy/load_config.php';
 
 // set exception handler
 $logger = Log::factory('file', $conf['log_file'], basename(__FILE__));

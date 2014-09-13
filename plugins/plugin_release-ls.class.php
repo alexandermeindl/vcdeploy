@@ -44,11 +44,7 @@ class VcdeployPluginReleaseLs extends Vcdeploy implements IVcdeployPlugin {
     $this->validate_projects();
 
     $project_name = $this->paras->command->args['project'];
-
-    if (!array_key_exists($project_name, $this->projects)) {
-      throw new Exception('Project "' . $project_name . '" is not configured!');
-    }
-    $this->set_project($project_name, $this->projects[$project_name]);
+    $this->set_project($project_name, $this->get_project($project_name));
 
     return $this->_listReleases();
   }

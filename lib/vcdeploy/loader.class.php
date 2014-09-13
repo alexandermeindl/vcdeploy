@@ -31,7 +31,7 @@ class VcDeployLoader {
    *
    * @var string
    */
-  protected $version = '0.64';
+  protected $version = '0.65';
 
   /**
    * Configuration
@@ -348,7 +348,7 @@ class VcDeployLoader {
         'short_name'  => '-d',
         'long_name'   => '--debug',
         'action'      => 'StoreTrue',
-        'description' => 'turn on verbose output',
+        'description' => 'turn on debug output',
       )
     );
 
@@ -379,7 +379,7 @@ class VcDeployLoader {
         'short_name'  => '-P',
         'long_name'   => '--allprojects',
         'action'      => 'StoreTrue',
-        'description' => 'show list of all projects (active and inactive)',
+        'description' => 'show list of all projects (active, inactive and subprojects)',
       )
     );
 

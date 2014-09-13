@@ -172,10 +172,7 @@ class VcdeployPluginBackupDb extends Vcdeploy implements IVcdeployPlugin {
 
     switch ($mode) {
       case 'project':
-        if (!array_key_exists($name, $this->projects)) {
-          throw new Exception('Project "' . $name . '" is not configured!');
-        }
-        $this->set_project($name, $this->projects[$name]);
+        $this->set_project($name, $this->get_project($name));
         // reinitialize db
         $this->set_db();
         $this->_databases = $this->project['db'];

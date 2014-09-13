@@ -197,11 +197,7 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin {
       // check for existing projects
       $this->validate_projects();
 
-      if (!array_key_exists($project_name, $this->projects)) {
-        throw new Exception('Project "' . $project_name . '" is not configured!');
-      }
-
-      $this->set_project($project_name, $this->projects[$project_name]);
+      $this->set_project($project_name, $this->get_project($project_name));
     }
 
     // initialize scm

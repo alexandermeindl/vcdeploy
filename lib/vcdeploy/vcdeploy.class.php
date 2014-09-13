@@ -337,6 +337,18 @@ class Vcdeploy {
     }
   }
 
+
+  private function set_subprojects() {
+
+      if (isset($this->project['depends']) && !empty($this->project['depends'])) {
+          $subprojects = explode(',', str_replace("\n", '', $this->project['depends']));
+          foreach($subprojects AS $subproject) {
+              $subproject = trim($subproject);
+              //print $subproject . "\n";
+          }
+      }
+  }
+
   /**
    * Set current project to
    *
@@ -346,12 +358,21 @@ class Vcdeploy {
    * @param  string $project_name  name of project
    * @param  array $project  project details
    *
-   * @return  void
+   * @throws Exception
    */
   public function set_project($project_name, $project) {
 
+      /**
+       * Check if project exists
+       */
+      if (!array_key_exists($project_name, $this->projects)) {
+          throw new Exception('Project "' . $project_name . '" is not configured!');
+      }
+
     $this->project_name = $project_name;
     $this->project = $project;
+
+    $this->set_subprojects();
 
     if (isset($this->project['ssh'])) {
       $this->ssh = $this->project['ssh'];
@@ -399,6 +420,19 @@ class Vcdeploy {
     return $projects;
   }
 
+    /**
+     * @param string $parent_project
+     */
+    public function get_sub_projects($parent_project) {
+
+        print_r($this->projects);
+        die('here');
+  }
+
+  public function get_project($project_name) {
+      return $this->projects[$project_name];
+  }
+
   /**
    * Get active projects
    *
@@ -423,6 +457,8 @@ class Vcdeploy {
           if (($project_name != $this->common_project_name)
             && (!isset($project_settings['active'])
             || (isset($project_settings['active']) && $project_settings['active']))
+            && (!isset($project_settings['subproject'])
+                  || (isset($project_settings['subproject']) && !$project_settings['subproject']))
           ) {
 
             // set default configuration, if available
