@@ -340,12 +340,19 @@ class Vcdeploy {
 
   private function set_subprojects() {
 
+      $this->project['subprojects'] = array();
       if (isset($this->project['depends']) && !empty($this->project['depends'])) {
           $subprojects = explode(',', str_replace("\n", '', $this->project['depends']));
           foreach($subprojects AS $subproject) {
-              $subproject = trim($subproject);
-              //print $subproject . "\n";
+              if (!array_key_exists($subproject, $this->projects)) {
+                  throw new Exception('Project ' . $subproject . ' is not defined but required for parent project ' . $this->project_name);
+              }
+              $this->project['subprojects'][] = trim($subproject);
           }
+      }
+
+      if (in_array($this->project_name, $this->project['subprojects'])) {
+        throw new Exception('Parent project ' . $this->project_name . ' must not be in the projects dependency list itelse');
       }
   }
 
@@ -360,7 +367,7 @@ class Vcdeploy {
    *
    * @throws Exception
    */
-  public function set_project($project_name, $project) {
+  public function set_project($project_name, $project, $parent_project=null) {
 
       /**
        * Check if project exists
@@ -376,6 +383,10 @@ class Vcdeploy {
 
     if (isset($this->project['ssh'])) {
       $this->ssh = $this->project['ssh'];
+    }
+
+      if (isset($parent_project) && isset($parent_project['path'])) {
+        $this->project['path'] = str_replace('[parent_path]', $parent_project['path'], $this->project['path']);
     }
 
     // if not set, default is git
@@ -438,9 +449,11 @@ class Vcdeploy {
    *
    * Returns an array with all active projects, which are defined.
    *
+   * @param bool $onlyParentProjects
    * @return array
+   * @throws Exception
    */
-  public function get_projects() {
+  public function get_projects($onlyParentProjects=false) {
 
     global $project;
 
@@ -457,8 +470,8 @@ class Vcdeploy {
           if (($project_name != $this->common_project_name)
             && (!isset($project_settings['active'])
             || (isset($project_settings['active']) && $project_settings['active']))
-            && (!isset($project_settings['subproject'])
-                  || (isset($project_settings['subproject']) && !$project_settings['subproject']))
+            && (!$onlyParentProjects || ($onlyParentProjects && !isset($project_settings['subproject'])
+                  || (isset($project_settings['subproject']) && !$project_settings['subproject'])))
           ) {
 
             // set default configuration, if available
@@ -480,6 +493,11 @@ class Vcdeploy {
 
             if (!isset($projects[$project_name]['remote_tmp_dir'])) {
               $projects[$project_name]['remote_tmp_dir'] = $this->conf['tmp_dir'];
+            }
+
+            // Project path is always required for a valid projec
+            if (!isset($projects[$project_name]['path'])) {
+              throw new Exception('Missing project path for project "' . $project_name . '".');
             }
           }
         }

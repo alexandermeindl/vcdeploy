@@ -41,7 +41,7 @@ class VcdeployPluginStatus extends Vcdeploy implements IVcdeployPlugin {
     $this->msg("Config file:\t\t" . $this->conf['config_file']);
     $this->msg("System source:\t\t" . $this->_getSystemSourcesList());
     $this->msg("Backup dir:\t\t" . $this->conf['backup_dir'] . $this->_checkDir($this->conf['backup_dir']));
-    $this->msg("Project (active):\t" . count($this->get_projects()));
+    $this->msg("Project (active):\t" . count($this->get_projects(true)));
     $this->msg("Project (all):\t\t" . count($this->get_all_projects()));
 
     return 0;

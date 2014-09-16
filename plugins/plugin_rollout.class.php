@@ -131,55 +131,16 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
 
     if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
       $project_name = $this->paras->command->options['project'];
-      $this->set_project($project_name, $this->get_project($project_name));
+
       $this->progressbar_init();
 
-      // initialize db
-      $this->set_db();
-
-      if (isset($this->project['tag'])) {
-        $this->tag = $this->project['tag'];
-      }
-      elseif ($this->_isTagRequired()) {
-        throw new Exception('No release TAG specified.');
-      }
-
-      $this->progressbar_step();
-      $this->msg('Project: ' . $this->project_name);
-
-      if (!isset($this->project['path'])) {
-        throw new Exception('Project path is required for rollout!');
-      }
-
-      // initialize scm
-      $this->set_scm('project');
-      $rc = $this->_projectRollout();
+      $rc = $this->_runProjectRollout($project_name, $this->get_project($project_name));
     }
     else { // all projects
 
       $this->progressbar_init();
-
       foreach ($this->projects AS $project_name => $project) {
-
-        $this->set_project($project_name, $project);
-
-        if (isset($this->project['tag'])) {
-          $this->tag = $this->project['tag'];
-        }
-        elseif ($this->_isTagRequired()) {
-          throw new Exception('No release TAG specified.');
-        }
-
-        $this->progressbar_step();
-
-        if (!isset($this->project['path'])) {
-          throw new Exception('Project path is required for rollout!');
-        }
-
-        //initialize scm
-        $this->set_scm('project');
-        $rc = $this->_projectRollout();
-
+        $rc = $this->_runProjectRollout($project_name, $project);
         if ($rc) {
           return $rc;
         }
@@ -188,6 +149,62 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
 
     return $rc;
   }
+
+
+    /**
+     * @return bool
+     *  if subproject has been run, true
+     */
+    private function _runProjectsDepends() {
+
+        $rc = false;
+
+        $parent_project = $this->project;
+
+        if ($this->project['subprojects']) {
+            foreach ($this->project['subprojects'] AS $subproject) {
+                $this->_runProjectRollout($subproject, $this->get_project($subproject), $parent_project);
+            }
+            return true;
+        }
+
+      return $rc;
+    }
+
+    /**
+     *
+     * // TODO: this should be refactored and merge into $this->_projectRollout()
+     *
+     * @param $project_name
+     * @param $project
+     * @return int
+     * @throws Exception
+     */
+    private function _runProjectRollout($project_name, $project, $parent_project=null) {
+        // set project information for subprojects and main project
+        $this->set_project($project_name, $project, $parent_project);
+        if ($this->_runProjectsDepends()) {
+            // set projects again, because subprojects has been activated
+            $this->set_project($project_name, $project, $parent_project);
+        }
+
+            // initialize db
+        $this->set_db();
+
+        if (isset($this->project['tag'])) {
+            $this->tag = $this->project['tag'];
+        }
+        elseif ($this->_isTagRequired()) {
+            throw new Exception('No release TAG specified.');
+        }
+
+        $this->progressbar_step();
+
+        //initialize scm
+        $this->set_scm('project');
+
+        return $this->_projectRollout();
+    }
 
   /**
    * Get max steps of this plugin for progress view
@@ -270,7 +287,12 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
     }
     else {
 
-      $this->show_progress('Updating ' . $this->scm->get_name() . ' Repository for project ' . $this->project_name . ' (' . $this->get_progressbar_pos() . '/' . $this->get_steps() . ')...', FALSE);
+        if ($this->project['scm']['type']!='static') {
+            $this->show_progress('Updating ' . $this->scm->get_name() . ' Repository for project ' . $this->project_name . ' (' . $this->get_progressbar_pos() . '/' . $this->get_steps() . ')...', FALSE);
+        }
+        else {
+            $this->show_progress('No update required for static repository in project ' . $this->project_name . ' (' . $this->get_progressbar_pos() . '/' . $this->get_steps() . ')...', FALSE);
+        }
 
 
       // 1. run pre commands
@@ -541,6 +563,8 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
 
     if ($this->project['scm']['type']!='static') {
 
+      $withCheckout = false;
+
       if (file_exists($this->project['path'])) {
         if (is_dir($this->project['path'])) {
           chdir($this->project['path']);
@@ -548,6 +572,16 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
         else {
           throw new Exception($this->project['path'] . ' is not a directory');
         }
+      }
+      else if (isset($this->project['scm']['url'])) {
+          $withCheckout = true;
+          $rc = $this->system($this->scm->checkout($this->project['path']), TRUE);
+          if ($rc['rc']) {
+              throw new Exception('An error occured on SCM checkout with ' . $this->project['scm']['url'] . '.');
+          }
+      }
+      else {
+          throw new Exception('Directory ' . $this->project['path'] . ' does not exist and no SCM url is specified to create it.');
       }
 
       // check if switch to tag is used
@@ -559,11 +593,14 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
         }
       }
 
-      // update scm project code
-      $rc = $this->system($this->scm->update(), TRUE);
-      if ($rc['rc']) {
-        throw new Exception('SCM type static is not supported with rollout');
+      if (!$withCheckout) {
+          // update scm project code
+          $rc = $this->system ($this->scm->update (), true);
+          if ($rc['rc']) {
+              throw new Exception('An error occured on SCM update.');
+          }
       }
+
       // check if switch to tag is used
       if ($this->_isTagSwitchRequired()) {
         $rc = $this->system($this->scm->activate_tag($this->tag));
@@ -572,9 +609,6 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin {
         }
       }
       return $rc['rc'];
-    }
-    else {
-      throw new Exception('Error rollout from scm: static is not supported!');
     }
   }
 }

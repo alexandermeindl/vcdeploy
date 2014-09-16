@@ -394,7 +394,7 @@ class VcDeployLoader {
       if ($result->options['projects']) {
         // show projects
         $vcdeploy = new Vcdeploy($this->conf, NULL, $result, $this->version);
-        $projects = $vcdeploy->get_projects();
+        $projects = $vcdeploy->get_projects(TRUE);
         ksort($projects);
         foreach ($projects AS $project_name => $project_settings) {
           print($project_name . "\n");
