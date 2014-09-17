@@ -1,27 +1,15 @@
 <?php
 /**
- * @file
- *   Plugin to rollout a project release
+ * List release files
  *
- * Workflow:
+ * PHP version 5.3
  *
- *  - rollout project files
- *  - rollout database
- *  - rollout directories
- *
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations
- * under the License.
- *
- * @package  vcdeploy
- * @author  Alexander Meindl
- * @link    https://github.com/alexandermeindl/vcdeploy
+ * @category  Plugins
+ * @package   Vcdeploy
+ * @author    Alexander Meindl <a.meindl@alphanodes.com>
+ * @copyright 2014 Alexander Meindl
+ * @license   http://www.mozilla.org/MPL Mozilla Public License Version 1.1
+ * @link      https://github.com/alexandermeindl/vcdeploy
  */
 
 $plugin['info'] = 'List all available releases';
@@ -29,101 +17,104 @@ $plugin['root_only'] = FALSE;
 
 $plugin['args']['project'] = 'Project to list releases';
 
-class VcdeployPluginReleaseLs extends Vcdeploy implements IVcdeployPlugin {
+/**
+ * Class VcdeployPluginReleaseLs
+ */
+class VcdeployPluginReleaseLs extends Vcdeploy implements IVcdeployPlugin
+{
+    /**
+     * This function is run with the command
+     *
+     * @return int
+     * @throws Exception
+     * @see vcdeploy#run()
+     */
+    public function run()
+    {
+        // check for existing projects
+        $this->validate_projects();
 
-  /**
-   * This function is run with the command
-   *
-   * @return int
-   * @throws Exception
-   * @see vcdeploy#run()
-   */
-  public function run() {
+        $project_name = $this->paras->command->args['project'];
+        $this->set_project($project_name, $this->get_project($project_name));
 
-    // check for existing projects
-    $this->validate_projects();
+        return $this->_listReleases();
+    }
 
-    $project_name = $this->paras->command->args['project'];
-    $this->set_project($project_name, $this->get_project($project_name));
+    /**
+     * Get max steps of this plugin for progress view
+     *
+     * @param int $init initial value of counter
+     *
+     * @return int amount of working steps of this plugin
+     * @see Vcdeploy#progressbar_init()
+     */
+    public function get_steps($init = 0)
+    {
+        return ++$init;
+    }
 
-    return $this->_listReleases();
-  }
+    /**
+     * List all existing Releases to a project
+     *
+     * @return int
+     * @throws Exception
+     */
+    private function _listReleases()
+    {
+        if (!isset($this->project['rollout']['with_project_scm']) || $this->project['rollout']['with_project_scm']) {
 
-  /**
-   * Get max steps of this plugin for progress view
-   *
-   * @param int $init initial value of counter
-   *
-   * @return int amount of working steps of this plugin
-   * @see Vcdeploy#progressbar_init()
-   */
-  public function get_steps($init = 0) {
-    return ++$init;
-  }
+            // initialize scm
+            $this->set_scm('project');
+            if ($this->project['scm']['type'] != 'static') {
+                chdir($this->project['path']);
+                $rc = $this->system($this->scm->get_tags());
+                foreach ($rc['output'] AS $tag) {
+                    $this->msg('- ' . $tag);
+                }
+            } else {
+                throw new Exception('SCM type static is not supported with release-ls');
+            }
+        } else {
 
-  /**
-   * List all existing Releases to a project
-   *
-   * @return int
-   */
-  private function _listReleases() {
+            if (!isset($this->project['release']['release_dir'])) {
+                throw new Exception('\'release_dir\' is not specified.');
+            }
 
-    if (!isset($this->project['rollout']['with_project_scm']) || $this->project['rollout']['with_project_scm']) {
+            $files = $this->_findReleases();
 
-      // initialize scm
-      $this->set_scm('project');
-      if ($this->project['scm']['type']!='static') {
-        chdir($this->project['path']);
-        $rc = $this->system($this->scm->get_tags());
-        foreach ($rc['output'] AS $tag) {
-          $this->msg('- ' . $tag);
+            rsort($files);
+            foreach ($files AS $line) {
+                $this->msg('- ' . $line);
+            }
         }
-      }
-      else {
-        throw new Exception('SCM type static is not supported with release-ls');
-      }
-    }
-    else {
 
-      if (!isset($this->project['release']['release_dir'])) {
-        throw new Exception('\'release_dir\' is not specified.');
-      }
-
-      $files = $this->_findReleases();
-
-      rsort($files);
-      foreach ($files AS $line) {
-        $this->msg('- ' . $line);
-      }
+        return 0;
     }
 
-    return 0;
-  }
+    /**
+     * Get existing tags of project releases
+     *
+     * @array tags
+     */
+    private function _findReleases()
+    {
+        $lines = array();
 
-  /**
-   * Get existing tags of project releases
-   *
-   * @array tags
-   */
-  private function _findReleases() {
+        $d = dir($this->project['release']['release_dir']);
+        $prefix_length = strlen($this->project['release']['prefix']);
 
-    $lines = array();
+        while (FALSE !== ($entry = $d->read())) {
+            if ($entry != '.' && $entry != '..') {
 
-    $d = dir($this->project['release']['release_dir']);
-    $prefix_length = strlen($this->project['release']['prefix']);
-
-    while (FALSE !== ($entry = $d->read())) {
-      if ($entry != '.' && $entry != '..') {
-
-        if ((substr($entry, 0, $prefix_length) == $this->project['release']['prefix'])
-          && (substr($entry, -4) != '.md5')
-        ) {
-          $lines[] = $entry;
+                if ((substr($entry, 0, $prefix_length) == $this->project['release']['prefix'])
+                    && (substr($entry, -4) != '.md5')
+                ) {
+                    $lines[] = $entry;
+                }
+            }
         }
-      }
-    }
-    $d->close();
+        $d->close();
 
-    return $lines;
-  }
+        return $lines;
+    }
 }

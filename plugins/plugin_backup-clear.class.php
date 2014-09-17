@@ -1,25 +1,15 @@
 <?php
 /**
- * Backup for projects and independent files/directory
+ * Clear old backup sets
  *
- * PHP Version 5
+ * PHP version 5.3
  *
- * @category Plugins
- * @package  Vcdeploy
- * @author   Alexander Meindl <a.meindl@alphanodes.com>
- * @version  Git
- * @link     https://github.com/alexandermeindl/vcdeploy
- * @license
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations
- * under the License.
- *
+ * @category  Plugins
+ * @package   Vcdeploy
+ * @author    Alexander Meindl <a.meindl@alphanodes.com>
+ * @copyright 2014 Alexander Meindl
+ * @license   http://www.mozilla.org/MPL Mozilla Public License Version 1.1
+ * @link      https://github.com/alexandermeindl/vcdeploy
  */
 
 $plugin['info'] = 'remove old backups';
@@ -32,12 +22,12 @@ $plugin['root_only'] = FALSE;
 class VcdeployPluginBackupClear extends Vcdeploy implements IVcdeployPlugin
 {
     /**
-    * This function is run with the command
-    *
-    * @return int
-    * @throws Exception
-    * @see vcdeploy#run()
-    */
+     * This function is run with the command
+     *
+     * @return int
+     * @throws Exception
+     * @see vcdeploy#run()
+     */
     public function run()
     {
         if (empty($this->conf['backup_dir'])) {
@@ -51,23 +41,23 @@ class VcdeployPluginBackupClear extends Vcdeploy implements IVcdeployPlugin
     }
 
     /**
-    * Get max steps of this plugin for progress view
-    *
-    * @param int $init initial value of counter
-    *
-    * @return int amount of working steps of this plugin
-    * @see Vcdeploy#progressbar_init()
-    */
+     * Get max steps of this plugin for progress view
+     *
+     * @param int $init initial value of counter
+     *
+     * @return int amount of working steps of this plugin
+     * @see Vcdeploy#progressbar_init()
+     */
     public function get_steps($init = 0)
     {
         return $init + 3;
     }
 
     /**
-    * Clear existing backups
-    *
-    * @return int
-    */
+     * Clear existing backups
+     *
+     * @return int
+     */
     private function _clearBackups()
     {
         $this->msg('Remove old backups on ' . $this->hostname . ':');
