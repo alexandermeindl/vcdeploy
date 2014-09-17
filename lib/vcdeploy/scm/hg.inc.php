@@ -47,7 +47,11 @@ class VcdeployScmHg extends VcdeployScm
      */
     public function update()
     {
-        return $this->conf['hg_bin'] . ' pull';
+        if (!isset($this->project['scm']['url'])) {
+            throw new Exception($this->get_name() . ' url not defined (scm->url)');
+        }
+
+        return $this->conf['hg_bin'] . ' pull ' . $this->project['scm']['url'] . ' && ' . $this->conf['hg_bin'] . ' update';
     }
 
     /**
@@ -109,7 +113,7 @@ class VcdeployScmHg extends VcdeployScm
      */
     public function activate_tag($tag)
     {
-        return $this->conf['hg_bin'] . ' update ' . $tag;
+        return $this->conf['hg_bin'] . ' checkout ' . $tag;
     }
 
     /**
@@ -133,7 +137,7 @@ class VcdeployScmHg extends VcdeployScm
      */
     public function remove_tag($tag)
     {
-        return $this->conf['hg_bin'] . ' tag -d ' . $tag;
+        return $this->conf['hg_bin'] . ' tag --remove ' . $tag;
     }
 
     /**
@@ -143,7 +147,7 @@ class VcdeployScmHg extends VcdeployScm
      */
     public function get_tags()
     {
-        return $this->conf['hg_bin'] . ' tag -l';
+        return $this->conf['hg_bin'] . ' tags';
     }
 
     /**

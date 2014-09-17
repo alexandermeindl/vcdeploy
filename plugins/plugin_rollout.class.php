@@ -160,6 +160,7 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
 
         if ($this->project['subprojects']) {
             foreach ($this->project['subprojects'] AS $subproject) {
+                $this->tag = null; //  Reset tag
                 $this->_runProjectRollout($subproject, $this->get_project($subproject), $parent_project);
             }
             return true;
@@ -189,7 +190,6 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
 
         // initialize db
         $this->set_db();
-
         if (isset($this->project['tag'])) {
             $this->tag = $this->project['tag'];
         } elseif ($this->_isTagRequired()) {
@@ -521,7 +521,7 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
      */
     private function _isTagSwitchRequired()
     {
-        if ($this->tag) {
+        if (isset($this->tag) && (!empty($this->tag))) {
 
             if (!isset($this->project['with_scm_tag_switch']) || $this->project['with_scm_tag_switch']) {
                 return true;

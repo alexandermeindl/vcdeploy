@@ -106,7 +106,7 @@ class VcdeployScmGit extends VcdeployScm
      */
     public function activate_tag($tag)
     {
-        return $this->conf['git_bin'] . ' checkout ' . $tag;
+        return $this->conf['git_bin'] . ' checkout -f ' . $tag;
     }
 
     /**
