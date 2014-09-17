@@ -13,7 +13,7 @@
  */
 
 $plugin['info'] = 'List all available releases';
-$plugin['root_only'] = FALSE;
+$plugin['root_only'] = false;
 
 $plugin['args']['project'] = 'Project to list releases';
 
@@ -103,7 +103,7 @@ class VcdeployPluginReleaseLs extends Vcdeploy implements IVcdeployPlugin
         $d = dir($this->project['release']['release_dir']);
         $prefix_length = strlen($this->project['release']['prefix']);
 
-        while (FALSE !== ($entry = $d->read())) {
+        while (false !== ($entry = $d->read())) {
             if ($entry != '.' && $entry != '..') {
 
                 if ((substr($entry, 0, $prefix_length) == $this->project['release']['prefix'])

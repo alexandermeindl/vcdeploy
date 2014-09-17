@@ -17,7 +17,7 @@
  */
 
 $plugin['info'] = 'log system changes';
-$plugin['root_only'] = FALSE;
+$plugin['root_only'] = false;
 
 /**
  * Class VcdeployPluginSystemLog
@@ -63,7 +63,7 @@ class VcdeployPluginSystemLog extends Vcdeploy implements IVcdeployPlugin
         chdir($this->conf['log_source']);
         // make sure we have the latest content,
         // which is required to avoid conflicts
-        $this->system($this->conf['git_bin'] . ' --work-tree ' . $this->conf['log_source'] . ' pull', TRUE);
+        $this->system($this->conf['git_bin'] . ' --work-tree ' . $this->conf['log_source'] . ' pull', true);
 
         if ($this->conf['log_etc_dir']) {
             if ($this->current_user == 'root') {
@@ -122,9 +122,9 @@ class VcdeployPluginSystemLog extends Vcdeploy implements IVcdeployPlugin
         ob_end_clean();
 
         if (substr_count(strtolower($pinfo), 'darwin kernel version') > 0) {
-            return TRUE;
+            return true;
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -181,9 +181,9 @@ class VcdeployPluginSystemLog extends Vcdeploy implements IVcdeployPlugin
                     $this->msg('Dump SQL to SCM on ' . $this->project_name);
 
                     if (isset($this->project['sql_to_scm_with_db_sanitize']) && $this->project['sql_to_scm_with_db_sanitize']) {
-                        $with_sanitize = TRUE;
+                        $with_sanitize = true;
                     } else {
-                        $with_sanitize = FALSE;
+                        $with_sanitize = false;
                     }
 
                     foreach ($this->project['db'] AS $db) {
@@ -243,7 +243,7 @@ class VcdeployPluginSystemLog extends Vcdeploy implements IVcdeployPlugin
         // absolute path of package log file
         $package_log_file = $this->log_dir . '/' . $this->package_file_name;
 
-        $this->system($cmd_create . ' > ' . $package_log_file, TRUE);
+        $this->system($cmd_create . ' > ' . $package_log_file, true);
     }
 
     /**
@@ -253,8 +253,8 @@ class VcdeployPluginSystemLog extends Vcdeploy implements IVcdeployPlugin
      */
     private function _commitToVcm()
     {
-        $this->system($this->conf['git_bin'] . ' --work-tree ' . $this->conf['log_source'] . ' add -A ' . $this->log_dir, TRUE);
-        $this->system($this->conf['git_bin'] . ' --work-tree ' . $this->conf['log_source'] . ' commit -m "Changes found on ' . $this->hostname . '"', TRUE);
-        $this->system($this->conf['git_bin'] . ' --work-tree ' . $this->conf['log_source'] . ' push', TRUE);
+        $this->system($this->conf['git_bin'] . ' --work-tree ' . $this->conf['log_source'] . ' add -A ' . $this->log_dir, true);
+        $this->system($this->conf['git_bin'] . ' --work-tree ' . $this->conf['log_source'] . ' commit -m "Changes found on ' . $this->hostname . '"', true);
+        $this->system($this->conf['git_bin'] . ' --work-tree ' . $this->conf['log_source'] . ' push', true);
     }
 }

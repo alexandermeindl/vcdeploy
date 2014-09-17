@@ -40,7 +40,7 @@ class VcDeployLoader
      *
      * @var bool
      */
-    public $debug = FALSE;
+    public $debug = false;
 
     /**
      * Plugin directory
@@ -79,7 +79,6 @@ class VcDeployLoader
      */
     public function __construct($conf)
     {
-
         global $logger;
 
         $this->conf = $conf;
@@ -95,7 +94,7 @@ class VcDeployLoader
         $this->current_user = $output[0];
 
         if (isset($this->conf['debug']) && $this->conf['debug']) {
-            $this->debug = TRUE;
+            $this->debug = true;
         }
     }
 
@@ -106,7 +105,6 @@ class VcDeployLoader
      */
     private function _setPlugins()
     {
-
         $this->plugins = array();
 
         $this->_setPluginFromDir($this->plugin_dir);
@@ -138,9 +136,8 @@ class VcDeployLoader
      */
     private function _setPluginFromDir($dir)
     {
-
         $d = dir($dir);
-        while (FALSE !== ($entry = $d->read())) {
+        while (false !== ($entry = $d->read())) {
             if ((substr($entry, 0, 7) == 'plugin_') && (substr($entry, -10) == '.class.php')) {
                 if ($entry != 'plugin_interface.class.php') {
                     $plugin_name = substr($entry, 7, -10);
@@ -158,7 +155,6 @@ class VcDeployLoader
      */
     private function _getPluginInfo()
     {
-
         $plugins = array();
 
         foreach ($this->plugins AS $plugin_name => $plugin_path) {
@@ -179,17 +175,16 @@ class VcDeployLoader
      * Check access for a plugin
      *
      * @param array $plugin
-     * @return bool  TRUE, if status is enabled for execution
+     * @return bool  true, if status is enabled for execution
      */
     private function _checkPluginStatus(&$plugin)
     {
-
-        $rc = TRUE;
+        $rc = true;
 
         if (isset($plugin['disable']) && $plugin['disable']) {
-            $rc = FALSE;
+            $rc = false;
         } elseif (isset($plugin['root_only']) && !$this->check_plugin_permission($plugin['root_only'])) {
-            $rc = FALSE;
+            $rc = false;
         }
 
         if (isset($plugin['disable'])) {
@@ -223,13 +218,12 @@ class VcDeployLoader
      */
     public function check_plugin_permission($root_only)
     {
-
-        $rc = TRUE;
+        $rc = true;
 
         if ($root_only) {
 
             if ($this->current_user != 'root') {
-                $rc = FALSE;
+                $rc = false;
             }
         }
 
@@ -245,7 +239,6 @@ class VcDeployLoader
      */
     private function _buildSubCommands(&$parser)
     {
-
         // sort plugins for command output help
         ksort($this->plugin_infos);
 
@@ -275,7 +268,6 @@ class VcDeployLoader
      */
     private function _checkAlreadyRunning()
     {
-
         $lock_file = $this->conf['tmp_dir'] . '/.vcdeploy_' . $this->current_user . '_' . $this->plugin_name . '.lck';
 
         if (file_exists($lock_file)) {
@@ -308,7 +300,6 @@ class VcDeployLoader
      */
     private function _getPluginClass($plugin_name)
     {
-
         // convert plugin to class
         $words = ucwords(str_replace('-', ' ', $plugin_name));
         $name = str_replace(' ', '', $words);
@@ -325,8 +316,6 @@ class VcDeployLoader
      */
     public function parser()
     {
-
-
         // create the parser
         $parser = new Console_CommandLine(array(
             'description' => 'vcdeploy - version controlled deployment script powered by http://www.alphanodes.com',
@@ -397,7 +386,7 @@ class VcDeployLoader
             if ($result->options['projects']) {
                 // show projects
                 $vcdeploy = new Vcdeploy($this->conf, NULL, $result, $this->version);
-                $projects = $vcdeploy->get_projects(TRUE);
+                $projects = $vcdeploy->get_projects(true);
                 ksort($projects);
                 foreach ($projects AS $project_name => $project_settings) {
                     print($project_name . "\n");
@@ -418,7 +407,7 @@ class VcDeployLoader
                 if (isset($plugin_info['batch_before']) && is_array($plugin_info['batch_before'])) {
                     foreach ($plugin_info['batch_before'] AS $batch_before) {
                         $this->plugin_name = $batch_before;
-                        $this->run_plugin($result, TRUE);
+                        $this->run_plugin($result, true);
                     }
                 }
 
@@ -452,9 +441,8 @@ class VcDeployLoader
      * @return  int return code of plugin
      * @throws Exception
      */
-    public function run_plugin($result, $no_message = FALSE)
+    public function run_plugin($result, $no_message = false)
     {
-
         // if script is already running, stop it
         if ($this->_checkAlreadyRunning()) {
             throw new Exception('vcdeploy is already running with plugin ' . $this->plugin_name);

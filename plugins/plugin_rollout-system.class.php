@@ -13,7 +13,7 @@
  */
 
 $plugin['info'] = 'rollout system files/configuration';
-$plugin['root_only'] = TRUE;
+$plugin['root_only'] = true;
 
 $plugin['options']['without_packages'] = array(
     'short_name' => '-W',
@@ -86,7 +86,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
                     $this->show_progress('Get repository updates...');
                     // initialize scm
                     $this->set_scm('system');
-                    $this->system($this->scm->update(), TRUE);
+                    $this->system($this->scm->update(), true);
                 }
 
                 // update system
@@ -140,8 +140,8 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
             $init++;
         }
 
-        $init += $this->_createDirectories(TRUE);
-        $init += $this->_createSymlinks(TRUE);
+        $init += $this->_createDirectories(true);
+        $init += $this->_createSymlinks(true);
 
         if (!isset($this->paras->command->options['without_packages']) || !$this->paras->command->options['without_packages']) {
             // 2. Update package sources and add required system packages
@@ -155,25 +155,25 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
         }
 
         // 4. modsConfig
-        $init += $this->_modsConfig(TRUE);
+        $init += $this->_modsConfig(true);
 
         // 5. vhostsConfig
-        $init += $this->_vhostsConfig(TRUE);
+        $init += $this->_vhostsConfig(true);
 
         // 6. nginxConfig
-        $init += $this->_nginxConfig(TRUE);
+        $init += $this->_nginxConfig(true);
 
         // 7. serviceConfig
-        $init += $this->_servicesConfig(TRUE);
+        $init += $this->_servicesConfig(true);
 
         // 8. preCommands
-        $init += $this->runHooks('pre', TRUE);
+        $init += $this->runHooks('pre', true);
 
         // 9. serviceReload
-        $init += $this->_service('reload', TRUE);
+        $init += $this->_service('reload', true);
 
         // 10. serviceRestart
-        $init += $this->_service('restart', TRUE);
+        $init += $this->_service('restart', true);
 
         if (!isset($this->paras->command->options['without_permissions']) || !$this->paras->command->options['without_permissions']) {
             foreach ($this->conf['permissions'] AS $permission) {
@@ -187,7 +187,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
         }
 
         // 11. postCommands
-        $init += $this->runHooks('post', TRUE);
+        $init += $this->runHooks('post', true);
 
         return $init;
     }
@@ -206,37 +206,37 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
             // temporary directory for SVN copy
             $tmp_dir = $this->conf['tmp_dir'] . '/' . uniqid('vcdeploy_svn_cp_');
             if ($tmp_dir != '/' && file_exists($tmp_dir)) {
-                $this->system('rm -rf ' . $tmp_dir, TRUE);
+                $this->system('rm -rf ' . $tmp_dir, true);
             }
 
             // Copy files to temporary location
-            $this->system($this->conf['cp_bin'] . ' -r . ' . $tmp_dir, TRUE);
+            $this->system($this->conf['cp_bin'] . ' -r . ' . $tmp_dir, true);
 
             // Remove SVN directories
-            $this->system('find "' . $tmp_dir . '/" -name ".svn" -type d -exec rm -rf {} 2>/dev/null \;', TRUE);
+            $this->system('find "' . $tmp_dir . '/" -name ".svn" -type d -exec rm -rf {} 2>/dev/null \;', true);
 
             // Cleanup Mac OS X files
-            $this->system('find "' . $tmp_dir . '/" -name ".DS_Store" -type f -exec rm -f {} \;', TRUE);
+            $this->system('find "' . $tmp_dir . '/" -name ".DS_Store" -type f -exec rm -f {} \;', true);
 
             // Switch to temporary directory
             chdir($tmp_dir);
         } else if (getcwd() != $system_source) {
             // Cleanup Mac OS X files
-            $this->system('find "' . $system_source . '/" -name ".DS_Store" -type f -exec rm -f {} \;', TRUE);
+            $this->system('find "' . $system_source . '/" -name ".DS_Store" -type f -exec rm -f {} \;', true);
             // Switch to source directory
             chdir($system_source);
         }
 
         // Copy files
         if (isset($this->paras->command->options['force']) && $this->paras->command->options['force']) {
-            $this->system($this->conf['cp_bin'] . ' -r . /', TRUE);
+            $this->system($this->conf['cp_bin'] . ' -r . /', true);
         } else {
-            $this->system($this->conf['cp_bin'] . ' -ru . /', TRUE);
+            $this->system($this->conf['cp_bin'] . ' -ru . /', true);
         }
 
         // Clean up
         if (!empty($tmp_dir) && $tmp_dir != '/' && file_exists($tmp_dir)) {
-            $this->system('rm -rf ' . $tmp_dir, TRUE);
+            $this->system('rm -rf ' . $tmp_dir, true);
         }
         if (getcwd() != $system_source) {
             chdir($system_source);
@@ -250,7 +250,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
      *
      * @return int amount of system commands
      */
-    private function _vhostsConfig($try = FALSE)
+    private function _vhostsConfig($try = false)
     {
 
         if (!isset($this->conf['apache_sites'])) {
@@ -278,7 +278,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
      *
      * @return int amount of system commands
      */
-    private function _nginxConfig($try = FALSE)
+    private function _nginxConfig($try = false)
     {
 
         if (!isset($this->conf['nginx_sites'])) {
@@ -302,11 +302,11 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
     /**
      * Apache modules configuration: enable or disable a module
      *
-     * @param bool $try if TRUE, this is a test run without system calls
+     * @param bool $try if true, this is a test run without system calls
      *
      * @return int amount of system commands
      */
-    private function _modsConfig($try = FALSE)
+    private function _modsConfig($try = false)
     {
         if (!isset($this->conf['apache_mods'])) {
             $this->conf['apache_mods'] = '';
@@ -333,7 +333,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
      *
      * @return int amount of system commands
      */
-    private function _servicesConfig($try = FALSE)
+    private function _servicesConfig($try = false)
     {
         if (!isset($this->conf['services'])) {
             $this->conf['services'] = '';
@@ -410,7 +410,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
      *
      * @return int amount of system commands
      */
-    private function _service($command, $try = FALSE)
+    private function _service($command, $try = false)
     {
         $count = 0;
         $config_key = 'services_' . $command;
@@ -443,7 +443,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
      *
      * @return int
      */
-    private function _systemCommand($command, $para = NULL)
+    private function _systemCommand($command, $para = null)
     {
         $rc = 0;
 
@@ -562,24 +562,24 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
             switch ($this->conf['system_os']) {
                 case 'suse':
                     $this->show_progress('Check for SuSE packages to install...');
-                    $rc = $this->system('zypper --non-interactive install ' . $this->conf['packages_depends'], TRUE);
+                    $rc = $this->system('zypper --non-interactive install ' . $this->conf['packages_depends'], true);
                     break;
                 case 'centos':
                     $this->show_progress('Check for Redhat packages to install...');
-                    $rc = $this->system('yum install -y ' . $this->conf['packages_depends'], TRUE);
+                    $rc = $this->system('yum install -y ' . $this->conf['packages_depends'], true);
                     break;
                 case 'ubuntu':
-                    $rc = $this->system('aptitude update', TRUE);
+                    $rc = $this->system('aptitude update', true);
                     if (!$rc['rc']) {
                         $this->show_progress('Check for Ubuntu packages to install...');
                         $rc = $this->system('aptitude install -y ' . $this->conf['packages_depends'], true);
                     }
                     break;
                 case 'debian':
-                    $rc = $this->system('apt-get -qq update', TRUE);
+                    $rc = $this->system('apt-get -qq update', true);
                     if (!$rc['rc']) {
                         $this->show_progress('Check for Debian packages to install...');
-                        $rc = $this->system('apt-get install -yqq ' . $this->conf['packages_depends'], TRUE);
+                        $rc = $this->system('apt-get install -yqq ' . $this->conf['packages_depends'], true);
                     }
                     break;
                 default:
@@ -615,16 +615,16 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
 
             switch ($this->conf['system_os']) {
                 case 'suse':
-                    $rc = $this->system('zypper --non-interactive remove ' . $this->conf['packages_conflicts'], TRUE);
+                    $rc = $this->system('zypper --non-interactive remove ' . $this->conf['packages_conflicts'], true);
                     break;
                 case 'centos':
-                    $rc = $this->system('yum uninstall -y ' . $this->conf['packages_conflicts'], TRUE);
+                    $rc = $this->system('yum uninstall -y ' . $this->conf['packages_conflicts'], true);
                     break;
                 case 'ubuntu':
-                    $rc = $this->system('aptitude remove -y ' . $this->conf['packages_conflicts'], TRUE);
+                    $rc = $this->system('aptitude remove -y ' . $this->conf['packages_conflicts'], true);
                     break;
                 case 'debian':
-                    $rc = $this->system('apt-get --purge remove -yqq ' . $this->conf['packages_conflicts'], TRUE);
+                    $rc = $this->system('apt-get --purge remove -yqq ' . $this->conf['packages_conflicts'], true);
                     break;
                 default:
                     throw new Exception('Package depends system not support on this platform');
@@ -658,7 +658,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
         if (!empty($this->conf['gem_packages_depends'])) {
 
             $this->show_progress('Install ruby gem packages...');
-            $rc = $this->system('gem install ' . $this->conf['gem_options'] . ' ' . $this->conf['gem_packages_depends'], TRUE);
+            $rc = $this->system('gem install ' . $this->conf['gem_options'] . ' ' . $this->conf['gem_packages_depends'], true);
 
             if ($rc['rc']) {
                 if (!empty($rc['output'])) {
@@ -679,11 +679,11 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
     /**
      * Create directories
      *
-     * @param bool $try if TRUE, this is a test run without system calls
+     * @param bool $try if true, this is a test run without system calls
      * @throws Exception
      * @return int amount of system commands
      */
-    private function _createDirectories($try = FALSE)
+    private function _createDirectories($try = false)
     {
         $rc = 0;
 
@@ -699,7 +699,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
                         $this->show_progress('Directory ' . $dir . ' already exists.');
                     } else {
                         $this->show_progress('Creating directory ' . $dir);
-                        mkdir($dir, 0775, TRUE);
+                        mkdir($dir, 0775, true);
                     }
                 }
             }
@@ -711,11 +711,11 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
     /**
      * Create symbolic links
      *
-     * @param bool $try if TRUE, this is a test run without system calls
+     * @param bool $try if true, this is a test run without system calls
      * @throws Exception
      * @return int amount of system commands
      */
-    private function _createSymlinks($try = FALSE)
+    private function _createSymlinks($try = false)
     {
         $rc = 0;
 

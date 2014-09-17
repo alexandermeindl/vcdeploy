@@ -13,7 +13,7 @@
  */
 
 $plugin['info'] = 'Setup a drupal installation';
-$plugin['root_only'] = TRUE;
+$plugin['root_only'] = true;
 
 $plugin['args']['project'] = 'Name of project to setup';
 $plugin['args']['command'] = 'Name of subcommand

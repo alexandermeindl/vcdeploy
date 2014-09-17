@@ -65,13 +65,13 @@ class VcdeployPluginBackupClear extends Vcdeploy implements IVcdeployPlugin
         $max_minutes = $this->conf['backup_max_days'] * 24 * 60;
 
         $this->show_progress('Removing old tar.gz files...');
-        $this->system('find "' . $this->conf['backup_dir'] . '/" ! -mmin -' . $max_minutes . ' -name "*.tar.gz*" -type f -exec rm {} \;', TRUE);
+        $this->system('find "' . $this->conf['backup_dir'] . '/" ! -mmin -' . $max_minutes . ' -name "*.tar.gz*" -type f -exec rm {} \;', true);
         $this->show_progress('Removing old sql.gz files...');
-        $this->system('find "' . $this->conf['backup_dir'] . '/" ! -mmin -' . $max_minutes . ' -name "*sql.gz*" -type f -exec rm {} \;', TRUE);
+        $this->system('find "' . $this->conf['backup_dir'] . '/" ! -mmin -' . $max_minutes . ' -name "*sql.gz*" -type f -exec rm {} \;', true);
 
         // delete files, which no longer in use
         $this->show_progress('Removing tar files...');
-        $rc = $this->system('find "' . $this->conf['backup_dir'] . '/" -name "*.tar" -type f -exec rm {} \;', TRUE);
+        $rc = $this->system('find "' . $this->conf['backup_dir'] . '/" -name "*.tar" -type f -exec rm {} \;', true);
 
         return $rc['rc'];
     }

@@ -19,7 +19,7 @@
  */
 
 $plugin['info'] = 'rollout a new release';
-$plugin['root_only'] = FALSE;
+$plugin['root_only'] = false;
 
 $plugin['options']['project'] = array(
     'short_name' => '-p',
@@ -74,14 +74,14 @@ $plugin['options']['with_backup'] = array(
     'short_name' => '-b',
     'long_name' => '--with_backup',
     'action' => 'StoreTrue',
-    'description' => 'Create a backup before the rollout (default with setting without_backup=FALSE)',
+    'description' => 'Create a backup before the rollout (default with setting without_backup=false)',
 );
 
 $plugin['options']['without_backup'] = array(
     'short_name' => '-B',
     'long_name' => '--without_backup',
     'action' => 'StoreTrue',
-    'description' => 'Do not create a backup before the rollout (default with setting without_backup=TRUE)',
+    'description' => 'Do not create a backup before the rollout (default with setting without_backup=true)',
 );
 
 $plugin['options']['without_permission'] = array(
@@ -252,14 +252,14 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
      *
      * Three type of archive files are supported
      *
-     * ['rollout']['with_project_archive'] = TRUE
+     * ['rollout']['with_project_archive'] = true
      * an archive file of the project code is used
      * to rollout (and not an VCS update command)
      *
-     * ['rollout']['with_db'] = TRUE
+     * ['rollout']['with_db'] = true
      * database dump of the release (tag) will replace the project database
      *
-     * ['rollout']['with_data'] = TRUE
+     * ['rollout']['with_data'] = true
      * directories/files (data) of the release (tag) will replace the project data
      *
      * @return int
@@ -283,9 +283,9 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
         } else {
 
             if ($this->project['scm']['type'] != 'static') {
-                $this->show_progress('Updating ' . $this->scm->get_name() . ' Repository for project ' . $this->project_name . ' (' . $this->get_progressbar_pos() . '/' . $this->get_steps() . ')...', FALSE);
+                $this->show_progress('Updating ' . $this->scm->get_name() . ' Repository for project ' . $this->project_name . ' (' . $this->get_progressbar_pos() . '/' . $this->get_steps() . ')...', false);
             } else {
-                $this->show_progress('No update required for static repository in project ' . $this->project_name . ' (' . $this->get_progressbar_pos() . '/' . $this->get_steps() . ')...', FALSE);
+                $this->show_progress('No update required for static repository in project ' . $this->project_name . ' (' . $this->get_progressbar_pos() . '/' . $this->get_steps() . ')...', false);
             }
 
 
@@ -403,7 +403,7 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
             $this->db_recreate($db_name);
 
             $this->msg('Rolling out database...');
-            $this->system($this->db->get_restore($db_name, $sql_file, TRUE));
+            $this->system($this->db->get_restore($db_name, $sql_file, true));
 
             $this->msg('Database ' . $db_name . ' has been successfully reseted.');
         }
@@ -494,24 +494,24 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
         if (isset($this->project['with_project_archive'])
             && $this->project['with_project_archive']
         ) {
-            return TRUE;
+            return true;
         }
 
         // required for db data
         if ((isset($this->paras->command->options['with_db']) && ($this->paras->command->options['with_db']))
             || (isset($this->project['with_db']) && $this->project['with_db'])
         ) {
-            return TRUE;
+            return true;
         }
 
         // required for files data
         if ((isset($this->paras->command->options['with_data']) && ($this->paras->command->options['with_data']))
             || (isset($this->project['with_data']) && $this->project['with_data'])
         ) {
-            return TRUE;
+            return true;
         }
 
-        return FALSE;
+        return false;
     }
 
     /**
@@ -524,11 +524,11 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
         if ($this->tag) {
 
             if (!isset($this->project['with_scm_tag_switch']) || $this->project['with_scm_tag_switch']) {
-                return TRUE;
+                return true;
             }
         }
 
-        return FALSE;
+        return false;
     }
 
     /**
@@ -567,7 +567,7 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
                 }
             } else if (isset($this->project['scm']['url'])) {
                 $withCheckout = true;
-                $rc = $this->system($this->scm->checkout($this->project['path']), TRUE);
+                $rc = $this->system($this->scm->checkout($this->project['path']), true);
                 if ($rc['rc']) {
                     throw new Exception('An error occured on SCM checkout with ' . $this->project['scm']['url'] . '.');
                 }

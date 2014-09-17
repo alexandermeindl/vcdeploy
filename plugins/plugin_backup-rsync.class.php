@@ -13,7 +13,7 @@
  */
 
 $plugin['info'] = 'Rsync backup files with remote system';
-$plugin['root_only'] = FALSE;
+$plugin['root_only'] = false;
 
 class VcdeployPluginBackupRsync extends Vcdeploy implements IVcdeployPlugin
 {

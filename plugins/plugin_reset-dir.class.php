@@ -16,7 +16,7 @@
  */
 
 $plugin['info'] = 'Reset directory. If no project is specified, all active projects files/directories will be reseted.';
-$plugin['root_only'] = FALSE;
+$plugin['root_only'] = false;
 
 $plugin['options']['project'] = array(
     'short_name' => '-p',
@@ -29,14 +29,14 @@ $plugin['options']['with_backup'] = array(
     'short_name' => '-b',
     'long_name' => '--with_backup',
     'action' => 'StoreTrue',
-    'description' => 'Create a backup before the sync (default with setting without_backup=FALSE)',
+    'description' => 'Create a backup before the sync (default with setting without_backup=false)',
 );
 
 $plugin['options']['without_backup'] = array(
     'short_name' => '-B',
     'long_name' => '--without_backup',
     'action' => 'StoreTrue',
-    'description' => 'Do not create a backup before the sync (default with setting without_backup=TRUE)',
+    'description' => 'Do not create a backup before the sync (default with setting without_backup=true)',
 );
 
 $plugin['options']['without_commands'] = array(

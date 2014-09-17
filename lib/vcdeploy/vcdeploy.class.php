@@ -44,7 +44,7 @@ class Vcdeploy
      *
      * @var bool
      */
-    public $debug = FALSE;
+    public $debug = false;
 
     /**
      * Hostname of script server
@@ -66,7 +66,7 @@ class Vcdeploy
      * A list of all active projects
      *
      * All projects specified in the configuration file with
-     * active = TRUE
+     * active = true
      *
      * @var array
      */
@@ -180,7 +180,6 @@ class Vcdeploy
      */
     public function __construct($conf, $plugin_name, $paras, $version)
     {
-
         global $logger;
 
         $this->conf = $conf;
@@ -198,7 +197,7 @@ class Vcdeploy
         $this->current_user = $rc['output'][0];
 
         if (isset($this->conf['debug']) && $this->conf['debug']) {
-            $this->debug = TRUE;
+            $this->debug = true;
         }
     }
 
@@ -210,9 +209,8 @@ class Vcdeploy
      *
      * @return void
      */
-    public function show_progress($msg, $with_step = TRUE)
+    public function show_progress($msg, $with_step = true)
     {
-
         // show verbose message
         if ((isset($this->paras->options['verbose']) && $this->paras->options['verbose']) || !is_object($this->progressbar)) {
             $this->msg($msg);
@@ -228,9 +226,8 @@ class Vcdeploy
      *
      * @return void
      */
-    public function progressbar_update($with_step = TRUE)
+    public function progressbar_update($with_step = true)
     {
-
         if (!isset($this->paras->options['verbose']) || !$this->paras->options['verbose']) {
 
             if ($with_step) {
@@ -274,7 +271,6 @@ class Vcdeploy
      */
     public function progressbar_init($init = 0)
     {
-
         // initialize progress bar for non-verbose
         if (!isset($this->paras->options['verbose']) || !$this->paras->options['verbose']) {
             $this->progressbar = new Console_ProgressBar(' %fraction% [%bar%] %percent%  ', '=', ' ', 50, $this->get_steps($init));
@@ -289,7 +285,6 @@ class Vcdeploy
      */
     protected function set_db()
     {
-
         if (!empty($this->project) && isset($this->project['dbtype'])) {
             $db_type = $this->project['dbtype'];
         } else {
@@ -314,7 +309,6 @@ class Vcdeploy
      */
     protected function set_scm($mode = 'system')
     {
-
         switch ($mode) {
             case 'system':
                 $scm_type = $this->conf['source_scm'];
@@ -341,7 +335,6 @@ class Vcdeploy
 
     private function set_subprojects()
     {
-
         $this->project['subprojects'] = array();
         if (isset($this->project['depends']) && !empty($this->project['depends'])) {
             $subprojects = explode(',', str_replace("\n", '', $this->project['depends']));
@@ -366,12 +359,12 @@ class Vcdeploy
      *
      * @param  string $project_name name of project
      * @param  array $project project details
+     * @param array $parent_project
      *
      * @throws Exception
      */
     public function set_project($project_name, $project, $parent_project = null)
     {
-
         /**
          * Check if project exists
          */
@@ -420,7 +413,6 @@ class Vcdeploy
      */
     public function get_all_projects()
     {
-
         global $project;
 
         $projects = array();
@@ -436,15 +428,11 @@ class Vcdeploy
     }
 
     /**
-     * @param string $parent_project
+     * Get project array
+     *
+     * @param string $project_name
+     * @return array
      */
-    public function get_sub_projects($parent_project)
-    {
-
-        print_r($this->projects);
-        die('here');
-    }
-
     public function get_project($project_name)
     {
         return $this->projects[$project_name];
@@ -461,7 +449,6 @@ class Vcdeploy
      */
     public function get_projects($onlyParentProjects = false)
     {
-
         global $project;
 
         if (is_array($this->projects)) {
@@ -564,7 +551,7 @@ class Vcdeploy
      *
      * @return  string system command output
      */
-    public function system($command, $passthru = FALSE)
+    public function system($command, $passthru = false)
     {
         if ($this->debug) {
             $this->msg('system: ' . $command);
@@ -601,7 +588,7 @@ class Vcdeploy
     public function msg($msg, $error_code = 0)
     {
         if (is_array($msg)) {
-            $msg = print_r($msg, TRUE);
+            $msg = print_r($msg, true);
         }
         echo $msg . "\n";
         if ($this->conf['write_to_log']) {
@@ -616,7 +603,7 @@ class Vcdeploy
      * Run post commands
      *
      * @param array $commands install calls
-     * @param bool $try if TRUE, this is a test run without system calls
+     * @param bool $try if true, this is a test run without system calls
      * @throws Exception
      * @return int amount of system commands
      */
@@ -628,14 +615,13 @@ class Vcdeploy
     /**
      * Run Hooks
      *
-     * @param string $type pre, post or install hook
-     * @param bool $try if TRUE, this is a test run without system calls
-     * @throws Exception
+     * @param string $name pre, post or install hook
+     * @param bool $try if true, this is a test run without system calls
      * @return int amount of system commands
+     * @throws Exception
      */
-    public function runHooks($name, $try = FALSE)
+    public function runHooks($name, $try = false)
     {
-
         if (!in_array($name, array('pre', 'post'))) {
             throw new Exception('Unsupported hook ' . $name . ' type for ' . $this->plugin_name);
         }
@@ -680,9 +666,8 @@ class Vcdeploy
      *    amount of commands
      * @throws Exception
      */
-    private function _hook_commands($commands, $msg, $try = FALSE)
+    private function _hook_commands($commands, $msg, $try = false)
     {
-
         $numCommands = 0;
 
         if (is_array($commands)) {
@@ -721,7 +706,7 @@ class Vcdeploy
                     // show verbose message
                     if ((isset($this->paras->options['verbose']) && $this->paras->options['verbose'])) {
                         $this->msg('Running ' . $msg . ' command: ' . $command_info['command']);
-                        $rc = $this->system($command_info['command'], TRUE);
+                        $rc = $this->system($command_info['command'], true);
                     } else {
                         $rc = $this->system($command_info['command']);
                     }
@@ -744,7 +729,6 @@ class Vcdeploy
      */
     public function ssh_check()
     {
-
         if (!is_array($this->ssh)) {
             throw new Exception('ssh_system error: ssh configuration is missing');
         } elseif (empty($this->ssh['host'])) {
@@ -775,7 +759,6 @@ class Vcdeploy
      */
     private function _getScpBin()
     {
-
         $command = $this->conf['scp_bin'];
         if (!empty($this->ssh['port'])) {
             $command .= ' -P ' . $this->ssh['port'];
@@ -797,7 +780,6 @@ class Vcdeploy
      */
     private function _getSshBin()
     {
-
         $command = $this->conf['ssh_bin'];
         if (!empty($this->ssh['port'])) {
             $command .= ' -p ' . $this->ssh['port'];
@@ -823,12 +805,11 @@ class Vcdeploy
      */
     public function ssh_get_file($remote_file, $local_file)
     {
-
         $this->ssh_check();
         $remote_file = $this->_getSshHost() . ':' . $remote_file;
 
         $this->msg('Transfer file from ' . $this->_getSshHost() . '...');
-        $rc = $this->system($this->_getScpBin() . ' ' . $remote_file . ' ' . $local_file, TRUE);
+        $rc = $this->system($this->_getScpBin() . ' ' . $remote_file . ' ' . $local_file, true);
         if ($rc['rc']) {
             throw new Exception('File could not be transfered. (' . $remote_file . ')');
         }
@@ -845,12 +826,11 @@ class Vcdeploy
      */
     public function ssh_put_file($local_file, $remote_file)
     {
-
         $this->ssh_check();
         $remote_file = $this->_getSshHost() . ':' . $remote_file;
 
         $this->msg('Transfer file to ' . $this->_getSshHost() . '...');
-        $rc = $this->system($this->_getScpBin() . ' ' . $local_file . ' ' . $remote_file, TRUE);
+        $rc = $this->system($this->_getScpBin() . ' ' . $local_file . ' ' . $remote_file, true);
         if ($rc['rc']) {
             throw new Exception('File could not be transfered. (' . $local_file . ')');
         }
@@ -866,9 +846,8 @@ class Vcdeploy
      * @param   bool $passthru
      * @return  string command output
      */
-    public function ssh_system($command, $passthru = FALSE)
+    public function ssh_system($command, $passthru = false)
     {
-
         $this->ssh_check();
 
         $ssh_command = $this->_getSshBin() . ' ' . $this->_getSshHost();
@@ -885,9 +864,8 @@ class Vcdeploy
      * @return string files list of files (compressed file and hash file)
      * @throws Exception
      */
-    public function gzip_file($filename, $only_command = FALSE)
+    public function gzip_file($filename, $only_command = false)
     {
-
         $command = $this->conf['gzip_bin'] . ' -f ' . $filename;
 
         if (!$only_command) {
@@ -896,7 +874,7 @@ class Vcdeploy
 
             $this->set_nice('low');
             $this->show_progress('compressing file: ' . $filename);
-            $rc = $this->system($command, TRUE);
+            $rc = $this->system($command, true);
             if ($rc['rc']) {
                 throw new Exception('Error while compress file ' . $filename);
             } elseif ($this->conf['create_hashfiles']) {
@@ -918,7 +896,6 @@ class Vcdeploy
      */
     public function md5_file($filename)
     {
-
         $md5_filename = $filename . '.md5';
         $md5 = md5_file($filename);
 
@@ -942,10 +919,10 @@ class Vcdeploy
         if (!empty($dir)) {
             // check for one or more /
             if (preg_match('/^[\/]+$/', $dir)) {
-                return TRUE;
+                return true;
             }
             if ($dir == '/') {
-                return TRUE;
+                return true;
             }
         }
         return false;
@@ -961,7 +938,6 @@ class Vcdeploy
      */
     public function remove_directory($dir)
     {
-
         if (file_exists($dir)) {
             // remove existing target directory
             if (!$this->is_root_dir($dir)) {
@@ -1042,7 +1018,6 @@ class Vcdeploy
      */
     public function create_project_data_backup()
     {
-
         if (!is_array($this->project)) {
             throw new Exception('set_scm error: scm mode project requires $this->project');
         }
@@ -1064,7 +1039,6 @@ class Vcdeploy
      */
     public function get_source_db($identifier)
     {
-
         // first look for source database
         if (isset($this->project['source_db'][$identifier]) && $this->project['source_db'][$identifier]) {
             $source_db = $this->project['source_db'][$identifier];
@@ -1087,7 +1061,6 @@ class Vcdeploy
      */
     public function get_source_data($identifier)
     {
-
         if (isset($this->project['source_data_dir'][$identifier]) && $this->project['source_data_dir'][$identifier]) {
             $source_dir = $this->project['source_data_dir'][$identifier];
         } else {
@@ -1107,9 +1080,8 @@ class Vcdeploy
      * @return array created files (dump and hash file)
      * @throws Exception
      */
-    public function create_data_dump($source_dir, $target_file, $excludes = NULL)
+    public function create_data_dump($source_dir, $target_file, $excludes = null)
     {
-
         $this->show_progress('Creating tar file of directory ' . $source_dir . '...');
 
         // change to parent directory
@@ -1151,9 +1123,8 @@ class Vcdeploy
      * @return array created files (dump and hash file)
      * @throws Exception
      */
-    public function create_db_dump($db_name, $target_file = NULL)
+    public function create_db_dump($db_name, $target_file = null)
     {
-
         if (!isset($target_file)) {
             $target_file = $this->conf['backup_dir'] . '/db-' . $db_name . '-' . $this->date_stamp . '.sql';
         }
@@ -1181,7 +1152,6 @@ class Vcdeploy
      */
     private function _getRemoteBasename($name)
     {
-
         $prefix = '';
         if (!empty($this->ssh['user'])) {
             $prefix .= $this->ssh['user'] . '_';
@@ -1203,7 +1173,6 @@ class Vcdeploy
      */
     public function get_remote_db_file($identifier, $db)
     {
-
         if (!isset($this->project['source_type'])) {
             throw new Exception('Project source_type not specified.');
         }
@@ -1228,13 +1197,13 @@ class Vcdeploy
                 $remote_file = $this->project['remote_tmp_dir'] . '/' . $this->_getRemoteBasename('db_' . $identifier) . '.sql';
 
                 $this->msg('Create Dump on remote server...(' . $this->ssh['host'] . ')');
-                $rc = $this->ssh_system($this->db->get_dump($db, $remote_file), TRUE);
+                $rc = $this->ssh_system($this->db->get_dump($db, $remote_file), true);
                 if ($rc['rc']) {
                     throw new Exception('Error creating remote dump.');
                 }
 
                 $this->msg('Compress remote file...');
-                $rc = $this->ssh_system($this->gzip_file($remote_file, TRUE), TRUE);
+                $rc = $this->ssh_system($this->gzip_file($remote_file, true), true);
                 if ($rc['rc']) {
                     throw new Exception('Error compress remote file.');
                 }
@@ -1262,7 +1231,6 @@ class Vcdeploy
      */
     public function get_source_data_file($identifier, $source_dir)
     {
-
         if (!isset($this->project['source_type'])) {
             throw new Exception('Project source_type not specified.');
         }
@@ -1317,14 +1285,13 @@ class Vcdeploy
      */
     public function sanitize_database_sanitize($db_name)
     {
-
         // 1. truncates
         if (isset($this->project['sanitize']['truncates'])) {
             $tables = explode(' ', $this->project['sanitize']['truncates']);
             foreach ($tables AS $table) {
                 if (!empty($table)) {
                     $this->msg('Truncate table ' . $table);
-                    $this->system($this->db->get_table_truncate($db_name, $table), TRUE);
+                    $this->system($this->db->get_table_truncate($db_name, $table), true);
                 }
             }
         }
@@ -1335,7 +1302,7 @@ class Vcdeploy
             foreach ($tables AS $table) {
                 if (!empty($table)) {
                     $this->msg('Drop table ' . $table);
-                    $this->system($this->db->get_table_drop($db_name, $table), TRUE);
+                    $this->system($this->db->get_table_drop($db_name, $table), true);
                 }
             }
         }
@@ -1345,7 +1312,7 @@ class Vcdeploy
             foreach ($this->project['sanitize']['sql'] AS $sql) {
                 if (!empty($sql)) {
                     $this->msg('Run sanitize SQL query...');
-                    $this->system($this->db->get_query($db_name, $sql), TRUE);
+                    $this->system($this->db->get_query($db_name, $sql), true);
                 }
             }
         }
@@ -1362,21 +1329,20 @@ class Vcdeploy
      *
      * @return void
      */
-    public function sanitize_database($sql_file, $source_db = NULL, $sanitize = TRUE)
+    public function sanitize_database($sql_file, $source_db = null, $sanitize = true)
     {
-
         // 1. clear database
         $this->msg('Clear temporary database ' . $this->conf['tmp_db'] . '...');
-        $this->system($this->db->get_db_drop($this->conf['tmp_db']), TRUE);
-        $this->system($this->db->get_db_create($this->conf['tmp_db']), TRUE);
+        $this->system($this->db->get_db_drop($this->conf['tmp_db']), true);
+        $this->system($this->db->get_db_create($this->conf['tmp_db']), true);
 
         // 2. clone database to tmp
         if (isset($source_db)) {
             $this->msg('Create SQL file ' . $source_db . '...');
-            $this->system($this->db->get_dump($source_db, $sql_file), TRUE);
+            $this->system($this->db->get_dump($source_db, $sql_file), true);
         }
         $this->msg('Import SQL file...');
-        $this->system($this->db->get_restore($this->conf['tmp_db'], $sql_file), TRUE);
+        $this->system($this->db->get_restore($this->conf['tmp_db'], $sql_file), true);
 
         // 3. Sanitize tmp database
         if ($sanitize) {
@@ -1385,7 +1351,7 @@ class Vcdeploy
 
         // 4. Create dump
         $this->msg('Creating scm dump for ' . $this->project_name . '...');
-        $this->system($this->db->get_dump($this->conf['tmp_db'], $sql_file), TRUE);
+        $this->system($this->db->get_dump($this->conf['tmp_db'], $sql_file), true);
     }
 
     /**
@@ -1398,7 +1364,6 @@ class Vcdeploy
      */
     public function prepare_backup_dir()
     {
-
         if (empty($this->conf['backup_dir'])) {
             throw new Exception('Backup directory not specified.');
         } elseif (file_exists($this->conf['backup_dir'])) {
@@ -1408,7 +1373,7 @@ class Vcdeploy
         } else {
 
             try {
-                mkdir($this->conf['backup_dir'], 0700, TRUE);
+                mkdir($this->conf['backup_dir'], 0700, true);
             } catch (Exception $e) {
                 $this->msg($e->message(), 1);
             }
@@ -1471,7 +1436,6 @@ class Vcdeploy
      */
     public function db_recreate($db)
     {
-
         // 1. drop database
         $this->db_drop($db);
 
@@ -1485,6 +1449,8 @@ class Vcdeploy
     /**
      * Get number of project permission loops
      *
+     * @param array $project
+     * @return int
      */
     public function count_project_permissions($project)
     {
@@ -1526,9 +1492,8 @@ class Vcdeploy
      * @throws Exception
      * @return void
      */
-    public function set_permissions($mode, $permission, $root_dir = FALSE)
+    public function set_permissions($mode, $permission, $root_dir = false)
     {
-
         if (!isset($permission['name']) || empty($permission['name'])) {
             throw new Exception('name value (directory) is required for permissions.');
         } elseif (!isset($permission['rec'])) {
@@ -1607,7 +1572,6 @@ class Vcdeploy
      */
     public function is_backup_required()
     {
-
         if ((isset($this->paras->command->options['with_backup']) && ($this->paras->command->options['with_backup']))
             || (!isset($this->conf['without_backup']) || !$this->conf['without_backup'])
         ) {

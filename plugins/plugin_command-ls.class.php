@@ -13,7 +13,7 @@
  */
 
 $plugin['info'] = 'List all available commands';
-$plugin['root_only'] = FALSE;
+$plugin['root_only'] = false;
 
 /**
  * Class VcdeployPluginCommandLs

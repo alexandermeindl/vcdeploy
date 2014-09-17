@@ -13,7 +13,7 @@
  */
 
 $plugin['info'] = 'List all available backups';
-$plugin['root_only'] = FALSE;
+$plugin['root_only'] = false;
 
 class VcdeployPluginBackupLs extends Vcdeploy implements IVcdeployPlugin
 {
@@ -59,7 +59,7 @@ class VcdeployPluginBackupLs extends Vcdeploy implements IVcdeployPlugin
 
         $d = dir($this->conf['backup_dir']);
 
-        while (FALSE !== ($entry = $d->read())) {
+        while (false !== ($entry = $d->read())) {
             if ($entry != '.' && $entry != '..') {
                 $line = $this->_getBackupLine($entry);
                 if (!empty($line)) {
@@ -93,7 +93,7 @@ class VcdeployPluginBackupLs extends Vcdeploy implements IVcdeployPlugin
             $suffix = $this->conf['backup_dir'] . '/' . $entry . ' (files)';
             $name = substr($entry, 0, -20);
         } else {
-            return FALSE;
+            return false;
         }
 
         $date = substr($entry, -19, 8);

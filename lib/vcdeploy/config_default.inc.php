@@ -53,8 +53,8 @@ $conf['dbtype'] = 'mysql';
 // backup directory (used by reset-db)
 $conf['backup_dir'] = '/srv/backups';
 
-// If TRUE, no auto backup will be created with reset-db, reset-files or rollout (this can be overwritten with the command line option)
-$conf['without_backup'] = TRUE;
+// If true, no auto backup will be created with reset-db, reset-files or rollout (this can be overwritten with the command line option)
+$conf['without_backup'] = true;
 
 // Max days to keep backups
 $conf['backup_max_days'] = 7;
@@ -79,7 +79,7 @@ $conf['mysqldump_options'] = '--single-transaction --extended-insert=false';
 $conf['postgresqldump_options'] = '';
 
 // Create hash files for all backup files
-$conf['create_hashfiles'] = FALSE;
+$conf['create_hashfiles'] = false;
 
 // temporary directory
 $conf['tmp_dir'] = '/tmp';
@@ -91,7 +91,7 @@ $conf['tmp_db'] = 'vcdeploy_tmp';
 $conf['etc_dir'] = '/etc';
 
 // log etc directory in system-log mode
-$conf['log_etc_dir'] = TRUE;
+$conf['log_etc_dir'] = true;
 
 // exclude all files from log with these patterns
 $conf['log_excludes'] = '~ .dpkg-new .dpkg-old adjtime /mtab ld.so.cache';
@@ -113,10 +113,10 @@ $conf['system_scm'] = 'git';
 $conf['system_os'] = 'debian';
 
 // activate log
-$conf['write_to_log'] = TRUE;
+$conf['write_to_log'] = true;
 
 // Debug mode
-$conf['debug'] = FALSE;
+$conf['debug'] = false;
 
 // high priority commands
 $conf['nice_high'] = -10;
@@ -147,4 +147,4 @@ $conf['custom_plugins'] = 'custom_plugins';
 $conf['commands'] = array();
 
 // default access for all plugins
-$plugin = array('root_only' => FALSE);
+$plugin = array('root_only' => false);

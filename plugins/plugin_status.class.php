@@ -13,7 +13,7 @@
  */
 
 $plugin['info'] = 'status messages and information of vcdeploy environment';
-$plugin['root_only'] = FALSE;
+$plugin['root_only'] = false;
 
 /**
  * Class VcdeployPluginStatus

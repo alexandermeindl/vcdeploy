@@ -32,7 +32,7 @@
  */
 
 $plugin['info'] = 'Create a new release. If no project is specified, for all projects a new release will be created';
-$plugin['root_only'] = FALSE;
+$plugin['root_only'] = false;
 
 $plugin['args']['tag'] = 'Tag of the release (required)';
 
@@ -95,7 +95,7 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin
      *
      * @var bool
      */
-    private $with_push = TRUE;
+    private $with_push = true;
 
     /**
      * files to commit
@@ -201,7 +201,7 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin
 
         $this->_prepareEnvironment();
 
-        $with_commit = FALSE;
+        $with_commit = false;
 
         // set tag
         if ((isset($this->paras->command->options['create_tag']) && ($this->paras->command->options['create_tag']))
@@ -209,7 +209,7 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin
         ) {
             if (!isset($this->paras->command->options['dontcreate_tag']) || (!$this->paras->command->options['dontcreate_tag'])) {
                 $this->_setTag();
-                $with_commit = TRUE;
+                $with_commit = true;
             }
         }
 
@@ -252,7 +252,7 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin
                 $this->system($this->scm->commit('Files for release ' . $this->tag . ' have been added.', $this->commit_files));
             }
             if ($this->with_push) {
-                $this->system($this->scm->push(TRUE));
+                $this->system($this->scm->push(true));
             }
         }
 
@@ -272,7 +272,7 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin
         }
 
         if (!file_exists($this->project['release']['release_dir'])) {
-            mkdir($this->project['release']['release_dir'], 0775, TRUE);
+            mkdir($this->project['release']['release_dir'], 0775, true);
         }
     }
 
@@ -348,10 +348,10 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin
                 if (!empty($sql_file)) {
 
                     if (isset($this->project['release']['with_db_sanitize']) && $this->project['release']['with_db_sanitize']) {
-                        $this->system($this->conf['gunzip_bin'] . ' -f ' . $sql_file, TRUE);
+                        $this->system($this->conf['gunzip_bin'] . ' -f ' . $sql_file, true);
                         $sql_file_uncompressed = substr($sql_file, 0, -3);
                         $this->sanitize_database($sql_file_uncompressed);
-                        $this->system($this->conf['gzip_bin'] . ' -f ' . $sql_file_uncompressed, TRUE);
+                        $this->system($this->conf['gzip_bin'] . ' -f ' . $sql_file_uncompressed, true);
                     }
 
                     $this->system('mv ' . $sql_file . ' ' . $target_file . '.gz');
@@ -415,7 +415,7 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin
     private function _createProjectArchive()
     {
         if ($this->project['scm']['type'] == 'static') {
-            throw new Exception('You cannot use [scm][type]=static with setting [release][with_project_archive]=TRUE');
+            throw new Exception('You cannot use [scm][type]=static with setting [release][with_project_archive]=true');
         }
 
         // 0. prepare environment

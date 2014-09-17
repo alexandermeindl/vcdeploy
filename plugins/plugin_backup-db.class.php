@@ -13,7 +13,7 @@
  */
 
 $plugin['info'] = 'Create database backup. If no parameter is specfied all project database will be backuped';
-$plugin['root_only'] = FALSE;
+$plugin['root_only'] = false;
 
 $plugin['options']['project'] = array(
     'short_name' => '-p',

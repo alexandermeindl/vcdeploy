@@ -13,7 +13,7 @@
  */
 
 $plugin['info'] = 'run commands';
-$plugin['root_only'] = FALSE;
+$plugin['root_only'] = false;
 
 $plugin['args']['command'] = 'command to run. Use \'command-ls\' to get a list with all available commands';
 
@@ -86,7 +86,7 @@ class VcdeployPluginCommand extends Vcdeploy implements IVcdeployPlugin
                         $this->msg('---');
                     }
                     $this->show_progress('Run ' . $command_atom . '...');
-                    $rc = $this->system($this->conf['commands'][$command_atom], TRUE);
+                    $rc = $this->system($this->conf['commands'][$command_atom], true);
                     if ($rc['rc']) {
                         $r++;
                     }
@@ -95,7 +95,7 @@ class VcdeployPluginCommand extends Vcdeploy implements IVcdeployPlugin
             }
             $this->msg($runs . ' commands have been executed');
         } else {
-            $rc = $this->system($command, TRUE);
+            $rc = $this->system($command, true);
             $r = $rc['rc'];
         }
 

@@ -13,7 +13,7 @@
  */
 
 $plugin['info'] = 'Create backup of files';
-$plugin['root_only'] = FALSE;
+$plugin['root_only'] = false;
 
 class VcdeployPluginBackupFiles extends Vcdeploy implements IVcdeployPlugin
 {
@@ -122,13 +122,13 @@ class VcdeployPluginBackupFiles extends Vcdeploy implements IVcdeployPlugin
         $dirs = array();
 
         $d = dir($source_dir);
-        while (FALSE !== ($entry = $d->read())) {
+        while (false !== ($entry = $d->read())) {
             if ($entry != '.' && $entry != '..' && is_dir($source_dir . '/' . $entry)) {
-                $ok = TRUE;
+                $ok = true;
                 reset($excludes);
                 foreach ($excludes AS $exclude) {
                     if ($entry == $exclude) {
-                        $ok = FALSE;
+                        $ok = false;
                         break;
                     }
                 }

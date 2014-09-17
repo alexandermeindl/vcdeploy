@@ -16,7 +16,7 @@
  */
 
 $plugin['info'] = 'Reset database. If no project is specified, all active project databases will be reseted';
-$plugin['root_only'] = FALSE;
+$plugin['root_only'] = false;
 
 $plugin['options']['project'] = array(
     'short_name' => '-p',
@@ -29,14 +29,14 @@ $plugin['options']['with_backup'] = array(
     'short_name' => '-b',
     'long_name' => '--with_backup',
     'action' => 'StoreTrue',
-    'description' => 'Create a backup before the sync (default with setting without_backup=FALSE)',
+    'description' => 'Create a backup before the sync (default with setting without_backup=false)',
 );
 
 $plugin['options']['without_backup'] = array(
     'short_name' => '-B',
     'long_name' => '--without_backup',
     'action' => 'StoreTrue',
-    'description' => 'Do not create a backup before the sync (default with setting without_backup=TRUE)',
+    'description' => 'Do not create a backup before the sync (default with setting without_backup=true)',
 );
 
 $plugin['options']['without_commands'] = array(
@@ -133,8 +133,8 @@ class VcdeployPluginResetDb extends Vcdeploy implements IVcdeployPlugin
                 }
 
                 foreach ($this->project['db'] AS $identifier => $db) {
-                    $this->system($this->db->get_user_drop($perm['host'], $perm['user']), TRUE);
-                    $this->system($this->db->get_user_create($perm['host'], $db, $perm['user'], $perm['password']), TRUE);
+                    $this->system($this->db->get_user_drop($perm['host'], $perm['user']), true);
+                    $this->system($this->db->get_user_create($perm['host'], $db, $perm['user'], $perm['password']), true);
                 }
             }
 
@@ -162,7 +162,7 @@ class VcdeployPluginResetDb extends Vcdeploy implements IVcdeployPlugin
                     $this->db_recreate($db);
 
                     $this->msg('Import data...');
-                    $this->system($this->db->get_restore($db, $sql_file, TRUE));
+                    $this->system($this->db->get_restore($db, $sql_file, true));
 
                     if (isset($this->project['reset_db']['with_db_sanitize']) && $this->project['reset_db']['with_db_sanitize']) {
                         $this->sanitize_database_sanitize($db);

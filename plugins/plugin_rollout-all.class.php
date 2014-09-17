@@ -13,7 +13,7 @@
  */
 
 $plugin['info'] = 'Run rollout and rollout-system plugins';
-$plugin['root_only'] = TRUE;
+$plugin['root_only'] = true;
 
 $plugin['batch_before'] = array('rollout', 'rollout-system');
 $plugin['batch_after'] = array();
