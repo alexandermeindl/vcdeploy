@@ -96,6 +96,13 @@ class Vcdeploy
     public $project;
 
     /**
+     * Current parent project
+     *
+     * @var array
+     */
+    public $parent_project;
+
+    /**
      *
      * @var string
      */
@@ -168,6 +175,14 @@ class Vcdeploy
      * @see progressbar_update
      */
     private $progressbar_current_pos = 0;
+
+    /**
+     * Can be used to cache max counter (e.g. or subprojects)
+     *
+     * @var int
+     */
+    public $progressbar_max_cache = 0;
+
 
     /**
      * Constructor
@@ -360,11 +375,10 @@ class Vcdeploy
      *
      * @param  string $project_name name of project
      * @param  array $project project details
-     * @param array $parent_project
      *
      * @throws Exception
      */
-    public function set_project($project_name, $project, $parent_project = null)
+    public function set_project($project_name, $project)
     {
         /**
          * Check if project exists
@@ -382,8 +396,8 @@ class Vcdeploy
             $this->ssh = $this->project['ssh'];
         }
 
-        if (isset($parent_project) && isset($parent_project['path'])) {
-            $this->project['path'] = str_replace('[parent_path]', $parent_project['path'], $this->project['path']);
+        if (isset($this->parent_project) && isset($this->parent_project['path'])) {
+            $this->project['path'] = str_replace('[parent_path]', $this->parent_project['path'], $this->project['path']);
         }
 
         // if not set, default is git

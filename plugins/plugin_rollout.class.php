@@ -149,21 +149,60 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
 
 
     /**
-     * @return bool
-     *  if subproject has been run, true
+     * Get max steps of this plugin for progress view
+     *
+     * @param int $init initial value of counter
+     *
+     * @return int amount of working steps of this plugin
+     * @see Vcdeploy#progressbar_init()
      */
-    private function _runProjectsDepends()
+    public function get_steps($init = 0)
     {
-        $rc = false;
+        // only calc once
+        if ($this->progressbar_max_cache < 1) {
 
-        $parent_project = $this->project;
-
-        if ($this->project['subprojects']) {
-            foreach ($this->project['subprojects'] AS $subproject) {
-                $this->tag = null; //  Reset tag
-                $this->_runProjectRollout($subproject, $this->get_project($subproject), $parent_project);
+            // with permissions
+            if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
+                $project_name = $this->paras->command->options['project'];
+                if (array_key_exists($project_name, $this->projects) && isset($this->projects[$project_name]['depends'])) {
+                    $rc = substr_count($this->projects[$project_name]['depends'], ',') + 2;
+                } else {
+                    $rc = 1;
+                }
+            } else {
+                $rc = count($this->projects);
             }
-            return true;
+
+            // with backup
+            if ($this->is_backup_required()) {
+                $rc *= 2;
+            }
+
+            // pre commands
+            $rc += $this->runHooks('pre', true);
+
+            // with permissions
+            if ($this->is_permission_required()) {
+                if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
+                    $project_name = $this->paras->command->options['project'];
+                    $rc += $this->count_project_permissions($this->projects[$project_name]);
+                } else {
+                    foreach ($this->projects AS $project_name => $project) {
+                        $rc += $this->count_project_permissions($project);
+                    }
+                }
+            }
+
+            // post commands
+            $rc += $this->runHooks('post', true);
+            $rc += $init;
+
+            if ($rc>1) {
+                $this->progressbar_max_cache = $rc;
+            }
+        }
+        else {
+            $rc = $this->progressbar_max_cache;
         }
 
         return $rc;
@@ -175,17 +214,26 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
      *
      * @param string $project_name
      * @param array $project
-     * @param array $parent_project
      * @return int
      * @throws Exception
      */
-    private function _runProjectRollout($project_name, $project, $parent_project = null)
+    private function _runProjectRollout($project_name, $project)
     {
         // set project information for subprojects and main project
-        $this->set_project($project_name, $project, $parent_project);
-        if ($this->_runProjectsDepends()) {
+        $this->set_project($project_name, $project);
+
+        if (!isset($this->parent_project)) {
+            $this->parent_project = $this->project;
+        }
+
+        if ($this->project['subprojects']) {
+            foreach ($this->project['subprojects'] AS $subproject) {
+                $this->tag = null; //  Reset tag
+                $this->_runProjectRollout($subproject, $this->get_project($subproject));
+            }
             // set projects again, because subprojects has been activated
-            $this->set_project($project_name, $project, $parent_project);
+            unset($this->parent_project);
+            $this->set_project($project_name, $project);
         }
 
         // initialize db
@@ -202,49 +250,6 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
         $this->set_scm('project');
 
         return $this->_projectRollout();
-    }
-
-    /**
-     * Get max steps of this plugin for progress view
-     *
-     * @param int $init initial value of counter
-     *
-     * @return int amount of working steps of this plugin
-     * @see Vcdeploy#progressbar_init()
-     */
-    public function get_steps($init = 0)
-    {
-        // with permissions
-        if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
-            $rc = 1;
-        } else {
-            $rc = count($this->projects);
-        }
-
-        // with backup
-        if ($this->is_backup_required()) {
-            $rc *= 2;
-        }
-
-        // pre commands
-        $rc += $this->runHooks('pre', true);
-
-        // with permissions
-        if ($this->is_permission_required()) {
-            if (isset($this->paras->command->options['project']) && !empty($this->paras->command->options['project'])) {
-                $project_name = $this->paras->command->options['project'];
-                $rc += $this->count_project_permissions($this->projects[$project_name]);
-            } else {
-                foreach ($this->projects AS $project_name => $project) {
-                    $rc += $this->count_project_permissions($project);
-                }
-            }
-        }
-
-        // post commands
-        $rc += $this->runHooks('post', true);
-
-        return $init + $rc;
     }
 
     /**
@@ -283,11 +288,16 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
         } else {
 
             if ($this->project['scm']['type'] != 'static') {
-                $this->show_progress('Updating ' . $this->scm->get_name() . ' Repository for project ' . $this->project_name . ' (' . $this->get_progressbar_pos() . '/' . $this->get_steps() . ')...', false);
+                $this->show_progress(
+                    'Updating ' . $this->scm->get_name() . ' Repository for project ' . $this->project_name . ' (' . $this->get_progressbar_pos() . '/' . $this->get_steps() . ')...',
+                    false
+                );
             } else {
-                $this->show_progress('No update required for static repository in project ' . $this->project_name . ' (' . $this->get_progressbar_pos() . '/' . $this->get_steps() . ')...', false);
+                $this->show_progress(
+                    'No update required for static repository in project ' . $this->project_name . ' (' . $this->get_progressbar_pos() . '/' . $this->get_steps() . ')...',
+                    false
+                );
             }
-
 
             // 1. run pre commands
             $this->runHooks('pre');
@@ -314,7 +324,9 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
             ) {
                 if (!isset($this->paras->command->options['without_data']) || (!$this->paras->command->options['without_data'])) {
                     if ($this->current_user != 'root') {
-                        throw new Exception('with_data requires to run script with root privileges for project ' . $this->project_name);
+                        throw new Exception(
+                            'with_data requires to run script with root privileges for project ' . $this->project_name
+                        );
                     }
                     $rc = $this->_dataRollout();
                 }
@@ -327,7 +339,9 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
             if ($this->is_permission_required()) {
                 if (isset($this->project['permissions']) && is_array($this->project['permissions'])) {
                     if ($this->current_user != 'root') {
-                        throw new Exception('permission commands requires to run script with root privileges for project ' . $this->project_name);
+                        throw new Exception(
+                            'permission commands requires to run script with root privileges for project ' . $this->project_name
+                        );
                     }
                     foreach ($this->project['permissions'] AS $permission) {
                         if (isset($permission['mod']) && !empty($permission['mod'])) {
@@ -565,14 +579,21 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
                 } else {
                     throw new Exception($this->project['path'] . ' is not a directory');
                 }
-            } else if (isset($this->project['scm']['url'])) {
-                $withCheckout = true;
-                $rc = $this->system($this->scm->checkout($this->project['path']), true);
-                if ($rc['rc']) {
-                    throw new Exception('An error occured on SCM checkout with ' . $this->project['scm']['url'] . '.');
-                }
             } else {
-                throw new Exception('Directory ' . $this->project['path'] . ' does not exist and no SCM url is specified to create it.');
+                if (isset($this->project['scm']['url'])) {
+                    $withCheckout = true;
+                    $rc = $this->system($this->scm->checkout($this->project['path']), true);
+                    if ($rc['rc']) {
+                        throw new Exception(
+                            'An error occured on SCM checkout with ' . $this->project['scm']['url'] . '.'
+                        );
+                    }
+                    chdir($this->project['path']);
+                } else {
+                    throw new Exception(
+                        'Directory ' . $this->project['path'] . ' does not exist and no SCM url is specified to create it.'
+                    );
+                }
             }
 
             // check if switch to tag is used
