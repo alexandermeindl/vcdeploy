@@ -1,6 +1,6 @@
 <?php
 /**
- * SCM cvs implementation
+ * SCM Mercurial implementation
  *
  * PHP version 5.3
  *
@@ -15,9 +15,9 @@
 require_once 'Scm_base.inc.php';
 
 /**
- * Class VcdeployScmCvs
+ * Class VcdeployScmHg
  */
-class VcdeployScmCvs extends VcdeployScm
+class VcdeployScmHg extends VcdeployScm
 {
     /**
      * Constructor
@@ -32,19 +32,22 @@ class VcdeployScmCvs extends VcdeployScm
 
     /**
      * Get userfriendly name of SCM
+     *
+     * @return string
      */
     public function get_name()
     {
-        return 'CVS';
+        return 'Mercurial';
     }
 
     /**
-     * Get update command
+     * Get checkout command
      *
+     * @return string
      */
     public function update()
     {
-        return $this->conf['cvs_bin'] . ' update';
+        return $this->conf['hg_bin'] . ' pull';
     }
 
     /**
@@ -62,7 +65,7 @@ class VcdeployScmCvs extends VcdeployScm
             throw new Exception('commit error: files has to be an array');
         }
 
-        return $this->conf['cvs_bin'] . ' commit -m "' . $message . '" ' . implode(' ', $files);
+        return $this->conf['hg_bin'] . ' commit -m "' . $message . '" ' . implode(' ', $files);
     }
 
     /**
@@ -79,7 +82,7 @@ class VcdeployScmCvs extends VcdeployScm
             throw new Exception($this->get_name() . ' url not defined (scm->url)');
         }
 
-        $command = $this->conf['cvs_bin'] . ' checkout ' . $this->project['scm']['url'];
+        $command = $this->conf['hg_bin'] . ' clone ' . $this->project['scm']['url'];
         if (isset($directory)) {
             $command .= ' ' . $directory;
         }
@@ -94,6 +97,70 @@ class VcdeployScmCvs extends VcdeployScm
      */
     public function get_default_branch()
     {
-        return '';
+        return 'default';
+    }
+
+    /**
+     * Get 'activate tag' command
+     *
+     * @param string $tag
+     *
+     * @return string
+     */
+    public function activate_tag($tag)
+    {
+        return $this->conf['hg_bin'] . ' update ' . $tag;
+    }
+
+    /**
+     * Get 'set tag' command
+     *
+     * @param string $tag
+     *
+     * @return string
+     */
+    public function set_tag($tag)
+    {
+        return $this->conf['hg_bin'] . ' tag ' . $tag;
+    }
+
+    /**
+     * Get 'remove tag' command
+     *
+     * @param string $tag
+     *
+     * @return string
+     */
+    public function remove_tag($tag)
+    {
+        return $this->conf['hg_bin'] . ' tag -d ' . $tag;
+    }
+
+    /**
+     * Get list of tags command
+     *
+     * @return string
+     */
+    public function get_tags()
+    {
+        return $this->conf['hg_bin'] . ' tag -l';
+    }
+
+    /**
+     * Get push command
+     *
+     * @param bool $with_tags
+     *
+     * @return string
+     */
+    public function push($with_tags = FALSE)
+    {
+        $command = $this->conf['hg_bin'] . ' push';
+
+        if ($with_tags) {
+            $command .= ' --tags';
+        }
+
+        return $command;
     }
 }

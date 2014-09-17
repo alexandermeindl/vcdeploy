@@ -339,10 +339,11 @@ class Vcdeploy
         if (isset($this->project['depends']) && !empty($this->project['depends'])) {
             $subprojects = explode(',', str_replace("\n", '', $this->project['depends']));
             foreach ($subprojects AS $subproject) {
+                $subproject = trim($subproject);
                 if (!array_key_exists($subproject, $this->projects)) {
                     throw new Exception('Project ' . $subproject . ' is not defined but required for parent project ' . $this->project_name);
                 }
-                $this->project['subprojects'][] = trim($subproject);
+                $this->project['subprojects'][] = $subproject;
             }
         }
 

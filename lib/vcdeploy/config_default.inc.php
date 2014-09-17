@@ -17,6 +17,7 @@
 $project = array();
 
 $conf['git_bin'] = '/usr/bin/git';
+$conf['hg_bin'] = '/usr/bin/hg';
 $conf['svn_bin'] = '/usr/bin/svn';
 $conf['cvs_bin'] = '/usr/bin/cvs';
 $conf['bzr_bin'] = '/usr/bin/bzr';
