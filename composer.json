@@ -5,6 +5,7 @@
     "version": "0.65",
     "keywords": ["deployment"],
     "homepage": "https://github.com/alexandermeindl/vcdeploy",
+    "minimum-stability": "dev",
     "authors": [
         {
             "name": "Alexander Meindl",

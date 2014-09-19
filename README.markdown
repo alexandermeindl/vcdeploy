@@ -12,11 +12,22 @@
 
 ##Installation
 
+1) Installing via Composer
 
-1) Copy config.inc.php.dist to config.inc.php (or to /etc/vcdeploy.inc.php). Change config.inc.php
+```
+curl -s http://getcomposer.org/installer | php
+```
+
+For a system-wide installation via Composer, you can run:
+```
+composer global require "alphanodes/vcdeploy"
+```
+Make sure you have ~/.composer/vendor/bin/ in your path.
+
+2) Copy config.inc.php.dist to config.inc.php (or to /etc/vcdeploy.inc.php). Change config.inc.php
 to fit your system and project settings.
 
-2) Create a symbolic link
+3) Create a symbolic link
 
 	$ cd {VCDEPLOY_ROOT}
 	$ ln -s vcdeploy.php /usr/local/bin/vcdeploy
