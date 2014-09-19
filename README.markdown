@@ -20,7 +20,7 @@ curl -s http://getcomposer.org/installer | php
 
 For a system-wide installation via Composer, you can run:
 ```
-composer global require "alphanodes/vcdeploy=dev-master" --no-dev
+composer global require "alphanodes/vcdeploy=dev-master"
 ```
 
 Make sure you have ~/.composer/vendor/bin/ in your path.

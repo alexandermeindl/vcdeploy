@@ -15,6 +15,12 @@
             "role": "Developer"
         }
     ],
+    "repositories": [
+        {
+        "type": "pear",
+        "url": "http://pear.php.net"
+        }
+    ],
     "require": {
         "php": ">=5.3.0",
         "drush/drush": "6.*",
