@@ -24,7 +24,8 @@ if (!defined('__DIR__')) {
 
 set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . '/lib');
 
-require 'Log.php';
+require 'vendor/autoload.php';
+#require 'Log.php';
 require 'vcdeploy/loader.class.php';
 require 'vcdeploy/exception_handler.inc.php';
 
