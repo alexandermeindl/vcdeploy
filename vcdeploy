@@ -13,6 +13,24 @@
  * @link      https://github.com/alexandermeindl/vcdeploy
  */
 
+foreach (array(__DIR__ . '/../../autoload.php', __DIR__ . '/vendor/autoload.php') as $file) {
+    if (file_exists($file)) {
+        define('VCDEPLOY_COMPOSER_INSTALL', $file);
+        break;
+    }
+}
+
+unset($file);
+
+if (!defined('VCDEPLOY_COMPOSER_INSTALL')) {
+    echo 'You need to set up the project dependencies using the following commands:' . PHP_EOL .
+        'wget http://getcomposer.org/composer.phar' . PHP_EOL .
+        'php composer.phar install' . PHP_EOL;
+    die(1);
+}
+
+require VCDEPLOY_COMPOSER_INSTALL;
+
 error_reporting(E_ALL);
 
 
@@ -24,8 +42,6 @@ if (!defined('__DIR__')) {
 
 set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . '/lib');
 
-require 'vendor/autoload.php';
-#require 'Log.php';
 require 'vcdeploy/loader.class.php';
 require 'vcdeploy/exception_handler.inc.php';
 
