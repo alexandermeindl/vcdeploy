@@ -18,8 +18,8 @@
     "require": {
         "php": ">=5.3.0",
         "drush/drush": "6.*",
-        "pear/log": "dev-master",
         "pear/pear_exception": "1.0.*@dev",
+        "pear/log": "dev-master",
         "pear/console_commandline": "dev-trunk"
     },
     "require-dev": {
