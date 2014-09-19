@@ -6,6 +6,7 @@
     "keywords": ["deployment"],
     "homepage": "https://github.com/alexandermeindl/vcdeploy",
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "authors": [
         {
             "name": "Alexander Meindl",
