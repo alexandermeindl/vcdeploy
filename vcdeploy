@@ -51,8 +51,12 @@ require 'vcdeploy/config_default.inc.php';
 require 'vcdeploy/load_config.php';
 
 // set exception handler
-$logger = Log::factory('file', $conf['log_file'], basename(__FILE__));
-set_exception_handler('exceptionHandler');
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+$log = new Logger('name');
+$log->pushHandler(new StreamHandler($conf['log_file'], Logger::WARNING));
+#$logger = Log::factory('file', $conf['log_file'], basename(__FILE__));
+#set_exception_handler('exceptionHandler');
 
 $vcdeploy = new VcDeployLoader($conf);
 

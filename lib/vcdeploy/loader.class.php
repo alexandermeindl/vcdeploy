@@ -79,7 +79,7 @@ class VcDeployLoader
      */
     public function __construct($conf)
     {
-        global $logger;
+        global $log;
 
         $this->conf = $conf;
         $this->hostname = $this->get_hostname();
@@ -88,7 +88,7 @@ class VcDeployLoader
 
         include_once $this->plugin_dir . '/plugin_interface.class.php';
 
-        $this->logger = $logger;
+        $this->logr = $log;
 
         exec('whoami', $output);
         $this->current_user = $output[0];

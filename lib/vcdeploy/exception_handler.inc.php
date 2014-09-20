@@ -19,9 +19,9 @@
  */
 function exceptionHandler($exception)
 {
-    global $logger;
+    global $log;
 
     echo $exception->getMessage() . "\n";
-    $logger->log($exception->getMessage(), PEAR_LOG_ALERT);
+    $log->addError($exception->getMessage());
     exit(1);
 }

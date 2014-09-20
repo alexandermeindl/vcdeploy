@@ -127,7 +127,7 @@ class Vcdeploy
      *
      * @var object
      */
-    public $logger;
+    public $log;
 
     /**
      * Database class
@@ -195,7 +195,7 @@ class Vcdeploy
      */
     public function __construct($conf, $plugin_name, $paras, $version)
     {
-        global $logger;
+        global $log;
 
         $this->conf = $conf;
         $this->version = $version;
@@ -206,7 +206,7 @@ class Vcdeploy
 
         $this->date_stamp = date('YmdHi');
 
-        $this->logger = $logger;
+        $this->log = $log;
 
         $rc = $this->system('whoami');
         $this->current_user = $rc['output'][0];
@@ -607,7 +607,7 @@ class Vcdeploy
         }
         echo $msg . "\n";
         if ($this->conf['write_to_log']) {
-            $this->logger->log($msg, PEAR_LOG_INFO);
+            $this->log->addInfo($msg);
         }
         if ($error_code !== 0) {
             exit($error_code);
