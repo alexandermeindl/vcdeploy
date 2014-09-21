@@ -2,8 +2,8 @@
 
 ## Requirements
 
-* PHP 5.3.x
-* SCM (git, svn or cvs)
+* PHP 5.3.x CLI
+* SCM (git, hg, svn, bzr or cvs)
 
 ## Optional
 - rsync

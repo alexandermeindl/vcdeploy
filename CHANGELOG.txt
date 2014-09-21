@@ -5,7 +5,8 @@ vcdeploy 0.65, 2014-09-?
 - suppport for project dependencies/subprojects
 - some cleanups
 - mercurial suppport has been added
-- switch to composer
+- switch to composer installation
+- renamed vcdeploy.php to vcdeploy
 
 vcdeploy 0.62, 2014-08-12
 - SVN rollout-system supports

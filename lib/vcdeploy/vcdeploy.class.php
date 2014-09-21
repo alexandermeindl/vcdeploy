@@ -450,7 +450,11 @@ class Vcdeploy
      */
     public function get_project($project_name)
     {
-        return $this->projects[$project_name];
+        $project = array();
+        if (array_key_exists('project_name', $this->projects)) {
+            $project = $this->projects[$project_name];
+        }
+        return $project;
     }
 
     /**
@@ -1474,17 +1478,19 @@ class Vcdeploy
 
             foreach ($project['permissions'] AS $permission) {
 
-                if (!is_array($permission['name'])) {
-                    $permission['name'] = array($permission['name']);
-                }
-
-                // Run system call for each name entry
-                foreach ($permission['name'] AS $name) {
-                    if (isset($permission['mod']) && !empty($permission['mod'])) {
-                        $count++;
+                if (is_array($permission)) {
+                    if (!is_array($permission['name'])) {
+                        $permission['name'] = array($permission['name']);
                     }
-                    if (isset($permission['own']) && !empty($permission['own'])) {
-                        $count++;
+
+                    // Run system call for each name entry
+                    foreach ($permission['name'] AS $name) {
+                        if (isset($permission['mod']) && !empty($permission['mod'])) {
+                            $count++;
+                        }
+                        if (isset($permission['own']) && !empty($permission['own'])) {
+                            $count++;
+                        }
                     }
                 }
             }
