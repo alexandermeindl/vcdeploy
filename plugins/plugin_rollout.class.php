@@ -131,7 +131,6 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
             $project_name = $this->paras->command->options['project'];
 
             $this->progressbar_init();
-
             $rc = $this->_runProjectRollout($project_name, $this->get_project($project_name));
         } else { // all projects
 
@@ -226,7 +225,7 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
             $this->parent_project = $this->project;
         }
 
-        if ($this->project['subprojects']) {
+        if (count($this->project['subprojects'])) {
             foreach ($this->project['subprojects'] AS $subproject) {
                 $this->tag = null; //  Reset tag
                 $this->_runProjectRollout($subproject, $this->get_project($subproject));
@@ -572,7 +571,6 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
         if ($this->project['scm']['type'] != 'static') {
 
             $withCheckout = false;
-
             if (file_exists($this->project['path'])) {
                 if (is_dir($this->project['path'])) {
                     chdir($this->project['path']);

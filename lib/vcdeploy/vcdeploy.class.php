@@ -451,7 +451,7 @@ class Vcdeploy
     public function get_project($project_name)
     {
         $project = array();
-        if (array_key_exists('project_name', $this->projects)) {
+        if (array_key_exists($project_name, $this->projects)) {
             $project = $this->projects[$project_name];
         }
         return $project;
