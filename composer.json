@@ -18,7 +18,7 @@
     "bin": [ "vcdeploy" ],
     "require": {
         "php": ">=5.3.0",
-        "drush/drush": "6.*",
+        "drush/drush": ">=6.4.*",
         "monolog/monolog": ">=1.10.0",
         "ext-curl": "*"
     },
