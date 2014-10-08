@@ -131,12 +131,15 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
             $project_name = $this->paras->command->options['project'];
 
             $this->progressbar_init();
-            $rc = $this->_runProjectRollout($project_name, $this->get_project($project_name));
+            $rc = $this->_runProjectRollout($project_name, $this->get_project($project_name), true);
         } else { // all projects
 
             $this->progressbar_init();
             foreach ($this->projects AS $project_name => $project) {
-                $rc = $this->_runProjectRollout($project_name, $project);
+                if (isset($this->parent_project)) {
+                    unset($this->parent_project);
+                }
+                $rc = $this->_runProjectRollout($project_name, $project, true);
                 if ($rc) {
                     return $rc;
                 }
@@ -169,7 +172,16 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
                     $rc = 1;
                 }
             } else {
-                $rc = count($this->projects);
+                $rc = 0;
+                foreach($this->projects AS $tmp_project) {
+                    if (!isset($tmp_project['subproject']) || !$tmp_project['subproject']) {
+                        if (isset($tmp_project['depends'])) {
+                            $rc += substr_count($tmp_project['depends'], ',') + 2;
+                        } else {
+                            $rc++;
+                        }
+                    }
+                }
             }
 
             // with backup
@@ -213,13 +225,19 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
      *
      * @param string $project_name
      * @param array $project
+     * @param bool main_project_only
      * @return int
      * @throws Exception
      */
-    private function _runProjectRollout($project_name, $project)
+    private function _runProjectRollout($project_name, $project, $main_project_only=false)
     {
         // set project information for subprojects and main project
         $this->set_project($project_name, $project);
+
+        // if main project only, no subproject is allowed
+        if ($main_project_only && isset($this->project['subproject']) && $this->project['subproject']) {
+            return 0;
+        }
 
         if (!isset($this->parent_project)) {
             $this->parent_project = $this->project;
