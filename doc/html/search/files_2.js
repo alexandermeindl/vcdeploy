@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['db_5fbase_2einc_2ephp',['Db_base.inc.php',['../_db__base_8inc_8php.html',1,'']]]
+  ['plugin_5fsample_2dplugin_2eclass_2ephp',['plugin_sample-plugin.class.php',['../plugin__sample-plugin_8class_8php.html',1,'']]],
+  ['postgresql_2einc_2ephp',['postgresql.inc.php',['../postgresql_8inc_8php.html',1,'']]]
 ];

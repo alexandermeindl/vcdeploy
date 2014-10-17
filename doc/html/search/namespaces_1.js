@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['log',['Log',['../namespace_log.html',1,'']]]
+  ['pear',['PEAR',['../namespace_p_e_a_r.html',1,'']]]
 ];

@@ -7,13 +7,13 @@
 
 var indexSectionsWithContent =
 {
-  0: "$_abcdefgilmnoprstuvw",
-  1: "cilpv",
-  2: "clpv",
-  3: "bcdeglmpsv",
-  4: "_acdefgilmnoprstuvw",
+  0: "$_acdefgimnoprstuvw",
+  1: "cipv",
+  2: "cpv",
+  3: "dmp",
+  4: "_acdefgimnoprstuvw",
   5: "$o",
-  6: "dt"
+  6: "t"
 };
 
 var indexSectionNames =
