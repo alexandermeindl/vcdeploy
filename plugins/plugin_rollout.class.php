@@ -612,18 +612,6 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
                 }
             }
 
-            // check if switch to tag is used
-            if ($this->_isTagSwitchRequired()) {
-                $default_branch = $this->scm->get_default_branch();
-                if (!empty($default_branch)) {
-                    // switch back to default branch master before git pull
-                    $rc = $this->system($this->scm->activate_tag($default_branch));
-                    if ($rc['rc']) {
-                        throw new Exception('Error switching to ' . $default_branch);
-                    }
-                }
-            }
-
             if (!$withCheckout) {
                 // update scm project code
                 $rc = $this->system($this->scm->update(), true);
