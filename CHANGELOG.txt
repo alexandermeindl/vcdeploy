@@ -1,6 +1,9 @@
 // CHANGELOG.txt
 
-vcdeploy 0.65, 2014-09-?
+vcdeploy 0.66, 2015-03-?
+- add reset support for subproject (rollout)
+
+vcdeploy 0.65, 2014-10-17
 - support multible configuration files
 - suppport for project dependencies/subprojects
 - some cleanups
