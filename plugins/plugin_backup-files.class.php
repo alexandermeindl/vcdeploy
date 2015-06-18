@@ -65,10 +65,10 @@ class VcdeployPluginBackupFiles extends Vcdeploy implements IVcdeployPlugin
             foreach ($this->conf['backup_daily'] AS $name => $values) {
 
                 if (!isset($values['dir'])) {
-                    $this->msg('Missing dir for ' . $name . ' backup set!');
+                    $this->msg('Missing dir for ' . $name . ' backup set!', 0, 'warning');
                     $rc++;
                 } elseif (!file_exists($values['dir'])) {
-                    $this->msg('Backup target directory does not exist: ' . $values['dir']);
+                    $this->msg('Backup target directory does not exist: ' . $values['dir'], 0, 'warning');
                     $rc++;
                 } else {
 

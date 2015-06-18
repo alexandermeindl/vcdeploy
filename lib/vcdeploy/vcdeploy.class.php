@@ -560,7 +560,7 @@ class Vcdeploy
             }
 
         } else {
-            $this->msg('Unknow nice level (rc=' . $level . ')');
+            $this->msg('Unknow nice level (rc=' . $level . ')', 0, 'warning');
         }
     }
 
@@ -603,15 +603,18 @@ class Vcdeploy
      *
      * @param string $msg message to print
      * @param int $error_code if greater 0, script exit with $error_code as return value
+     * @param string $msg_type info, warning or error (warning and error will be printed with quit mode)
      *
      * @return int
      */
-    public function msg($msg, $error_code = 0)
+    public function msg($msg, $error_code = 0, $type = 'info')
     {
         if (is_array($msg)) {
             $msg = print_r($msg, true);
         }
-        echo $msg . "\n";
+        if ((!isset($this->paras->options['quit']) && !$this->paras->options['quit']) || ($type != 'info')) {
+          echo $msg . "\n";
+        }
         if ($this->conf['write_to_log']) {
             $this->log->addInfo($msg);
         }
@@ -923,7 +926,7 @@ class Vcdeploy
         try {
             file_put_contents($md5_filename, $md5 . '  ' . basename($filename));
         } catch (Exception $e) {
-            $this->msg('Could not create hash file \'' . $md5_filename . '\'', 1);
+            $this->msg('Could not create hash file \'' . $md5_filename . '\'', 1, 'error');
         }
 
         return $md5_filename;
@@ -973,7 +976,7 @@ class Vcdeploy
                 throw new Exception('Never ever use / as target directory!');
             }
         } else {
-            $this->msg('Directory ' . $dir . ' does not exists, removing is not required.');
+            $this->msg('Directory ' . $dir . ' does not exists, removing is not required.', 0, 'warning');
         }
     }
 
@@ -1396,7 +1399,7 @@ class Vcdeploy
             try {
                 mkdir($this->conf['backup_dir'], 0700, true);
             } catch (Exception $e) {
-                $this->msg($e->message(), 1);
+                $this->msg($e->message(), 1, 'error');
             }
 
             // TODO: check exception handler to die with warnings

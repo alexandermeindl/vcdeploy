@@ -60,9 +60,7 @@ class VcdeployPluginBackupClear extends Vcdeploy implements IVcdeployPlugin
      */
     private function _clearBackups()
     {
-        if (!isset($this->paras->options['quit']) && !$this->paras->options['quit']) {
-          $this->msg('Remove old backups on ' . $this->hostname . ':');
-        }
+        $this->msg('Remove old backups on ' . $this->hostname . ':');
 
         $max_minutes = $this->conf['backup_max_days'] * 24 * 60;
 

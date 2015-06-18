@@ -129,7 +129,7 @@ class VcdeployPluginResetDb extends Vcdeploy implements IVcdeployPlugin
             if (isset($this->project['reset_db']['permissions'])) {
                 $perm = $this->project['reset_db']['permissions'];
                 if (!is_array($perm)) {
-                    $this->msg('Missing permissions array for databases.');
+                    $this->msg('Missing permissions array for databases.', 0, 'warning');
                 }
 
                 foreach ($this->project['db'] AS $identifier => $db) {
@@ -152,7 +152,7 @@ class VcdeployPluginResetDb extends Vcdeploy implements IVcdeployPlugin
                         if ($this->db_exists($db)) {
                             $this->create_db_dump($db);
                         } else {
-                            $this->msg('Backup was not created, because database did not exist yet.');
+                            $this->msg('Backup was not created, because database did not exist yet.', 0, 'warning');
                         }
                     } else {
                         $this->msg('Backup deactivated.');
@@ -175,7 +175,7 @@ class VcdeployPluginResetDb extends Vcdeploy implements IVcdeployPlugin
                         unlink($sql_file);
                     }
                 } else {
-                    $this->msg('SQL file for import could not be identify');
+                    $this->msg('SQL file for import could not be identify', 0, 'warning');
                 }
             }
 

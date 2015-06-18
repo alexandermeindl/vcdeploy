@@ -477,7 +477,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
                 if ($this->conf['system_os'] == 'debian' || $this->conf['system_os'] == 'ubuntu') {
                     $rc = $this->system('a2ensite -q  ' . $para);
                 } else {
-                    $this->msg('vhost configuration not supported with ' . $this->conf['system_os'] . '.');
+                    $this->msg('vhost configuration not supported with ' . $this->conf['system_os'] . '.', 0, 'warning');
                     $rc = 1;
                 }
                 break;
@@ -486,7 +486,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
                 if ($this->conf['system_os'] == 'debian' || $this->conf['system_os'] == 'ubuntu') {
                     $rc = $this->system('a2dissite -q  ' . $para);
                 } else {
-                    $this->msg('vhost configuration not supported with ' . $this->conf['system_os'] . '.');
+                    $this->msg('vhost configuration not supported with ' . $this->conf['system_os'] . '.', 0, 'warning');
                     $rc = 1;
                 }
                 break;
@@ -505,7 +505,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
                 if ($this->conf['system_os'] == 'debian' || $this->conf['system_os'] == 'ubuntu') {
                     $rc = $this->system('a2enmod -q  ' . $para);
                 } else {
-                    $this->msg('apache modules configuration not supported with ' . $this->conf['system_os'] . '.');
+                    $this->msg('apache modules configuration not supported with ' . $this->conf['system_os'] . '.', 0, 'warning');
                     $rc = 1;
                 }
                 break;
@@ -514,7 +514,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
                 if ($this->conf['system_os'] == 'debian' || $this->conf['system_os'] == 'ubuntu') {
                     $rc = $this->system('a2dismod -q  ' . $para);
                 } else {
-                    $this->msg('apache modules configuration not supported with ' . $this->conf['system_os'] . '.');
+                    $this->msg('apache modules configuration not supported with ' . $this->conf['system_os'] . '.', 0, 'warning');
                     $rc = 1;
                 }
                 break;
@@ -544,7 +544,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
                 break;
 
             default:
-                $this->msg('Unknown systemCommand ' . $command . ' used!');
+                $this->msg('Unknown systemCommand ' . $command . ' used!', 0, 'warning');
                 break;
         }
 
@@ -590,12 +590,12 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
 
             if ($rc['rc']) {
                 if (!empty($rc['output'])) {
-                    $this->msg('An error occured while installing packages:');
+                    $this->msg('An error occured while installing packages:', 0, 'warning');
                     foreach ($rc['output'] AS $line) {
                         $this->msg($line);
                     }
                 } else {
-                    $this->msg('An error occured while installing packages (rc=' . $rc['rc'] . ')');
+                    $this->msg('An error occured while installing packages (rc=' . $rc['rc'] . ')', 0, 'warning');
                 }
                 return $rc['rc'];
             }
@@ -635,12 +635,12 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
 
             if ($rc['rc']) {
                 if (!empty($rc['output'])) {
-                    $this->msg('An error occured while installing packages:');
+                    $this->msg('An error occured while installing packages:', 0, 'warning');
                     foreach ($rc['output'] AS $line) {
                         $this->msg($line);
                     }
                 } else {
-                    $this->msg('An error occured while installing packages (rc=' . $rc['rc'] . ')');
+                    $this->msg('An error occured while installing packages (rc=' . $rc['rc'] . ')', 0, 'warning');
                 }
                 return $rc['rc'];
             }
@@ -664,12 +664,12 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
 
             if ($rc['rc']) {
                 if (!empty($rc['output'])) {
-                    $this->msg('An error occured while installing gem packages:');
+                    $this->msg('An error occured while installing gem packages:', 0, 'warning');
                     foreach ($rc['output'] AS $line) {
-                        $this->msg($line);
+                        $this->msg($line, 0, 'warning');
                     }
                 } else {
-                    $this->msg('An error occured while installing gem packages (rc=' . $rc['rc'] . ')');
+                    $this->msg('An error occured while installing gem packages (rc=' . $rc['rc'] . ')', 0, 'warning');
                 }
                 return $rc['rc'];
             }
@@ -751,7 +751,7 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
                                 throw new Exception('Error creating symlink "' . $target . '"');
                             }
                         } else {
-                            $this->msg('Cannot create symlink ' . $target . ', because parent directory does not exist.');
+                            $this->msg('Cannot create symlink ' . $target . ', because parent directory does not exist.', 0, 'warning');
                         }
                     }
                 }

@@ -171,7 +171,7 @@ class VcdeployPluginBackupDb extends Vcdeploy implements IVcdeployPlugin
                             $this->_databases[] = $db_name;
                         }
                     } else {
-                        $this->msg('Project ' . $this->project_name . ': no database has been specified.');
+                        $this->msg('Project ' . $this->project_name . ': no database has been specified.', 0, 'warning');
                     }
                 }
                 break;

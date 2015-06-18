@@ -360,7 +360,7 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin
                         $this->md5_file($target_file . '.gz'),
                     ));
                 } else {
-                    $this->msg('SQL file for import could not be identify');
+                    $this->msg('SQL file for import could not be identify', 0, 'warning');
                 }
             } else { // local
                 $this->_addCommitFiles($this->create_db_dump($db, $target_file));
@@ -392,7 +392,7 @@ class VcdeployPluginReleaseCreate extends Vcdeploy implements IVcdeployPlugin
                         $this->md5_file($target_file . '.gz'),
                     ));
                 } else {
-                    $this->msg('Tar file for import could not be identify');
+                    $this->msg('Tar file for import could not be identify', 0, 'warning');
                 }
             } else {
                 $this->_addCommitFiles($this->create_data_dump($dir, $target_file));

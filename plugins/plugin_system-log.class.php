@@ -69,7 +69,7 @@ class VcdeployPluginSystemLog extends Vcdeploy implements IVcdeployPlugin
             if ($this->current_user == 'root') {
                 $this->_etcLog();
             } else {
-                $this->msg('system etc and packages log is only tracked for root');
+                $this->msg('system etc and packages log is only tracked for root', 0, 'warning');
             }
         }
 

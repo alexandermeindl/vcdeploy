@@ -190,7 +190,7 @@ class VcdeployPluginResetDir extends Vcdeploy implements IVcdeployPlugin
 
                     $this->msg('Directory ' . $identifier . ' has been successfully restored.');
                 } else {
-                    $this->msg('TAR file for reset could not be identify');
+                    $this->msg('TAR file for reset could not be identify', 0, 'warning');
                 }
 
                 // Post commands

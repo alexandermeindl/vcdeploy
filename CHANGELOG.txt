@@ -1,7 +1,9 @@
 // CHANGELOG.txt
 
-vcdeploy 0.66, 2015-03-?
+vcdeploy 0.66, 2015-05-18
 - add reset support for subproject (rollout)
+- quit mode has been fixed
+- ngx-conf supported
 
 vcdeploy 0.65, 2014-10-17
 - support multible configuration files
