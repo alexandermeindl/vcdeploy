@@ -7,7 +7,7 @@
  * @category  Console
  * @package   Vcdeploy
  * @author    Alexander Meindl <a.meindl@alphanodes.com>
- * @copyright 2014 Alexander Meindl
+ * @copyright 2015 Alexander Meindl
  * @license   http://www.mozilla.org/MPL Mozilla Public License Version 1.1
  * @link      https://github.com/alexandermeindl/vcdeploy
  */
@@ -459,7 +459,9 @@ class VcDeployLoader
             throw new Exception('Only root can run this plugin');
         }
 
-        print('Run ' . $this->plugin_name . ' at ' . $this->hostname . "...\n");
+        if (!isset($app->paras->options['quit']) || !$app->paras->options['quit']) {
+          print('Run ' . $this->plugin_name . ' at ' . $this->hostname . "...\n");
+        }
 
         $rc = $app->run();
         if ($rc) {

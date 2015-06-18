@@ -7,7 +7,7 @@
  * @category  Plugins
  * @package   Vcdeploy
  * @author    Alexander Meindl <a.meindl@alphanodes.com>
- * @copyright 2014 Alexander Meindl
+ * @copyright 2015 Alexander Meindl
  * @license   http://www.mozilla.org/MPL Mozilla Public License Version 1.1
  * @link      https://github.com/alexandermeindl/vcdeploy
  */

@@ -7,7 +7,7 @@
  * @category  Console
  * @package   Vcdeploy
  * @author    Alexander Meindl <a.meindl@alphanodes.com>
- * @copyright 2014 Alexander Meindl
+ * @copyright 2015 Alexander Meindl
  * @license   http://www.mozilla.org/MPL Mozilla Public License Version 1.1
  * @link      https://github.com/alexandermeindl/vcdeploy
  */
@@ -492,11 +492,13 @@ class VcdeployPluginRolloutSystem extends Vcdeploy implements IVcdeployPlugin
                 break;
 
             case 'nginx_enable':
-                $rc = $this->system('nginx_ensite ' . $para);
+                // suported with nginx version 1.8.0 or higher from dotdeb
+                $rc = $this->system('ngx-conf --enable ' . $para);
                 break;
 
             case 'nginx_disable':
-                $rc = $this->system('nginx_dissite ' . $para);
+                // suported with nginx version 1.8.0 or higher from dotdeb
+                $rc = $this->system('ngx-conf --disable ' . $para);
                 break;
 
             case 'mod_enable':

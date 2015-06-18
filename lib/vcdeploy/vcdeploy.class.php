@@ -8,7 +8,7 @@
  * @category  Console
  * @package   Vcdeploy
  * @author    Alexander Meindl <a.meindl@alphanodes.com>
- * @copyright 2014 Alexander Meindl
+ * @copyright 2015 Alexander Meindl
  * @license   http://www.mozilla.org/MPL Mozilla Public License Version 1.1
  * @link      https://github.com/alexandermeindl/vcdeploy
  */
@@ -159,7 +159,7 @@ class Vcdeploy
      *
      * @var object
      */
-    protected $paras;
+    public $paras;
 
     /**
      * Progress bar
@@ -226,11 +226,13 @@ class Vcdeploy
      */
     public function show_progress($msg, $with_step = true)
     {
-        // show verbose message
-        if ((isset($this->paras->options['verbose']) && $this->paras->options['verbose']) || !is_object($this->progressbar)) {
-            $this->msg($msg);
-        } else {
-            $this->progressbar_update($with_step);
+        if (!isset($this->paras->options['quit']) || !$this->paras->options['quit']) {
+          // show verbose message
+          if ((isset($this->paras->options['verbose']) && $this->paras->options['verbose']) || !is_object($this->progressbar)) {
+              $this->msg($msg);
+          } else {
+              $this->progressbar_update($with_step);
+          }
         }
     }
 
