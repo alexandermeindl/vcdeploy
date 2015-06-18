@@ -459,14 +459,14 @@ class VcDeployLoader
             throw new Exception('Only root can run this plugin');
         }
 
-        if (!isset($app->paras->options['quit']) || !$app->paras->options['quit']) {
+        if (!isset($app->paras->options['quit']) && !$app->paras->options['quit']) {
           print('Run ' . $this->plugin_name . ' at ' . $this->hostname . "...\n");
         }
 
         $rc = $app->run();
         if ($rc) {
             print('An error occured (rc=' . $rc . ")\n");
-        } elseif (!$no_message) {
+        } elseif (!$no_message && !isset($app->paras->options['quit']) && !$app->paras->options['quit']) {
             print("Successfully finished.\n");
         }
 
