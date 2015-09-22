@@ -553,8 +553,7 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
     private function _isTagSwitchRequired()
     {
         if (isset($this->tag) && (!empty($this->tag))) {
-
-            if (!isset($this->project['with_scm_tag_switch']) || $this->project['with_scm_tag_switch']) {
+            if (isset($this->project['with_scm_tag_switch']) && $this->project['with_scm_tag_switch']) {
                 return true;
             }
         }
