@@ -548,16 +548,16 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
     /**
      * Check if SCM tag switch is required
      *
+     * @param bool $withCheckout
      * @return bool
      */
-    private function _isTagSwitchRequired()
+    private function _isTagSwitchRequired($withCheckout)
     {
         if (isset($this->tag) && (!empty($this->tag))) {
-            if (isset($this->project['with_scm_tag_switch']) && $this->project['with_scm_tag_switch']) {
+            if ($withCheckout || (isset($this->project['with_scm_tag_switch']) && $this->project['with_scm_tag_switch'])) {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -645,7 +645,7 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
             }
 
             // check if switch to tag is used
-            if ($this->_isTagSwitchRequired()) {
+            if ($this->_isTagSwitchRequired($withCheckout)) {
                 $rc = $this->system($this->scm->activate_tag($this->tag));
                 if ($rc['rc']) {
                     throw new Exception('Error switching to tag \'' . $this->tag . '\'');
