@@ -551,7 +551,7 @@ class VcdeployPluginRollout extends Vcdeploy implements IVcdeployPlugin
      * @param bool $withCheckout
      * @return bool
      */
-    private function _isTagSwitchRequired($withCheckout)
+    private function _isTagSwitchRequired($withCheckout=false)
     {
         if (isset($this->tag) && (!empty($this->tag))) {
             if ($withCheckout || (isset($this->project['with_scm_tag_switch']) && $this->project['with_scm_tag_switch'])) {
