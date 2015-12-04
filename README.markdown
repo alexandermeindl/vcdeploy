@@ -1,5 +1,7 @@
 # vcdeploy - Version control deploy
 
+[![Dependency Status](https://gemnasium.com/alexandermeindl/vcdeploy.svg)](https://gemnasium.com/alexandermeindl/vcdeploy)
+
 ## Requirements
 
 * PHP 5.3.x CLI
